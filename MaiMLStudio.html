@@ -2860,6 +2860,7 @@ ${
       function updateNamespace(idx, field, value) {
         if (!state.document.namespaces) return;
         state.document.namespaces[idx][field] = value;
+        if (field === 'prefix') updateNamespacePrefixDatalist();
       }
 
       function removeNamespace(idx) {
@@ -7689,3 +7690,4 @@ ${state.petriNet.transitions
     <datalist id="ns-prefix-list"></datalist>
   </body>
 </html>
+
