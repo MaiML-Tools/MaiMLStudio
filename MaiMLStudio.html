@@ -2909,7 +2909,7 @@ ${
                     <div class="flex gap-1 items-center">
                         <input type="text" value="${v.id}" onchange="updateVendor(${idx}, 'id', this.value)" placeholder="ID" 
                             class="w-32 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" title="Vendor ID">
-                        <input type="text" value="${v.name}" oninput="updateKeyValidation(this, this.value)" onchange="updateVendor(${idx}, 'name', this.value)" placeholder="Vendor Name" 
+                        <input type="text" value="${v.name}" oninput="updateKeyValidation(this, this.value)" onchange="updateVendor(${idx}, 'name', this.value)" placeholder="Vendor Name" list="ns-prefix-list"
                             class="w-48 px-2 py-1 text-xs font-semibold border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         <input type="text" value="${v.description}" onchange="updateVendor(${idx}, 'description', this.value)" placeholder="Description" 
                             class="flex-1 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
@@ -2966,7 +2966,7 @@ ${
                     <div class="flex gap-1 items-center">
                         <input type="text" value="${inst.id}" onchange="updateInstrument(${idx}, 'id', this.value)" placeholder="ID" 
                             class="w-32 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" title="Instrument ID">
-                        <input type="text" value="${inst.name}" oninput="updateKeyValidation(this, this.value)" onchange="updateInstrument(${idx}, 'name', this.value)" placeholder="Instrument Name" 
+                        <input type="text" value="${inst.name}" oninput="updateKeyValidation(this, this.value)" onchange="updateInstrument(${idx}, 'name', this.value)" placeholder="Instrument Name" list="ns-prefix-list"
                             class="w-48 px-2 py-1 text-xs font-semibold border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         <input type="text" value="${inst.description}" onchange="updateInstrument(${idx}, 'description', this.value)" placeholder="Description" 
                             class="flex-1 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
@@ -3023,7 +3023,7 @@ ${
                     <div class="flex gap-1 items-center">
                         <input type="text" value="${o.id}" onchange="updateOwner(${idx}, 'id', this.value)" placeholder="ID" 
                             class="w-32 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" title="Owner ID">
-                        <input type="text" value="${o.name}" oninput="updateKeyValidation(this, this.value)" onchange="updateOwner(${idx}, 'name', this.value)" placeholder="Owner Name" 
+                        <input type="text" value="${o.name}" oninput="updateKeyValidation(this, this.value)" onchange="updateOwner(${idx}, 'name', this.value)" placeholder="Owner Name" list="ns-prefix-list"
                             class="w-48 px-2 py-1 text-xs font-semibold border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         <input type="text" value="${o.description}" onchange="updateOwner(${idx}, 'description', this.value)" placeholder="Email / Description" 
                             class="flex-1 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
@@ -3081,7 +3081,7 @@ ${
                     <div class="flex gap-1 items-center mb-2">
                         <input type="text" value="${c.id}" onchange="updateCreator(${idx}, 'id', this.value)" placeholder="ID" 
                             class="w-32 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" title="Creator ID">
-                        <input type="text" value="${c.name}" oninput="updateKeyValidation(this, this.value)" onchange="updateCreator(${idx}, 'name', this.value)" placeholder="Full Name" 
+                        <input type="text" value="${c.name}" oninput="updateKeyValidation(this, this.value)" onchange="updateCreator(${idx}, 'name', this.value)" placeholder="Full Name"  list="ns-prefix-list"
                             class="w-48 px-2 py-1 text-xs font-semibold border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         <input type="text" value="${c.description}" onchange="updateCreator(${idx}, 'description', this.value)" placeholder="Description / Role" 
                             class="flex-1 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
@@ -7690,4 +7690,5 @@ ${state.petriNet.transitions
     <datalist id="ns-prefix-list"></datalist>
   </body>
 </html>
+
 
