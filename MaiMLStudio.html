@@ -2254,6 +2254,87 @@
     </main>
 
     <script>
+
+      const PROPERTY_TYPE_META = {
+        propertyListType:       { units: false, placeholder: "" },
+        stringType:             { units: false, placeholder: "text" },
+        tokenType:              { units: false, placeholder: "token" },
+        idType:                 { units: false, placeholder: "ID" },
+        idRefType:              { units: false, placeholder: "IDREF" },
+        qualifiedNameType:      { units: false, placeholder: "prefix:localName" },
+        languageType:           { units: false, placeholder: "ja, en, ..." },
+        uriType:                { units: false, placeholder: "https://www.example.xyz/..." },
+        uuidType:               { units: false, placeholder: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" },
+        decimalType:            { units: true,  placeholder: "0.0" },
+        doubleType:             { units: true,  placeholder: "0.0" },
+        floatType:              { units: true,  placeholder: "0.0" },
+        intType:                { units: true,  placeholder: "0" },
+        longType:               { units: true,  placeholder: "0" },
+        shortType:              { units: true,  placeholder: "0" },
+        byteType:               { units: true,  placeholder: "0" },
+        unsignedIntType:        { units: true,  placeholder: "0" },
+        unsignedLongType:       { units: true,  placeholder: "0" },
+        unsignedShortType:      { units: true,  placeholder: "0" },
+        unsignedByteType:       { units: true,  placeholder: "0" },
+        booleanType:            { units: false, placeholder: "true or false" },
+        dateTimeType:           { units: false, placeholder: "2000-01-01T00:00:00+09:00" },
+        base64BinaryType:       { units: false, placeholder: "Base64 encoded..." },
+        hexBinaryType:          { units: false, placeholder: "Hex encoded..." },
+        stringEnumType:         { units: false, placeholder: "enum value" },
+        stringListType:         { units: false, placeholder: "val1 val2 ..." },
+        idRefListType:          { units: false, placeholder: "id1 id2 ..." },
+        qualifiedNameListType:  { units: false, placeholder: "p:name1 p:name2 ..." },
+        dateTimeListType:       { units: false, placeholder: "2000-01-01T00:00:00+09:00 ..." },
+        decimalListType:        { units: true,  placeholder: "0.0 0.0 ..." },
+        doubleListType:         { units: true,  placeholder: "0.0 0.0 ..." },
+        floatListType:          { units: true,  placeholder: "0.0 0.0 ..." },
+        intListType:            { units: true,  placeholder: "0 0 ..." },
+        longListType:           { units: true,  placeholder: "0 0 ..." },
+        shortListType:          { units: true,  placeholder: "0 0 ..." },
+        byteListType:           { units: true,  placeholder: "0 0 ..." },
+        unsignedIntListType:    { units: true,  placeholder: "0 0 ..." },
+        unsignedLongListType:   { units: true,  placeholder: "0 0 ..." },
+        unsignedShortListType:  { units: true,  placeholder: "0 0 ..." },
+        unsignedByteListType:   { units: true,  placeholder: "0 0 ..." },
+        booleanListType:        { units: false, placeholder: "true false ..." },
+        base64BinaryListType:   { units: false, placeholder: "Base64... Base64... ..." },
+        hexBinaryListType:      { units: false, placeholder: "Hex... Hex... ..." },
+        uriListType:            { units: false, placeholder: "https://... https://... ..." },
+        uuidListType:           { units: false, placeholder: "uuid1 uuid2 ..." },
+        languageListType:       { units: false, placeholder: "ja en ..." },
+      };
+
+      const CONTENT_TYPE_META = {
+        contentStringListType:        { units: false, placeholder: "val1 val2 ..." },
+        contentIdRefListType:          { units: false, placeholder: "id1 id2 ..." },
+        contentQualifiedNameListType:  { units: false, placeholder: "p:name1 p:name2 ..." },
+        contentDateTimeListType:       { units: false, placeholder: "2000-01-01T00:00:00+09:00 ..." },
+        contentDecimalListType:        { units: true,  placeholder: "0.0 0.0 ..." },
+        contentDoubleListType:         { units: true,  placeholder: "0.0 0.0 ..." },
+        contentFloatListType:          { units: true,  placeholder: "0.0 0.0 ..." },
+        contentIntListType:            { units: true,  placeholder: "0 0 ..." },
+        contentLongListType:           { units: true,  placeholder: "0 0 ..." },
+        contentShortListType:          { units: true,  placeholder: "0 0 ..." },
+        contentByteListType:           { units: true,  placeholder: "0 0 ..." },
+        contentUnsignedIntListType:    { units: true,  placeholder: "0 0 ..." },
+        contentUnsignedLongListType:   { units: true,  placeholder: "0 0 ..." },
+        contentUnsignedShortListType:  { units: true,  placeholder: "0 0 ..." },
+        contentUnsignedByteListType:   { units: true,  placeholder: "0 0 ..." },
+        contentBooleanListType:        { units: false, placeholder: "true false ..." },
+        contentBase64BinaryListType:   { units: false, placeholder: "Base64... Base64... ..." },
+        contentHexBinaryListType:      { units: false, placeholder: "Hex... Hex... ..." },
+        contentUriListType:            { units: false, placeholder: "https://... https://... ..." },
+        contentUuidListType:           { units: false, placeholder: "uuid1 uuid2 ..." },
+        contentLanguageListType:       { units: false, placeholder: "ja en ..." },
+        contentStringEnumType:         { units: false, placeholder: "enum value" },
+      };
+
+      function buildOptions(typeMeta, currentType) {
+        return Object.keys(typeMeta)
+          .map(t => `<option value="${t}" ${currentType === t ? "selected" : ""}>${t}</option>`)
+          .join("");
+      }
+
       let state = {
         document: {
           id: "",
@@ -2631,15 +2712,10 @@
           .map((p, itemIdx) => {
             const currentPath = [...parentPath, itemIdx];
             const isPropertyList = p.type === "propertyListType";
-            const isNumeric =
-              p.type === "intType" ||
-              p.type === "floatType" ||
-              p.type === "doubleType";
+            const _pmeta = PROPERTY_TYPE_META[p.type] || { units: false, placeholder: "Value" };
+            const isNumeric = _pmeta.units;
             const isCollapsed = p._collapsed || false;
-            let placeholder = "Value";
-            if (p.type === "dateTimeType")
-              placeholder = "2000-12-31T12:59:59.000+09:00";
-            else if (p.type === "booleanType") placeholder = "true or false";
+            const placeholder = _pmeta.placeholder || "Value";
             const indentClass =
               depth > 0
                 ? `ml-${Math.min(depth * 4, 12)} border-l-2 border-indigo-200 dark:border-indigo-800 pl-3`
@@ -2666,15 +2742,7 @@
                         class="w-48 px-2 py-1 text-xs ${isPropertyList ? "font-semibold" : ""} border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         <select onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'type', this.value); renderDocumentProperties();"
                         class="w-32 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white outline-none cursor-pointer">
-                        <option value="stringType" ${p.type === "stringType" ? "selected" : ""}>stringType</option>
-                        <option value="intType" ${p.type === "intType" ? "selected" : ""}>intType</option>
-                        <option value="floatType" ${p.type === "floatType" ? "selected" : ""}>floatType</option>
-                        <option value="doubleType" ${p.type === "doubleType" ? "selected" : ""}>doubleType</option>
-                        <option value="booleanType" ${p.type === "booleanType" ? "selected" : ""}>booleanType</option>
-                        <option value="dateTimeType" ${p.type === "dateTimeType" ? "selected" : ""}>dateTimeType</option>
-                        <option value="uriType" ${p.type === "uriType" ? "selected" : ""}>uriType</option>
-                        <option value="uuidType" ${p.type === "uuidType" ? "selected" : ""}>uuidType</option>
-                        <option value="propertyListType" ${p.type === "propertyListType" ? "selected" : ""}>propertyListType (Nestting)</option>
+                        ${buildOptions(PROPERTY_TYPE_META, p.type)}
                     </select>
                     ${
                       isNumeric
@@ -2748,13 +2816,9 @@ ${
         return items
           .map((p, itemIdx) => {
             const currentPath = [...parentPath, itemIdx];
-            const isNumeric =
-              p.type === "contentIntListType" ||
-              p.type === "contentFloatListType" ||
-              p.type === "contentDoubleListType";
-            let placeholder = "Value";
-            if (p.type === "contentBooleanListType")
-              placeholder = "true or false";
+            const _cmeta = CONTENT_TYPE_META[p.type] || { units: false, placeholder: "Value" };
+            const isNumeric = _cmeta.units;
+            const placeholder = _cmeta.placeholder || "Value";
             const indentClass =
               depth > 0
                 ? `ml-${Math.min(depth * 4, 12)} border-l-2 border-teal-200 dark:border-teal-800 pl-3`
@@ -2771,11 +2835,7 @@ ${
                         class="w-48 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         <select onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'type', this.value); renderDocumentProperties();"
                         class="w-32 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white outline-none cursor-pointer">
-                        <option value="contentStringListType" ${p.type === "contentStringListType" ? "selected" : ""}>contentStringListType</option>
-                        <option value="contentIntListType" ${p.type === "contentIntListType" ? "selected" : ""}>contentIntListType</option>
-                        <option value="contentFloatListType" ${p.type === "contentFloatListType" ? "selected" : ""}>contentFloatListType</option>
-                        <option value="contentDoubleListType" ${p.type === "contentDoubleListType" ? "selected" : ""}>contentDoubleListType</option>
-                        <option value="contentBooleanListType" ${p.type === "contentBooleanListType" ? "selected" : ""}>contentBooleanListType</option>
+                        ${buildOptions(CONTENT_TYPE_META, p.type)}
                     </select>
                     ${
                       isNumeric
@@ -3081,7 +3141,7 @@ ${
                     <div class="flex gap-1 items-center mb-2">
                         <input type="text" value="${c.id}" onchange="updateCreator(${idx}, 'id', this.value)" placeholder="ID" 
                             class="w-32 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" title="Creator ID">
-                        <input type="text" value="${c.name}" oninput="updateKeyValidation(this, this.value)" onchange="updateCreator(${idx}, 'name', this.value)" placeholder="Full Name"  list="ns-prefix-list"
+                        <input type="text" value="${c.name}" oninput="updateKeyValidation(this, this.value)" onchange="updateCreator(${idx}, 'name', this.value)" placeholder="Full Name" list="ns-prefix-list"
                             class="w-48 px-2 py-1 text-xs font-semibold border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         <input type="text" value="${c.description}" onchange="updateCreator(${idx}, 'description', this.value)" placeholder="Description / Role" 
                             class="flex-1 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
@@ -4335,18 +4395,10 @@ ${state.petriNet.transitions
           const currentPath = [...parentPath, itemIdx];
           const pathStr = currentPath.join("-");
           const isPropertyList = item.type === "propertyListType";
-          const isNumeric =
-            item.type === "intType" ||
-            item.type === "floatType" ||
-            item.type === "doubleType";
+          const _pmeta = PROPERTY_TYPE_META[item.type] || { units: false, placeholder: "Default Value" };
+          const isNumeric = _pmeta.units;
           const isCollapsed = item._collapsed || false;
-
-          let placeholder = "Default Value";
-          if (item.type === "dateTimeType")
-            placeholder = "(format: 2000-12-31T23:59:59.000+09:00)";
-          else if (item.type === "booleanType")
-            placeholder = "(format: true or false)";
-          // else placeholder = 'default value';
+          const placeholder = _pmeta.placeholder || "Default Value";
 
           const indentClass =
             depth > 0
@@ -4380,15 +4432,7 @@ ${state.petriNet.transitions
                                         <select onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'type', this.value); renderTemplates();"
                                             ${isReadOnly ? "disabled" : ""}
                                             class="w-32 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white outline-none cursor-pointer ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
-                                            <option value="stringType" ${item.type === "stringType" ? "selected" : ""}>stringType</option>
-                                            <option value="intType" ${item.type === "intType" ? "selected" : ""}>intType</option>
-                                            <option value="floatType" ${item.type === "floatType" ? "selected" : ""}>floatType</option>
-                                            <option value="doubleType" ${item.type === "doubleType" ? "selected" : ""}>doubleType</option>
-                                            <option value="booleanType" ${item.type === "booleanType" ? "selected" : ""}>booleanType</option>
-                                            <option value="dateTimeType" ${item.type === "dateTimeType" ? "selected" : ""}>dateTimeType</option>
-                                            <option value="uriType" ${item.type === "uriType" ? "selected" : ""}>uriType</option>
-                                            <option value="uuidType" ${item.type === "uuidType" ? "selected" : ""}>uuidType</option>
-                                            <option value="propertyListType" ${item.type === "propertyListType" ? "selected" : ""}>propertyListType (Nestting)</option>
+                                            ${buildOptions(PROPERTY_TYPE_META, item.type)}
                                         </select>
 
                                         ${
@@ -4679,14 +4723,9 @@ ${state.petriNet.transitions
 
         return items.map((item, itemIdx) => {
           const currentPath = [...parentPath, itemIdx];
-          const isNumeric =
-            item.type === "contentIntListType" ||
-            item.type === "contentFloatListType" ||
-            item.type === "contentDoubleListType";
-
-          let placeholder = "Value";
-          if (item.type === "contentBooleanListType")
-            placeholder = "true or false";
+          const _cmeta = CONTENT_TYPE_META[item.type] || { units: false, placeholder: "Value" };
+          const isNumeric = _cmeta.units;
+          const placeholder = _cmeta.placeholder || "Value";
 
           const indentClass =
             depth > 0
@@ -4710,11 +4749,7 @@ ${state.petriNet.transitions
                                         <select onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'type', this.value); renderTemplates();"
                                             ${isReadOnly ? "disabled" : ""}
                                             class="w-40 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white outline-none cursor-pointer ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
-                                            <option value="contentStringListType" ${item.type === "contentStringListType" ? "selected" : ""}>contentStringListType</option>
-                                            <option value="contentIntListType" ${item.type === "contentIntListType" ? "selected" : ""}>contentIntListType</option>
-                                            <option value="contentFloatListType" ${item.type === "contentFloatListType" ? "selected" : ""}>contentFloatListType</option>
-                                            <option value="contentDoubleListType" ${item.type === "contentDoubleListType" ? "selected" : ""}>contentDoubleListType</option>
-                                            <option value="contentBooleanListType" ${item.type === "contentBooleanListType" ? "selected" : ""}>contentBooleanListType</option>
+                                            ${buildOptions(CONTENT_TYPE_META, item.type)}
                                         </select>
 
                                         ${
@@ -4985,19 +5020,6 @@ ${state.petriNet.transitions
                         bg: "hover:bg-purple-50 dark:hover:bg-purple-900/20",
                       };
 
-            //   return `<div onclick="createInstance('${tpl.id}')" class="cursor-pointer bg-white dark:bg-slate-800 border-l-4 ${typeConfig.border} p-4 shadow-sm hover:shadow-md transition-all rounded-r border-y border-r border-slate-200 dark:border-slate-700 mb-3 ${typeConfig.bg} group">
-            //     <div class="flex justify-between items-start">
-            //         <div>
-            //             <div class="font-bold text-sm capitalize ${typeConfig.text}">${tpl.type}</div>
-            //             <div class="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1"><i class="ph ph-map-pin"></i> ${placeLabel}</div>
-            //         </div>
-            //         <div class="opacity-0 group-hover:opacity-100 transition-opacity text-indigo-500 dark:text-indigo-400"><i class="ph ph-plus-circle text-xl"></i></div>
-            //     </div>
-            //     <div class="text-xs text-slate-400 mt-2 flex gap-3">
-            //         <span title="Properties"><i class="ph ph-list-dashes"></i> ${tpl.properties.length}</span>
-            //         <span title="Contents"><i class="ph ph-files"></i> ${tpl.contents.length}</span>
-            //     </div>
-            // </div>`;
             return `<div class="bg-white dark:bg-slate-800 border-l-4 ${typeConfig.border} p-4 shadow-sm transition-all rounded-r border-y border-r border-slate-200 dark:border-slate-700 mb-3 group">
                 <div class="flex justify-between items-start">
                     <div>
@@ -5210,16 +5232,10 @@ ${state.petriNet.transitions
           .map((item, itemIdx) => {
             const currentPath = [...parentPath, itemIdx];
             const isPropertyList = item.type === "propertyListType";
-            const isNumeric =
-              item.type === "intType" ||
-              item.type === "floatType" ||
-              item.type === "doubleType";
+            const _pmeta = PROPERTY_TYPE_META[item.type] || { units: false, placeholder: "Value" };
+            const isNumeric = _pmeta.units;
             const isCollapsed = item._collapsed || false;
-            let placeholder = "Value";
-            if (item.type === "dateTimeType")
-              placeholder = "(format: 2000-12-31T12:59:59.000+09:00)";
-            else if (item.type === "booleanType")
-              placeholder = "(format: true or false)";
+            const placeholder = _pmeta.placeholder || "Value";
             const indentClass =
               depth > 0
                 ? `ml-${Math.min(depth * 4, 12)} border-l-2 border-indigo-200 dark:border-indigo-800 pl-3`
@@ -5248,15 +5264,7 @@ ${state.petriNet.transitions
                     <select onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'type', this.value); renderDataInstances();"
                         ${isReadOnly ? "disabled" : ""}
                         class="w-32 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white outline-none cursor-pointer ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
-                        <option value="stringType" ${item.type === "stringType" ? "selected" : ""}>stringType</option>
-                        <option value="intType" ${item.type === "intType" ? "selected" : ""}>intType</option>
-                        <option value="floatType" ${item.type === "floatType" ? "selected" : ""}>floatType</option>
-                        <option value="doubleType" ${item.type === "doubleType" ? "selected" : ""}>doubleType</option>
-                        <option value="booleanType" ${item.type === "booleanType" ? "selected" : ""}>booleanType</option>
-                        <option value="dateTimeType" ${item.type === "dateTimeType" ? "selected" : ""}>dateTimeType</option>
-                        <option value="uriType" ${item.type === "uriType" ? "selected" : ""}>uriType</option>
-                        <option value="uuidType" ${item.type === "uuidType" ? "selected" : ""}>uuidType</option>
-                        <option value="propertyListType" ${item.type === "propertyListType" ? "selected" : ""}>propertyListType (Nestting)</option>
+                        ${buildOptions(PROPERTY_TYPE_META, item.type)}
                     </select>
                     ${
                       isNumeric
@@ -5355,13 +5363,9 @@ ${state.petriNet.transitions
         return items
           .map((item, itemIdx) => {
             const currentPath = [...parentPath, itemIdx];
-            const isNumeric =
-              item.type === "contentIntListType" ||
-              item.type === "contentFloatListType" ||
-              item.type === "contentDoubleListType";
-            let placeholder = "Value";
-            if (item.type === "contentBooleanListType")
-              placeholder = "true or false";
+            const _cmeta = CONTENT_TYPE_META[item.type] || { units: false, placeholder: "Value" };
+            const isNumeric = _cmeta.units;
+            const placeholder = _cmeta.placeholder || "Value";
             const indentClass =
               depth > 0
                 ? `ml-${Math.min(depth * 4, 12)} border-l-2 border-purple-200 dark:border-purple-800 pl-3`
@@ -5381,11 +5385,7 @@ ${state.petriNet.transitions
                     <select onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'type', this.value); renderDataInstances();"
                         ${isReadOnly ? "disabled" : ""}
                         class="w-32 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white outline-none cursor-pointer ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
-                        <option value="contentStringListType" ${item.type === "contentStringListType" ? "selected" : ""}>contentStringListType</option>
-                        <option value="contentIntListType" ${item.type === "contentIntListType" ? "selected" : ""}>contentIntListType</option>
-                        <option value="contentFloatListType" ${item.type === "contentFloatListType" ? "selected" : ""}>contentFloatListType</option>
-                        <option value="contentDoubleListType" ${item.type === "contentDoubleListType" ? "selected" : ""}>contentDoubleListType</option>
-                        <option value="contentBooleanListType" ${item.type === "contentBooleanListType" ? "selected" : ""}>contentBooleanListType</option>
+                        ${buildOptions(CONTENT_TYPE_META, item.type)}
                     </select>
                     ${
                       isNumeric
@@ -5623,10 +5623,8 @@ ${state.petriNet.transitions
           .map((item, itemIdx) => {
             const currentPath = [...parentPath, itemIdx];
             const isPropertyList = item.type === "propertyListType";
-            const isNumeric =
-              item.type === "intType" ||
-              item.type === "floatType" ||
-              item.type === "doubleType";
+            const _pmeta = PROPERTY_TYPE_META[item.type] || { units: false };
+            const isNumeric = _pmeta.units;
             const typeDisplay = (item.type || "stringType").replace("Type", "");
 
             const indentClass =
@@ -5642,8 +5640,8 @@ ${state.petriNet.transitions
                                         <div class="flex-1 min-w-[120px] px-2 py-1">
                                             <span class="text-xs font-mono ${isPropertyList ? " font-bold" : "font-bold"} text-slate-700 dark:text-slate-200 truncate block" title="${item.key || ""}">${item.key || ""}</span>
                                     </div>
-                                    <div class="w-28 px-2 py-1">
-                                        <span class="text-xs text-slate-500 dark:text-slate-400">${typeDisplay}</span>
+                                    <div class="w-48 px-2 py-1">
+                                        <span class="text-xs text-slate-500 dark:text-slate-400 truncate block" title="${typeDisplay}">${typeDisplay}</span>
                                     </div>
                                     ${
                                       isNumeric && item.units
@@ -5737,10 +5735,8 @@ ${state.petriNet.transitions
         return items
           .map((item, itemIdx) => {
             const currentPath = [...parentPath, itemIdx];
-            const isNumeric =
-              item.type === "contentIntListType" ||
-              item.type === "contentFloatListType" ||
-              item.type === "contentDoubleListType";
+            const _cmeta = CONTENT_TYPE_META[item.type] || { units: false };
+            const isNumeric = _cmeta.units;
 
             const indentClass =
               depth > 0
@@ -5755,8 +5751,8 @@ ${state.petriNet.transitions
                     <div class="flex-1 min-w-[120px] px-2 py-1">
                         <span class="text-xs font-mono font-bold text-slate-700 dark:text-slate-200 truncate block" title="${item.key || ""}">${item.key || ""}</span>
                     </div>
-                    <div class="w-28 px-2 py-1">
-                        <span class="text-xs text-slate-500 dark:text-slate-400">${item.type || "contentStringListType"}</span>
+                    <div class="w-48 px-2 py-1">
+                        <span class="text-xs text-slate-500 dark:text-slate-400 truncate block" title="${item.type || ''}">${item.type || "contentStringListType"}</span>
                     </div>
                     ${
                       isNumeric && item.units
@@ -5934,6 +5930,22 @@ ${state.petriNet.transitions
                                                 }
                                             </div>
                                         </div>`;
+          // テンプレートのdescriptionをインスタンスに同期（インスタンス作成後の変更に対応）
+          if (inst.templateId) {
+            const srcTemplate = state.templates.find(t => t.id === inst.templateId);
+            if (srcTemplate) {
+              (inst.properties || []).forEach((prop, idx) => {
+                if (srcTemplate.properties[idx] !== undefined) {
+                  prop.description = srcTemplate.properties[idx].description || prop.description || "";
+                }
+              });
+              (inst.contents || []).forEach((cont, idx) => {
+                if (srcTemplate.contents[idx] !== undefined) {
+                  cont.description = srcTemplate.contents[idx].description || cont.description || "";
+                }
+              });
+            }
+          }
 
           // Template Properties
           if (inst.properties && inst.properties.length > 0) {
@@ -6042,13 +6054,9 @@ ${state.petriNet.transitions
           } else {
             instanceHTML += `<div class="space-y-3">`;
             inst.instanceContents.forEach((item, itemIdx) => {
-              const isNumeric =
-                item.type === "contentIntListType" ||
-                item.type === "contentFloatListType" ||
-                item.type === "contentDoubleListType";
-              let placeholder = "Value";
-              if (item.type === "contentBooleanListType")
-                placeholder = "true or false";
+              const _cmeta = CONTENT_TYPE_META[item.type] || { units: false, placeholder: "Value" };
+              const isNumeric = _cmeta.units;
+              const placeholder = _cmeta.placeholder || "Value";
 
               instanceHTML += `
                                     <div class="bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg p-1 group/card hover:border-indigo-200 dark:hover:border-indigo-800 transition-all">
@@ -6063,11 +6071,7 @@ ${state.petriNet.transitions
                                             <select onchange="updateInstanceDynamicField(${instIdx}, 'content', ${itemIdx}, 'type', this.value); renderDataInstances();"
                                                 ${isProxy ? "disabled" : ""}
                                                 class="w-28 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white outline-none cursor-pointer ${isProxy ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
-                                                <option value="contentStringListType" ${item.type === "contentStringListType" ? "selected" : ""}>contentStringListType</option>
-                                                <option value="contentIntListType" ${item.type === "contentIntListType" ? "selected" : ""}>contentIntListType</option>
-                                                <option value="contentFloatListType" ${item.type === "contentFloatListType" ? "selected" : ""}>contentFloatListType</option>
-                                                <option value="contentDoubleListType" ${item.type === "contentDoubleListType" ? "selected" : ""}>contentDoubleListType</option>
-                                                <option value="contentBooleanListType" ${item.type === "contentBooleanListType" ? "selected" : ""}>contentBooleanListType</option>
+                                                ${buildOptions(CONTENT_TYPE_META, item.type)}
                                             </select>
                                             ${
                                               isNumeric
@@ -6468,6 +6472,23 @@ ${state.petriNet.transitions
 
       async function saveXML() {
         try {
+          // インスタンスにテンプレートのdescriptionを同期
+          state.instances.forEach(inst => {
+            if (!inst.templateId) return;
+            const srcTemplate = state.templates.find(t => t.id === inst.templateId);
+            if (!srcTemplate) return;
+            (inst.properties || []).forEach((prop, idx) => {
+              if (srcTemplate.properties[idx] !== undefined) {
+                prop.description = srcTemplate.properties[idx].description || prop.description || "";
+              }
+            });
+            (inst.contents || []).forEach((cont, idx) => {
+              if (srcTemplate.contents[idx] !== undefined) {
+                cont.description = srcTemplate.contents[idx].description || cont.description || "";
+              }
+            });
+          });
+          
           if (document.getElementById("doc-id"))
             state.document.id = document.getElementById("doc-id").value;
           if (document.getElementById("doc-uuid"))
@@ -6968,13 +6989,6 @@ ${state.petriNet.transitions
             state._activeMethodId = defaultMethodId;
           }
 
-          // Global UI settings
-          // if (loadedState.canvasTranslate)
-          //   state.canvasTranslate = loadedState.canvasTranslate;
-          // if (loadedState.canvasScale)
-          //   state.canvasScale = loadedState.canvasScale;
-          // canvas状態は各メソッドオブジェクト内に保持するため不要（各methodに含まれる）
-          // 旧フォーマット互換：canvasTranslateがメソッド外に保存されていた場合は最初のメソッドに適用
           if (loadedState.canvasTranslate && state._methods[0]) {
             state._methods[0].canvasTranslate = loadedState.canvasTranslate;
           }
@@ -7360,8 +7374,6 @@ ${state.petriNet.transitions
           const endY = tp.y - (vY / vDist) * offset;
 
           // ラベル位置
-          // const lx = midX + perpX * (base + 12) * sign;
-          // const ly = midY + perpY * (base + 12) * sign;
           // ラベル位置（曲線から一定距離に固定）
           const labelOffset = 0; // 曲線からの距離(px)
           const lx = midX + perpX * (base * 0.6 + labelOffset) * sign;
@@ -7690,5 +7702,3 @@ ${state.petriNet.transitions
     <datalist id="ns-prefix-list"></datalist>
   </body>
 </html>
-
-
