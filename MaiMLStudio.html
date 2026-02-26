@@ -1572,7 +1572,7 @@
                                 <div>
                                     <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100">Namespaces</h3>
                                     <p class="text-xs text-slate-400 mt-0.5">Define namespace prefixes used in
-                                        Property/Content keys (e.g.
+                                        NAME and Property/Content keys (e.g.
                                         <span class="font-mono">ns:localName</span>)
                                     </p>
                                 </div>
@@ -1853,14 +1853,14 @@
             unsignedShortType: { units: true, placeholder: "0" },
             unsignedByteType: { units: true, placeholder: "0" },
             booleanType: { units: false, placeholder: "true or false" },
-            dateTimeType: { units: false, placeholder: "2000-01-01T00:00:00+09:00" },
+            dateTimeType: { units: false, placeholder: "YYYY-MM-DDThh:mm:ss.sssTZD" },
             base64BinaryType: { units: false, placeholder: "Base64 encoded..." },
             hexBinaryType: { units: false, placeholder: "Hex encoded..." },
             stringEnumType: { units: false, placeholder: "enum value" },
             stringListType: { units: false, placeholder: "val1 val2 ..." },
             idRefListType: { units: false, placeholder: "id1 id2 ..." },
             qualifiedNameListType: { units: false, placeholder: "p:name1 p:name2 ..." },
-            dateTimeListType: { units: false, placeholder: "2000-01-01T00:00:00+09:00 ..." },
+            dateTimeListType: { units: false, placeholder: "YYYY-MM-DDThh:mm:ss.sssTZD ..." },
             decimalListType: { units: true, placeholder: "0.0 0.0 ..." },
             doubleListType: { units: true, placeholder: "0.0 0.0 ..." },
             floatListType: { units: true, placeholder: "0.0 0.0 ..." },
@@ -1884,7 +1884,7 @@
             contentStringListType: { units: false, placeholder: "val1 val2 ..." },
             contentIdRefListType: { units: false, placeholder: "id1 id2 ..." },
             contentQualifiedNameListType: { units: false, placeholder: "p:name1 p:name2 ..." },
-            contentDateTimeListType: { units: false, placeholder: "2000-01-01T00:00:00+09:00 ..." },
+            contentDateTimeListType: { units: false, placeholder: "YYYY-MM-DDThh:mm:ss.sssTZD ..." },
             contentDecimalListType: { units: true, placeholder: "0.0 0.0 ..." },
             contentDoubleListType: { units: true, placeholder: "0.0 0.0 ..." },
             contentFloatListType: { units: true, placeholder: "0.0 0.0 ..." },
@@ -2367,7 +2367,7 @@ ${!isPropertyList
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
                             <input type="text" value="${p.formatString || ""}"
                                 onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'formatString', this.value)"
-                                placeholder="e.g. %.3f"
+                                placeholder="e.g. 0.00"
                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 outline-none">
                         </div>
                         ${isNumeric ? `<div>
@@ -2476,7 +2476,7 @@ ${!isPropertyList
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
                             <input type="text" value="${p.formatString || ""}"
                                 onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'formatString', this.value)"
-                                placeholder="e.g. %.3f"
+                                placeholder="e.g. 0.00"
                                 class="w-full px-2 py-1 border border-teal-200 dark:border-teal-700 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-teal-500/20 outline-none">
                         </div>
                         ${isNumeric ? `<div>
@@ -4124,7 +4124,7 @@ ${state.petriNet.transitions
                                                 <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
                                                 <input type="text" value="${item.formatString || ""}"
                                                     onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'formatString', this.value)"
-                                                    placeholder="e.g. %.3f" 
+                                                    placeholder="e.g. 0.00" 
                                                     ${isReadOnly ? "disabled" : ""}
                                                     class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                                             </div>
@@ -4132,7 +4132,7 @@ ${state.petriNet.transitions
                                                 <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
                                                 <input type="number" step="any" value="${item.scaleFactor || ""}"
                                                     onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'scaleFactor', this.value)"
-                                                    placeholder="e.g. 1.0" 
+                                                    placeholder="e.g. 1.00" 
                                                     ${isReadOnly ? "disabled" : ""}
                                                     class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                                             </div>` : ""}
@@ -4452,7 +4452,7 @@ ${state.petriNet.transitions
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
                                             <input type="text" value="${item.formatString || ""}"
                                                 onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'formatString', this.value)"
-                                                placeholder="e.g. %.3f" 
+                                                placeholder="e.g. 0.00" 
                                                 ${isReadOnly ? "disabled" : ""}
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                                         </div>` : ""}
@@ -4460,7 +4460,7 @@ ${state.petriNet.transitions
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
                                             <input type="number" step="any" value="${item.scaleFactor || ""}"
                                                 onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'scaleFactor', this.value)"
-                                                placeholder="e.g. 1.0" 
+                                                placeholder="e.g. 1.00" 
                                                 ${isReadOnly ? "disabled" : ""}
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                                         </div>` : ""}
@@ -4475,7 +4475,7 @@ ${state.petriNet.transitions
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">size <span class="font-normal">(xs:int)</span></label>
                                             <input type="number" step="1" value="${item.size || ""}"
                                                 onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'size', this.value)"
-                                                placeholder="e.g. 10" 
+                                                placeholder="e.g. 16" 
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none">
                                         </div>
                                         <div>
@@ -4838,12 +4838,25 @@ ${state.petriNet.transitions
             if (!state.instances[instIdx].instanceContents) {
                 state.instances[instIdx].instanceContents = [];
             }
+            // state.instances[instIdx].instanceContents.push({
+            //     key: "",
+            //     type: "stringType",
+            //     units: "",
+            //     description: "",
+            //     value: "",
+            // });
             state.instances[instIdx].instanceContents.push({
                 key: "",
-                type: "stringType",
+                type: "contentStringListType",
                 units: "",
                 description: "",
                 value: "",
+                formatString: "",
+                scaleFactor: "",
+                axis: "",
+                size: "",
+                id: "",
+                ref: "",
             });
             renderDataInstances();
         }
@@ -5014,7 +5027,7 @@ ${state.petriNet.transitions
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
                             <input type="text" value="${item.formatString || ""}"
                                 onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'formatString', this.value)"
-                                placeholder="e.g. %.3f" 
+                                placeholder="e.g. 0.00" 
                                 ${isReadOnly ? "disabled" : ""}
                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                         </div>
@@ -5022,7 +5035,7 @@ ${state.petriNet.transitions
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
                             <input type="number" step="any" value="${item.scaleFactor || ""}"
                                 onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'scaleFactor', this.value)"
-                                placeholder="e.g. 1.0" 
+                                placeholder="e.g. 1.00" 
                                 ${isReadOnly ? "disabled" : ""}
                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                         </div>` : ""}
@@ -5151,7 +5164,7 @@ ${state.petriNet.transitions
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
                             <input type="text" value="${item.formatString || ""}"
                                 onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'formatString', this.value)"
-                                placeholder="e.g. %.3f" 
+                                placeholder="e.g. 0.00" 
                                 ${isReadOnly ? "disabled" : ""}
                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                         </div>` : ""}
@@ -5159,21 +5172,21 @@ ${state.petriNet.transitions
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
                             <input type="number" step="any" value="${item.scaleFactor || ""}"
                                 onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'scaleFactor', this.value)"
-                                placeholder="e.g. 1.0" 
+                                placeholder="e.g. 1.00" 
                                 ${isReadOnly ? "disabled" : ""}
                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                         </div>` : ""}
                         <div class="col-span-2 grid grid-cols-4 gap-3">
                             <div>
-                                <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">axis</label>
-                                <input type="number" value="${item.axis || ""}"
+                                <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">axis <span class="font-normal">(xs:string)</span></label>
+                                <input type="text" value="${item.axis || ""}"
                                     onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'axis', this.value)"
-                                    placeholder="e.g. 1" 
+                                    placeholder="e.g. x-axis" 
                                     ${isReadOnly ? "disabled" : ""}
                                     class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                             </div>
                             <div>
-                                <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">size</label>
+                                <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">size <span class="font-normal">(xs:int)</span></label>
                                 <input type="number" value="${item.size || ""}"
                                     onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'size', this.value)"
                                     placeholder="Size" 
@@ -5501,7 +5514,7 @@ ${state.petriNet.transitions
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
                                             <input type="text" value="${item.formatString || ""}"
                                                 onchange="updateInstanceFieldNested(${instIdx}, 'properties', [${serializePath(currentPath)}], 'formatString', this.value)"
-                                                placeholder="e.g. %.3f" 
+                                                placeholder="e.g. 0.00" 
                                                 ${isReadOnly ? "disabled" : ""}
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                                         </div>
@@ -5509,7 +5522,7 @@ ${state.petriNet.transitions
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
                                             <input type="number" step="any" value="${item.scaleFactor || ""}"
                                                 onchange="updateInstanceFieldNested(${instIdx}, 'properties', [${serializePath(currentPath)}], 'scaleFactor', this.value)"
-                                                placeholder="e.g. 1.0" 
+                                                placeholder="e.g. 1.00" 
                                                 ${isReadOnly ? "disabled" : ""}
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                                         </div>` : ""}
@@ -5633,7 +5646,7 @@ ${state.petriNet.transitions
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
                                             <input type="text" value="${item.formatString || ""}"
                                                 onchange="updateInstanceFieldNested(${instIdx}, 'contents', [${serializePath(currentPath)}], 'formatString', this.value)"
-                                                placeholder="e.g. %.3f" 
+                                                placeholder="e.g. 0.00" 
                                                 ${isReadOnly ? "disabled" : ""}
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                                         </div>
@@ -5641,7 +5654,7 @@ ${state.petriNet.transitions
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
                                             <input type="number" step="any" value="${item.scaleFactor || ""}"
                                                 onchange="updateInstanceFieldNested(${instIdx}, 'contents', [${serializePath(currentPath)}], 'scaleFactor', this.value)"
-                                                placeholder="e.g. 1.0" 
+                                                placeholder="e.g. 1.00" 
                                                 ${isReadOnly ? "disabled" : ""}
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                                         </div>
@@ -5657,7 +5670,7 @@ ${state.petriNet.transitions
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">size <span class="font-normal">(xs:int)</span></label>
                                             <input type="number" step="1" value="${item.size || ""}"
                                                 onchange="updateInstanceFieldNested(${instIdx}, 'contents', [${serializePath(currentPath)}], 'size', this.value)"
-                                                placeholder="e.g. 10" 
+                                                placeholder="e.g. 16" 
                                                 ${isReadOnly ? "disabled" : ""}
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                                         </div>
@@ -6019,7 +6032,7 @@ ${state.petriNet.transitions
                                                     <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
                                                     <input type="text" value="${item.formatString || ""}"
                                                         onchange="updateInstanceDynamicField(${instIdx}, 'content', ${itemIdx}, 'formatString', this.value)"
-                                                        placeholder="e.g. %.3f" 
+                                                        placeholder="e.g. 0.00" 
                                                         ${isProxy ? "disabled" : ""}
                                                         class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isProxy ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                                                 </div>` : ""}
@@ -6027,21 +6040,21 @@ ${state.petriNet.transitions
                                                     <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
                                                     <input type="number" step="any" value="${item.scaleFactor || ""}"
                                                         onchange="updateInstanceDynamicField(${instIdx}, 'content', ${itemIdx}, 'scaleFactor', this.value)"
-                                                        placeholder="e.g. 1.0" 
+                                                        placeholder="e.g. 1.00" 
                                                         ${isProxy ? "disabled" : ""}
                                                         class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isProxy ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                                                 </div>` : ""}
                                                 <div class="col-span-2 grid grid-cols-4 gap-3">
                                                     <div>
-                                                        <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">axis</label>
-                                                        <input type="number" value="${item.axis || ""}"
+                                                        <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">axis <span class="font-normal">(xs:string)</span></label>
+                                                        <input type="text" value="${item.axis || ""}"
                                                             onchange="updateInstanceDynamicField(${instIdx}, 'content', ${itemIdx}, 'axis', this.value)"
-                                                            placeholder="e.g. 1" 
+                                                            placeholder="e.g. x-axis" 
                                                             ${isProxy ? "disabled" : ""}
                                                             class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isProxy ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                                                     </div>
                                                     <div>
-                                                        <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">size</label>
+                                                        <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">size <span class="font-normal">(xs:int)</span></label>
                                                         <input type="number" value="${item.size || ""}"
                                                             onchange="updateInstanceDynamicField(${instIdx}, 'content', ${itemIdx}, 'size', this.value)"
                                                             placeholder="Size" 
@@ -6144,7 +6157,7 @@ ${state.petriNet.transitions
                         <span class="text-xs text-orange-700 dark:text-orange-400 font-mono">${evt.transitionLabel}</span>
                     </div>
                 </div>
-                <button onclick="deleteEvent(${idx})" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"><i class="ph ph-trash text-lg"></i></button>
+                <span class="px-2 py-1 text-[10px] text-slate-400 italic">Auto-generated from Petri Net</span>
             </div>
             <div class="p-5">
                 <div class="mb-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-2 hover:border-orange-200 dark:hover:border-orange-800 transition-all">
@@ -6176,10 +6189,11 @@ ${state.petriNet.transitions
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Timestamp (ISO 8601)</label>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Timestamp (ISO 8601:YYYY-MM-DDThh:mm:ss.sssTZD)</label>
                         <div class="relative">
                             <input type="text" value="${evt.timestamp || ""}" 
                                 onchange="updateEventTimestamp(${idx}, this.value)"
+                                placeholder="(blank) → current time on export"
                                 class="w-full pl-9 pr-3 py-2 text-sm font-mono border border-slate-200 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all bg-slate-50 dark:bg-slate-700 dark:text-white focus:bg-white dark:focus:bg-slate-600">
                             <i class="ph ph-clock text-slate-400 absolute left-3 top-2.5"></i>
                         </div>
@@ -6801,7 +6815,15 @@ ${state.petriNet.transitions
                         xml += `        <event id="${evt.id}" ref="inst_${label}_${method.id}">\n`;
                         xml += `          <uuid>${evt.uuid || crypto.randomUUID()}</uuid>\n`;
                         xml += `          <property key="lifecycle:transition" xsi:type="stringType"><value>${evt.lifecycle}</value></property>\n`;
-                        xml += `          <property key="time:timestamp" xsi:type="dateTimeType"><value>${evt.timestamp}</value></property>\n`;
+                        const exportTimestamp = (() => {
+                            if (evt.timestamp) return evt.timestamp;
+                            const now = new Date();
+                            const pad = (n) => String(n).padStart(2, "0");
+                            const tz = -now.getTimezoneOffset();
+                            const sign = tz >= 0 ? "+" : "-";
+                            return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}${sign}${pad(Math.floor(Math.abs(tz) / 60))}:${pad(Math.abs(tz) % 60)}`;
+                        })();
+                        xml += `          <property key="time:timestamp" xsi:type="dateTimeType"><value>${exportTimestamp}</value></property>\n`;
                         xml += `        </event>\n`;
                     });
                     xml += `      </trace>\n`;
