@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<maiml xmlns="http://www.maiml.org/schemas" xmlns:concept="http://www.xes-standard.org/concept.xesext#" xmlns:lifecycle="http://www.xes-standard.org/lifecycle.xesext#" xmlns:time="http://www.xes-standard.org/time.xesext#" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:VendorA="http://www.vendor_a.co.jp/NS/" xmlns:VendorB="http://www.vendor_b.co.jp/NS/" xmlns:CompanyC="http://www.company_c.co.jp/NS/" features="nested-attributes" version="1.0" xsi:type="maimlRootType">
+  <document id="MaiML_DataFile_CP_SEM">
+    <uuid>c81df37e-28b1-4ddf-891d-672e8b90ad39</uuid>
+    <name>MaiML_DataFile_CP_SEM</name>
+    <description>MaiML DataFile CP SEM</description>
+     <property key="CompanyC:projectName" xsi:type="stringType">
+      <description>desc. of projectName</description>
+      <value>Secret</value>
+    </property>
+     <property key="CompanyC:sectionNumber" xsi:type="stringType">
+      <description>desc. of sectionNumber</description>
+      <value>XYZ-999</value>
+    </property>
+    <creator id="creator_1770964389391">
+      <uuid>3da9ed63-ca43-4472-a1e0-add5d74d8ae8</uuid>
+      <name>VendorA:CP-SeriesXXX</name>
+      <description>CP-SeriesXXX</description>
+      <vendorRef id="vref_5cda7178-4f1b-4573-8118-1f65f553584b" ref="vendor_1770964351593" />
+      <instrumentRef id="iref_e4cbfe98-bcde-480d-bd27-bb05e7237314" ref="instrument_1770964362317" />
+    </creator>
+    <creator id="creator_1770964466916">
+      <uuid>2a835926-9e8c-4e5e-aba7-efed2de48756</uuid>
+      <name>VendorB:SEM-SeriesYYY</name>
+      <description>SEM-SeriesYYY</description>
+      <vendorRef id="vref_2bbfea38-6d75-48a6-974b-460a38855377" ref="vendor_1770964351593" />
+      <instrumentRef id="iref_95c7d881-bc4d-43c4-89d6-23875dfcc36a" ref="instrument_1770964373554" />
+    </creator>
+    <vendor id="vendor_1770964351593">
+      <uuid>876a1b3e-3616-4068-b128-424d4cbcee19</uuid>
+      <name>VendorA:CP_Vendor</name>
+      <description>CP Vendor</description>
+    </vendor>
+    <vendor id="vendor_1772095871681">
+      <uuid>e2a5de71-30e1-4543-bf4c-f068affb1825</uuid>
+      <name>VendorB:SEM_Vendor</name>
+      <description>SEM Vendor</description>
+    </vendor>
+    <owner id="owner_1770964378501">
+      <uuid>c1c3f36b-20bf-4949-988f-337b5f37c292</uuid>
+      <name>CompanyC:annonymous</name>
+      <description>annonymous@company_c.co.jp</description>
+    </owner>
+    <instrument id="instrument_1770964362317">
+      <uuid>1b73353b-d834-4cd6-92f2-6b13f2df3f50</uuid>
+      <name>VendorA:CP</name>
+      <description>CP</description>
+    </instrument>
+    <instrument id="instrument_1770964373554">
+      <uuid>29bc7192-d1ab-4820-8b00-2a51e7226eec</uuid>
+      <name>VendorB:SEM</name>
+      <description>SEM</description>
+    </instrument>
+    <date>2026-02-26T18:06:17+09:00</date>
+  </document>
+  <protocol id="protocol">
+    <uuid>1fc339f9-e08d-4bd3-9448-45ef14daec84</uuid>
+    <method id="method_1770964067784">
+      <uuid>885d9981-1a60-4612-8bcd-9cfd3cf8531b</uuid>
+      <name>CP_Method</name>
+      <pnml id="pnml_method_1770964067784">
+        <uuid>c54a9946-8aee-4d8f-9862-ad731c884644</uuid>
+        <place id="Material" />
+        <place id="processedMaterial" />
+        <place id="cpCondition" />
+        <transition id="CP_Processing" />
+        <arc id="arc_1770964111462" source="Material" target="CP_Processing" />
+        <arc id="arc_1770964114642" source="CP_Processing" target="processedMaterial" />
+        <arc id="arc_1770969725257" source="cpCondition" target="CP_Processing" />
+      </pnml>
+      <program id="program_method_1770964067784">
+        <uuid>4a6dbbce-0d73-408b-9ae7-61ac0b2b33d1</uuid>
+        <instruction id="inst_CP_Processing_method_1770964067784" xsi:type="lifecycleTaskType">
+          <uuid>8baeb3d7-e4ec-454f-85de-c0d58bb9a74d</uuid>
+          <name>trans_1</name>
+          <transitionRef id="tr_ref_CP_Processing_method_1770964067784" ref="CP_Processing" />
+        </instruction>
+        <materialTemplate id="template_1772078788293">
+          <uuid>67efa482-d9e9-412f-8b13-1d0de9c1c706</uuid>
+          <name>Material_materialTemplate</name>
+           <property key="VendorA:BeforeSampleName" xsi:type="stringType">
+            <description>Before Sample Name</description>
+          </property>
+           <property key="VendorA:BeforeSampleID" xsi:type="stringType">
+            <description>Before Sample ID</description>
+          </property>
+          <placeRef id="pref_template_1772078788293" ref="Material" />
+        </materialTemplate>
+        <materialTemplate id="template_1772078790283">
+          <uuid>b8d5944f-5898-4a15-afe5-f8db04abe29a</uuid>
+          <name>processedMaterial_materialTemplate</name>
+           <property key="VendorA:AfterSampleName" xsi:type="stringType">
+            <description>After Sample Name</description>
+          </property>
+           <property key="VendorA:AfterSampleID" xsi:type="stringType">
+            <description>After Sample ID</description>
+          </property>
+          <placeRef id="pref_template_1772078790283" ref="processedMaterial" />
+        </materialTemplate>
+        <conditionTemplate id="template_1772078791581">
+          <uuid>1beaad3b-619b-4ef4-a66b-37abe6d14d06</uuid>
+          <name>cpCondition_conditionTemplate</name>
+           <property key="VendorA:IonAcceleratingVoltage" xsi:type="intType" units="keV" scaleFactor="1">
+            <description>Ion accelerating voltage</description>
+            <value>0</value>
+          </property>
+           <property key="VendorA:MillingTime" xsi:type="intType" units="hour" scaleFactor="1">
+            <description>Milling time</description>
+            <value>0</value>
+          </property>
+           <property key="VendorA:TargetVacuumLevel" xsi:type="floatType" units="Pa" formatString="0.0" scaleFactor="1.0">
+            <description>Target vacuum level</description>
+            <value>0.0</value>
+          </property>
+           <property key="VendorA:CoolingTemperature" xsi:type="floatType" units="℃" formatString="0.0" scaleFactor="1.0">
+            <description>Cooling temperature</description>
+            <value>0.0</value>
+          </property>
+          <placeRef id="pref_template_1772078791581" ref="cpCondition" />
+        </conditionTemplate>
+      </program>
+    </method>
+    <method id="method_1770964099270">
+      <uuid>e8134722-7980-4c41-ba5b-d9f889c5931c</uuid>
+      <name>SEM_Method</name>
+      <pnml id="pnml_method_1770964099270">
+        <uuid>723cc515-241e-45f7-a0c2-af060ea6f3bf</uuid>
+        <place id="semMaterial" />
+        <place id="semImage" />
+        <place id="semCondition" />
+        <transition id="SEM_Measurement" />
+        <arc id="arc_1770964124853" source="semMaterial" target="SEM_Measurement" />
+        <arc id="arc_1770964127391" source="SEM_Measurement" target="semImage" />
+        <arc id="arc_1770969816815" source="semCondition" target="SEM_Measurement" />
+      </pnml>
+      <program id="program_method_1770964099270">
+        <uuid>9b3047ea-605e-4b17-a762-11aab29b9ed5</uuid>
+        <instruction id="inst_SEM_Measurement_method_1770964099270" xsi:type="lifecycleTaskType">
+          <uuid>5276e39f-d1d7-4813-af0c-dd66645eca32</uuid>
+          <name>trans_2</name>
+          <transitionRef id="tr_ref_SEM_Measurement_method_1770964099270" ref="SEM_Measurement" />
+        </instruction>
+        <materialTemplate id="template_1772078795392">
+          <uuid>83b3886f-3118-49b4-9525-74c1367be429</uuid>
+          <name>semMaterial_materialTemplate</name>
+           <property key="VendorB:SampleName" xsi:type="stringType">
+            <description>SEM Sample Name</description>
+          </property>
+           <property key="VendorB:" xsi:type="stringType">
+            <description>SEM Sample ID</description>
+          </property>
+          <placeRef id="pref_template_1772078795392" ref="semMaterial" />
+          <templateRef id="tref_a4afd746-f994-472a-bb58-2e309ead9d11" ref="template_1772078790283" />
+        </materialTemplate>
+        <conditionTemplate id="template_1772078798686">
+          <uuid>a3075542-c49d-4d51-b8aa-1cd821502634</uuid>
+          <name>semCondition_conditionTemplate</name>
+           <property key="VendorB:AcceleratingVoltage" xsi:type="floatType" units="kV" formatString="0.00" scaleFactor="1.00">
+            <description>Accelerating Voltage</description>
+            <value>0.0</value>
+          </property>
+           <property key="VendorB:ProbeCurrent" xsi:type="floatType" units="A" formatString="0.00" scaleFactor="1.0">
+            <description>probeCurrent</description>
+            <value>0.00</value>
+          </property>
+           <property key="VendorB:Magnification" xsi:type="intType" scaleFactor="1">
+            <description>Magnification</description>
+            <value>0</value>
+          </property>
+           <property key="VendorB:WorkingDistance" xsi:type="floatType" units="mm" formatString="0.00" scaleFactor="1.00">
+            <description>Working Distance</description>
+            <value>0.0</value>
+          </property>
+           <property key="VendorB:	Detector" xsi:type="stringType">
+            <description>Detector</description>
+          </property>
+           <property key="VendorB:VacuumMode" xsi:type="stringType">
+            <description>Vacuum Mode</description>
+          </property>
+           <property key="VendorB:ScanTime" xsi:type="floatType" units="sec" formatString="	0.00" scaleFactor="1.0">
+            <description>Scan Time</description>
+            <value>	0.00</value>
+          </property>
+           <property key="VendorB:Vacuum" xsi:type="intType" units="Pa" scaleFactor="1">
+            <description>Degree of vacuum</description>
+            <value>0</value>
+          </property>
+           <property key="VendorB:DwellTime" xsi:type="intType" units="ns" scaleFactor="1">
+            <description>Dwell Time</description>
+            <value>0</value>
+          </property>
+           <property key="VendorB:StagePosition" xsi:type="propertyListType">
+            <description>StagePosition</description>
+             <property key="VendorB:StagePositionX" xsi:type="floatType" units="mm" formatString="0.00000" scaleFactor="1.0">
+              <description>Stage Position X</description>
+              <value>0.00000</value>
+            </property>
+             <property key="VendorB:StagePositionY" xsi:type="floatType" units="mm" formatString="0.00000" scaleFactor="1.0">
+              <description>Stage Position Y</description>
+              <value>0.00000</value>
+            </property>
+             <property key="VendorB:StagePositionZ" xsi:type="floatType" units="mm" formatString="0.00000" scaleFactor="1.0">
+              <description>Stage Position Z</description>
+              <value>0.00000</value>
+            </property>
+             <property key="VendorB:StageTilt" xsi:type="floatType" units="mm" formatString="0.00000" scaleFactor="1.0">
+              <description>Stage Tilt</description>
+              <value>0.00000</value>
+            </property>
+             <property key="VendorB:StagePositionFineZ" xsi:type="floatType" units="mm" formatString="0.00000" scaleFactor="1.0">
+              <description>Stage Position Fine Z</description>
+              <value>0.00000</value>
+            </property>
+          </property>
+          <placeRef id="pref_template_1772078798686" ref="semCondition" />
+        </conditionTemplate>
+        <resultTemplate id="template_1772078797355">
+          <uuid>81cb2f4a-441d-44fb-abe5-c0fcc9d80345</uuid>
+          <name>semImage_resultTemplate</name>
+           <property key="VendorB:ImageSizeX" xsi:type="stringType">
+            <description>Image Size X</description>
+          </property>
+           <property key="VendorB:ImageSizeY" xsi:type="stringType">
+            <description>Image Size X</description>
+          </property>
+           <property key="VendorB:PixelSize" xsi:type="doubleType" units="um/pixel" formatString="0.0000" scaleFactor="1.0">
+            <description>Pixel Size</description>
+            <value>0.0000</value>
+          </property>
+          <placeRef id="pref_template_1772078797355" ref="semImage" />
+        </resultTemplate>
+      </program>
+    </method>
+  </protocol>
+  <data id="data1">
+    <uuid>bc9a317d-f5d4-4fb7-938b-a8f7d204f0d8</uuid>
+    <results id="results_method_1770964067784">
+      <uuid>fdfab366-ac23-4cbb-9877-abf51a51bc97</uuid>
+      <material id="instance_1772093275452" ref="template_1772078788293">
+        <uuid>b4fb1c9b-6007-4279-ad4d-ad8a339bdb8f</uuid>
+         <property key="VendorA:BeforeSampleName" xsi:type="stringType">
+          <description>Before Sample Name</description>
+          <value>CP-AAA</value>
+        </property>
+         <property key="VendorA:BeforeSampleID" xsi:type="stringType">
+          <description>Before Sample ID</description>
+          <value>CP-123</value>
+        </property>
+      </material>
+      <material id="instance_1772093278139" ref="template_1772078790283">
+        <uuid>c474ac21-d9b6-4afc-8023-745501c66739</uuid>
+         <property key="VendorA:AfterSampleName" xsi:type="stringType">
+          <description>After Sample Name</description>
+          <value>CP-BBB</value>
+        </property>
+         <property key="VendorA:AfterSampleID" xsi:type="stringType">
+          <description>After Sample ID</description>
+          <value>CP-456</value>
+        </property>
+      </material>
+      <condition id="instance_1772093276809" ref="template_1772078791581">
+        <uuid>d553cd51-3559-4362-ba80-5476003554f5</uuid>
+         <property key="VendorA:IonAcceleratingVoltage" xsi:type="intType" units="keV">
+          <description>Ion accelerating voltage</description>
+          <value>8</value>
+        </property>
+         <property key="VendorA:MillingTime" xsi:type="intType" units="hour">
+          <description>Milling time</description>
+          <value>2</value>
+        </property>
+         <property key="VendorA:TargetVacuumLevel" xsi:type="floatType" units="Pa" formatString="0.0e0" scaleFactor="1.0">
+          <description>Target vacuum level</description>
+          <value>5.0e-4</value>
+        </property>
+         <property key="VendorA:CoolingTemperature" xsi:type="floatType" units="℃" formatString="0.0" scaleFactor="1.0">
+          <description>Cooling temperature</description>
+          <value>-120.0</value>
+        </property>
+      </condition>
+    </results>
+    <results id="results_method_1770964099270">
+      <uuid>3e2b85a9-89b3-4e71-aa75-b0f33943b5c4</uuid>
+      <material id="instance_1772093676880" ref="template_1772078795392">
+        <uuid>bde69e7f-09fd-4634-9f96-a65a47437166</uuid>
+         <property key="VendorB:SampleName" xsi:type="stringType">
+          <description>SEM Sample Name</description>
+          <value>SEM-AAA</value>
+        </property>
+         <property key="VendorB:" xsi:type="stringType">
+          <description>SEM Sample ID</description>
+          <value>SEM-123</value>
+        </property>
+        <instanceRef id="iref_2402e7a8-73e3-43c6-81fa-dde4a54a95cc" ref="instance_1772093278139" />
+      </material>
+      <condition id="instance_1772093678212" ref="template_1772078798686">
+        <uuid>c5bc28f9-c415-4fba-b6ef-8b3766d3e96c</uuid>
+         <property key="VendorB:AcceleratingVoltage" xsi:type="floatType" units="kV" formatString="0.00" scaleFactor="1.00">
+          <description>Accelerating Voltage</description>
+          <value>20.0</value>
+        </property>
+         <property key="VendorB:ProbeCurrent" xsi:type="floatType" units="A" formatString="0.00" scaleFactor="1.0">
+          <description>probeCurrent</description>
+          <value>0.00</value>
+        </property>
+         <property key="VendorB:Magnification" xsi:type="intType" scaleFactor="1">
+          <description>Magnification</description>
+          <value>100000</value>
+        </property>
+         <property key="VendorB:WorkingDistance" xsi:type="floatType" units="mm" formatString="0.00" scaleFactor="1.00">
+          <description>Working Distance</description>
+          <value>6.0</value>
+        </property>
+         <property key="VendorB:	Detector" xsi:type="stringType">
+          <description>Detector</description>
+          <value>BED-C</value>
+        </property>
+         <property key="VendorB:VacuumMode" xsi:type="stringType">
+          <description>Vacuum Mode</description>
+          <value>Low Vaccum</value>
+        </property>
+         <property key="VendorB:ScanTime" xsi:type="floatType" units="sec" formatString="	0.00" scaleFactor="1.0">
+          <description>Scan Time</description>
+          <value>80.00</value>
+        </property>
+         <property key="VendorB:Vacuum" xsi:type="intType" units="Pa" scaleFactor="1">
+          <description>Degree of vacuum</description>
+          <value>50</value>
+        </property>
+         <property key="VendorB:DwellTime" xsi:type="intType" units="ns" scaleFactor="1">
+          <description>Dwell Time</description>
+          <value>0</value>
+        </property>
+         <property key="VendorB:StagePosition" xsi:type="propertyListType">
+          <description>StagePosition</description>
+           <property key="VendorB:StagePositionX" xsi:type="floatType" units="mm" formatString="0.00000" scaleFactor="1.0">
+            <description>Stage Position X</description>
+            <value>-14.78000</value>
+          </property>
+           <property key="VendorB:StagePositionY" xsi:type="floatType" units="mm" formatString="0.00000" scaleFactor="1.0">
+            <description>Stage Position Y</description>
+            <value>-0.17400</value>
+          </property>
+           <property key="VendorB:StagePositionZ" xsi:type="floatType" units="mm" formatString="0.00000" scaleFactor="1.0">
+            <description>Stage Position Z</description>
+            <value>6.18700</value>
+          </property>
+           <property key="VendorB:StageTilt" xsi:type="floatType" units="mm" formatString="0.00000" scaleFactor="1.0">
+            <description>Stage Tilt</description>
+            <value>359.99600</value>
+          </property>
+           <property key="VendorB:StagePositionFineZ" xsi:type="floatType" units="mm" formatString="0.00000" scaleFactor="1.0">
+            <description>Stage Position Fine Z</description>
+            <value>0.00000</value>
+          </property>
+        </property>
+      </condition>
+      <result id="instance_1772093679402" ref="template_1772078797355">
+        <uuid>15917310-4005-460a-8544-eec44f02bc2b</uuid>
+         <property key="VendorB:ImageSizeX" xsi:type="stringType">
+          <description>Image Size X</description>
+          <value>1280</value>
+        </property>
+         <property key="VendorB:ImageSizeY" xsi:type="stringType">
+          <description>Image Size X</description>
+          <value>960</value>
+        </property>
+         <property key="VendorB:PixelSize" xsi:type="doubleType" units="um/pixel" formatString="0.0000" scaleFactor="1.0">
+          <description>Pixel Size</description>
+          <value>0.0010</value>
+        </property>
+        <insertion>
+          <uri>20kV_PC30_WD6_50Pa_x100k_2_BED-C_2.bmp</uri>
+          <hash algorithm="SHA-256">797b7afae05e64a9e59d8a18fe958218c5b0dbfd60404fddf5c118b5fddd8c84</hash>
+          <format>image/bmp</format>
+        </insertion>
+      </result>
+    </results>
+  </data>
+  <eventLog id="log1">
+    <uuid>d2a672f6-aa7f-4199-a715-176f9dfdf38e</uuid>
+    <log id="log_method_1770964067784" ref="method_1770964067784">
+      <uuid>14e0bd44-bc0f-42e9-8b56-fadcf3dd6344</uuid>
+      <trace id="trace_method_1770964067784" ref="program_method_1770964067784">
+        <uuid>94e3748a-f6ea-4ec6-bd9e-d805d742895e</uuid>
+        <event id="event_trans_1_1770964232050" ref="inst_CP_Processing_method_1770964067784">
+          <uuid>3abbfd9f-ca19-4ddb-b45a-acd31358a0c6</uuid>
+          <property key="lifecycle:transition" xsi:type="stringType"><value>complete</value></property>
+          <property key="time:timestamp" xsi:type="dateTimeType"><value>2026-02-20T15:30:32+09:00</value></property>
+        </event>
+      </trace>
+    </log>
+    <log id="log_method_1770964099270" ref="method_1770964099270">
+      <uuid>84110ec8-d23f-4cac-ad10-ce46071f9a32</uuid>
+      <trace id="trace_method_1770964099270" ref="program_method_1770964099270">
+        <uuid>247f7f51-6c3d-4918-a7cb-845cbd947c8b</uuid>
+        <event id="event_trans_2_1770964230373" ref="inst_SEM_Measurement_method_1770964099270">
+          <uuid>17ff9728-765d-4bc5-93c2-498b3998c0ef</uuid>
+          <property key="lifecycle:transition" xsi:type="stringType"><value>complete</value></property>
+          <property key="time:timestamp" xsi:type="dateTimeType"><value>2026-02-20T15:30:30+09:00</value></property>
+        </event>
+      </trace>
+    </log>
+  </eventLog>
+</maiml>

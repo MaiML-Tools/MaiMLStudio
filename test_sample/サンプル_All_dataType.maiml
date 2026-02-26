@@ -1,0 +1,655 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<maiml xmlns="http://www.maiml.org/schemas" xmlns:concept="http://www.xes-standard.org/concept.xesext#" xmlns:lifecycle="http://www.xes-standard.org/lifecycle.xesext#" xmlns:time="http://www.xes-standard.org/time.xesext#" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:test="http://www.maiml.org/NS/test/1.0/" features="nested-attributes" version="1.0" xsi:type="maimlRootType">
+  <document id="ALL_dataType">
+    <uuid>fa4ce869-9bfb-49c0-8afc-1fd5d63df6eb</uuid>
+    <name>ALL_dataType</name>
+    <description>ALL dataType Test</description>
+     <property key="test:key1" xsi:type="stringType">
+      <description>key1の説明</description>
+      <value>key1の値</value>
+    </property>
+     <property key="test:key2" xsi:type="propertyListType" units="mm">
+      <description>key2の説明</description>
+       <property key="test:key2-x" xsi:type="floatType" units="mm" formatString="0.00" scaleFactor="1.0">
+        <description>key2-xの説明</description>
+        <value>1.00</value>
+      </property>
+       <property key="test:key2-y" xsi:type="floatType" units="mm" formatString="0.00" scaleFactor="1.0">
+        <description>key2-yの説明</description>
+        <value>2.00</value>
+      </property>
+       <property key="test:key2-z" xsi:type="floatType" units="mm" formatString="0.00" scaleFactor="1.0">
+        <description>key2-zの説明</description>
+        <value>3.00</value>
+      </property>
+    </property>
+    <creator id="creator_1771914427338">
+      <uuid>05ea90df-7c55-4abd-a5fd-2caf549af875</uuid>
+      <name>SEM-XYZ</name>
+      <description>SEM-シリーズXYZ</description>
+      <vendorRef id="vref_fc3cf6b4-b99c-41f7-aca8-468101ddede6" ref="vendor_1771914382245" />
+      <instrumentRef id="iref_5b644342-c91d-4bcd-97a9-9d17f817bc16" ref="instrument_1771914403105" />
+    </creator>
+    <vendor id="vendor_1771914382245">
+      <uuid>94fd1a02-0161-4f0d-8557-e132350fd5b0</uuid>
+      <name>vendorA</name>
+    </vendor>
+    <owner id="owner_1771914415314">
+      <uuid>c949386b-702f-43ca-83a7-b29d474552b2</uuid>
+      <name>annonymous</name>
+      <description>annonymous@example.co.jp</description>
+    </owner>
+    <instrument id="instrument_1771914403105">
+      <uuid>881e6d1f-a4c7-43a6-a0fd-05e24f8e2cac</uuid>
+      <name>SEM</name>
+      <description>走査型電子顕微鏡</description>
+    </instrument>
+    <date>2026-02-26T18:13:40+09:00</date>
+  </document>
+  <protocol id="protocol">
+    <uuid>fcd66abb-c4d6-4395-a19b-187ece3efc16</uuid>
+    <method id="method_1771914350417">
+      <uuid>c6a8455d-1285-4d73-9618-b7e1dc0ec16c</uuid>
+      <name>Main_Method</name>
+      <pnml id="pnml_method_1771914350417">
+        <uuid>80d4bf1a-fc3c-45c9-8a75-c0f36dd926cd</uuid>
+        <place id="place_1" />
+        <place id="place_2" />
+        <transition id="trans_1" />
+        <arc id="arc_1771914518369" source="place_1" target="trans_1" />
+        <arc id="arc_1771914520547" source="trans_1" target="place_2" />
+      </pnml>
+      <program id="program_method_1771914350417">
+        <uuid>564c263a-4c08-455d-8b07-47fc957e484c</uuid>
+        <instruction id="inst_trans_1_method_1771914350417" xsi:type="lifecycleTaskType">
+          <uuid>876eb6e2-ea67-49a5-a749-41c9dc958e73</uuid>
+          <name>trans_1</name>
+          <transitionRef id="tr_ref_trans_1_method_1771914350417" ref="trans_1" />
+        </instruction>
+        <materialTemplate id="template_1771914528596">
+          <uuid>bef237dc-6664-493a-9e75-26566e3d39ed</uuid>
+          <name>place_1_materialTemplate</name>
+           <property key="p1" xsi:type="stringType">
+            <description>description of key p1</description>
+            <value>text</value>
+          </property>
+           <property key="p2" xsi:type="tokenType">
+            <description>description of key p2</description>
+            <value>token</value>
+          </property>
+           <property key="p3" xsi:type="idType">
+            <description>description of key p3</description>
+            <value>ID</value>
+          </property>
+           <property key="p4" xsi:type="idRefType">
+            <description>description of key p4</description>
+            <value>IDREF</value>
+          </property>
+           <property key="p5" xsi:type="qualifiedNameType">
+            <description>description of key p5</description>
+            <value>prefix:localName</value>
+          </property>
+           <property key="p6" xsi:type="languageType">
+            <description>description of key p6</description>
+            <value>ja</value>
+          </property>
+           <property key="p7" xsi:type="uriType">
+            <description>description of key p7</description>
+            <value>https://www.example.xyz/</value>
+          </property>
+           <property key="p8" xsi:type="uuidType">
+            <description>description of key p8</description>
+            <value>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</value>
+          </property>
+           <property key="p9" xsi:type="decimalType" units="unit1">
+            <description>description of key p9</description>
+            <value>0.0</value>
+          </property>
+           <property key="p10" xsi:type="doubleType" units="unit2">
+            <description>description of key p10</description>
+            <value>0.0</value>
+          </property>
+           <property key="p11" xsi:type="floatType" units="unit3">
+            <description>description of key p11</description>
+            <value>0.0</value>
+          </property>
+           <property key="p12" xsi:type="intType" units="unit4">
+            <description>description of key p12</description>
+            <value>0</value>
+          </property>
+           <property key="p13" xsi:type="longType" units="unit5">
+            <description>description of key p13</description>
+            <value>0</value>
+          </property>
+           <property key="p14" xsi:type="shortType" units="unit6">
+            <description>description of key p14</description>
+            <value>0</value>
+          </property>
+           <property key="p15" xsi:type="byteType" units="unit7">
+            <description>description of key p15</description>
+            <value>0</value>
+          </property>
+           <property key="p16" xsi:type="unsignedIntType" units="unit8">
+            <description>description of key p16</description>
+            <value>0</value>
+          </property>
+           <property key="p17" xsi:type="unsignedLongType" units="unit9">
+            <description>description of key p17</description>
+            <value>0</value>
+          </property>
+           <property key="p18" xsi:type="unsignedShortType" units="unit10">
+            <description>description of key p18</description>
+            <value>0</value>
+          </property>
+           <property key="p19" xsi:type="unsignedByteType" units="unit11">
+            <description>description of key p19</description>
+            <value>0</value>
+          </property>
+           <property key="p20" xsi:type="booleanType">
+            <description>description of key p20</description>
+            <value>true</value>
+          </property>
+           <property key="p21" xsi:type="dateTimeType">
+            <description>description of key p21</description>
+            <value>2000-01-01T00:00:00+09:00</value>
+          </property>
+           <property key="p22" xsi:type="base64BinaryType">
+            <description>description of key p22</description>
+            <value>Base64 encoded...</value>
+          </property>
+           <property key="p23" xsi:type="hexBinaryType">
+            <description>description of key p23</description>
+            <value>Hex encoded...</value>
+          </property>
+           <property key="p24" xsi:type="stringEnumType">
+            <description>description of key p24</description>
+            <value>enum value</value>
+          </property>
+           <property key="p25" xsi:type="stringListType">
+            <description>description of key p25</description>
+            <value>val1 val2</value>
+          </property>
+           <property key="p26" xsi:type="idRefListType">
+            <description>description of key p26</description>
+            <value>id1 id2</value>
+          </property>
+           <property key="p27" xsi:type="qualifiedNameListType">
+            <description>description of key p27</description>
+            <value>p:name1 p:name2</value>
+          </property>
+           <property key="p28" xsi:type="dateTimeListType">
+            <description>description of key p28</description>
+            <value>2000-01-01T00:00:00+09:00</value>
+          </property>
+           <property key="p29" xsi:type="decimalListType" units="unit12">
+            <description>description of key p29</description>
+            <value>0.0 0.0</value>
+          </property>
+           <property key="p30" xsi:type="doubleListType" units="unit13">
+            <description>description of key p30</description>
+            <value>0.0 0.0</value>
+          </property>
+           <property key="p31" xsi:type="floatListType" units="unit14">
+            <description>description of key p31</description>
+            <value>0.0 0.0</value>
+          </property>
+           <property key="p32" xsi:type="intListType" units="unit15">
+            <description>description of key p32</description>
+            <value>0 0</value>
+          </property>
+           <property key="p33" xsi:type="longListType" units="unit16">
+            <description>description of key p33</description>
+            <value>0 0</value>
+          </property>
+           <property key="p34" xsi:type="shortListType" units="unit17">
+            <description>description of key p34</description>
+            <value>0 0</value>
+          </property>
+           <property key="p35" xsi:type="byteListType" units="unit18">
+            <description>description of key p35</description>
+            <value>0 0</value>
+          </property>
+           <property key="p36" xsi:type="unsignedIntListType" units="unit19">
+            <description>description of key p36</description>
+            <value>0 0</value>
+          </property>
+           <property key="p37" xsi:type="unsignedLongListType" units="unit20">
+            <description>description of key p37</description>
+            <value>0 0</value>
+          </property>
+           <property key="p38" xsi:type="unsignedShortListType" units="unit21">
+            <description>description of key p38</description>
+            <value>0 0</value>
+          </property>
+           <property key="p39" xsi:type="unsignedByteListType" units="unit22">
+            <description>description of key p39</description>
+            <value>0 0</value>
+          </property>
+           <property key="p40" xsi:type="booleanListType">
+            <description>description of key p40</description>
+            <value>true false</value>
+          </property>
+           <property key="p41" xsi:type="base64BinaryListType">
+            <description>description of key p41</description>
+            <value>Base64... Base64...</value>
+          </property>
+           <property key="p42" xsi:type="hexBinaryListType">
+            <description>description of key p42</description>
+            <value>Hex... Hex...</value>
+          </property>
+           <property key="p43" xsi:type="uriListType">
+            <description>description of key p43</description>
+            <value>https://... https://...</value>
+          </property>
+           <property key="p44" xsi:type="uuidListType">
+            <description>description of key p44</description>
+            <value>uuid1 uuid2</value>
+          </property>
+           <property key="p45" xsi:type="languageListType">
+            <description>description of key p45</description>
+            <value>ja en</value>
+          </property>
+          <placeRef id="pref_template_1771914528596" ref="place_1" />
+        </materialTemplate>
+        <materialTemplate id="template_1771914529856">
+          <uuid>ae492f4f-a676-496d-bf77-ec45aafe9ea0</uuid>
+          <name>place_2_materialTemplate</name>
+           <content key="c1" xsi:type="contentStringListType">
+            <description>description of key c1</description>
+            <value>val1 val2</value>
+          </content>
+           <content key="c2" xsi:type="contentIdRefListType">
+            <description>description of key c2</description>
+            <value>id1 id2</value>
+          </content>
+           <content key="c3" xsi:type="contentQualifiedNameListType">
+            <description>description of key c3</description>
+            <value>p:name1 p:name2</value>
+          </content>
+           <content key="c4" xsi:type="contentDateTimeListType">
+            <description>description of key c4</description>
+            <value>2000-01-01T00:00:00+09:00</value>
+          </content>
+           <content key="c5" xsi:type="contentDecimalListType" units="unit23">
+            <description>description of key c5</description>
+            <value>0.0 0.0</value>
+          </content>
+           <content key="c6" xsi:type="contentDoubleListType" units="unit24">
+            <description>description of key c6</description>
+            <value>0.0 0.0</value>
+          </content>
+           <content key="c7" xsi:type="contentFloatListType" units="unit25">
+            <description>description of key c7</description>
+            <value>0.0 0.0</value>
+          </content>
+           <content key="c8" xsi:type="contentIntListType" units="unit26">
+            <description>description of key c8</description>
+            <value>0 0</value>
+          </content>
+           <content key="c9" xsi:type="contentLongListType" units="unit27">
+            <description>description of key c9</description>
+            <value>0 0</value>
+          </content>
+           <content key="c10" xsi:type="contentShortListType" units="unit28">
+            <description>description of key c10</description>
+            <value>0 0</value>
+          </content>
+           <content key="c11" xsi:type="contentByteListType" units="unit29">
+            <description>description of key c11</description>
+            <value>0 0</value>
+          </content>
+           <content key="c12" xsi:type="contentUnsignedIntListType" units="unit30">
+            <description>description of key c12</description>
+            <value>0 0</value>
+          </content>
+           <content key="c13" xsi:type="contentUnsignedLongListType" units="unit31">
+            <description>description of key c13</description>
+            <value>0 0</value>
+          </content>
+           <content key="c14" xsi:type="contentUnsignedShortListType" units="unit32">
+            <description>description of key c14</description>
+            <value>0 0</value>
+          </content>
+           <content key="c15" xsi:type="contentUnsignedByteListType" units="unit33">
+            <description>description of key c15</description>
+            <value>0 0</value>
+          </content>
+           <content key="c16" xsi:type="contentBooleanListType">
+            <description>description of key c16</description>
+            <value>true false</value>
+          </content>
+           <content key="c17" xsi:type="contentBase64BinaryListType">
+            <description>description of key c17</description>
+            <value>Base64... Base64...</value>
+          </content>
+           <content key="c18" xsi:type="contentHexBinaryListType">
+            <description>description of key c18</description>
+            <value>Hex... Hex...</value>
+          </content>
+           <content key="c19" xsi:type="contentUriListType">
+            <description>description of key c19</description>
+            <value>https://... https://...</value>
+          </content>
+           <content key="c20" xsi:type="contentUuidListType">
+            <description>description of key c20</description>
+            <value>uuid1 uuid2</value>
+          </content>
+           <content key="c21" xsi:type="contentLanguageListType">
+            <description>description of key c21</description>
+            <value>ja en</value>
+          </content>
+           <content key="c22" xsi:type="contentStringEnumType">
+            <description>description of key c22</description>
+            <value>enum value</value>
+          </content>
+          <placeRef id="pref_template_1771914529856" ref="place_2" />
+        </materialTemplate>
+      </program>
+    </method>
+  </protocol>
+  <data id="data1">
+    <uuid>b461652a-5e4d-451b-89fc-fcc9a531c00d</uuid>
+    <results id="results_method_1771914350417">
+      <uuid>8df65541-8575-4b19-8fd2-8d08e8e15b7b</uuid>
+      <material id="instance_1771921386056" ref="template_1771914528596">
+        <uuid>b31e9e95-ac50-4b90-a5be-4c197b7257cc</uuid>
+         <property key="p1" xsi:type="stringType">
+          <description>description of key p1</description>
+          <value>text</value>
+        </property>
+         <property key="p2" xsi:type="tokenType">
+          <description>description of key p2</description>
+          <value>token</value>
+        </property>
+         <property key="p3" xsi:type="idType">
+          <description>description of key p3</description>
+          <value>ID</value>
+        </property>
+         <property key="p4" xsi:type="idRefType">
+          <description>description of key p4</description>
+          <value>IDREF</value>
+        </property>
+         <property key="p5" xsi:type="qualifiedNameType">
+          <description>description of key p5</description>
+          <value>prefix:localName</value>
+        </property>
+         <property key="p6" xsi:type="languageType">
+          <description>description of key p6</description>
+          <value>ja</value>
+        </property>
+         <property key="p7" xsi:type="uriType">
+          <description>description of key p7</description>
+          <value>https://www.example.xyz/</value>
+        </property>
+         <property key="p8" xsi:type="uuidType">
+          <description>description of key p8</description>
+          <value>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</value>
+        </property>
+         <property key="p9" xsi:type="decimalType" units="unit1">
+          <description>description of key p9</description>
+          <value>0.0</value>
+        </property>
+         <property key="p10" xsi:type="doubleType" units="unit2">
+          <description>description of key p10</description>
+          <value>0.0</value>
+        </property>
+         <property key="p11" xsi:type="floatType" units="unit3">
+          <description>description of key p11</description>
+          <value>0.0</value>
+        </property>
+         <property key="p12" xsi:type="intType" units="unit4">
+          <description>description of key p12</description>
+          <value>0</value>
+        </property>
+         <property key="p13" xsi:type="longType" units="unit5">
+          <description>description of key p13</description>
+          <value>0</value>
+        </property>
+         <property key="p14" xsi:type="shortType" units="unit6">
+          <description>description of key p14</description>
+          <value>0</value>
+        </property>
+         <property key="p15" xsi:type="byteType" units="unit7">
+          <description>description of key p15</description>
+          <value>0</value>
+        </property>
+         <property key="p16" xsi:type="unsignedIntType" units="unit8">
+          <description>description of key p16</description>
+          <value>0</value>
+        </property>
+         <property key="p17" xsi:type="unsignedLongType" units="unit9">
+          <description>description of key p17</description>
+          <value>0</value>
+        </property>
+         <property key="p18" xsi:type="unsignedShortType" units="unit10">
+          <description>description of key p18</description>
+          <value>0</value>
+        </property>
+         <property key="p19" xsi:type="unsignedByteType" units="unit11">
+          <description>description of key p19</description>
+          <value>0</value>
+        </property>
+         <property key="p20" xsi:type="booleanType">
+          <description>description of key p20</description>
+          <value>true</value>
+        </property>
+         <property key="p21" xsi:type="dateTimeType">
+          <description>description of key p21</description>
+          <value>2000-01-01T00:00:00+09:00</value>
+        </property>
+         <property key="p22" xsi:type="base64BinaryType">
+          <description>description of key p22</description>
+          <value>Base64 encoded...</value>
+        </property>
+         <property key="p23" xsi:type="hexBinaryType">
+          <description>description of key p23</description>
+          <value>Hex encoded...</value>
+        </property>
+         <property key="p24" xsi:type="stringEnumType">
+          <description>description of key p24</description>
+          <value>enum value</value>
+        </property>
+         <property key="p25" xsi:type="stringListType">
+          <description>description of key p25</description>
+          <value>val1 val2</value>
+        </property>
+         <property key="p26" xsi:type="idRefListType">
+          <description>description of key p26</description>
+          <value>id1 id2</value>
+        </property>
+         <property key="p27" xsi:type="qualifiedNameListType">
+          <description>description of key p27</description>
+          <value>p:name1 p:name2</value>
+        </property>
+         <property key="p28" xsi:type="dateTimeListType">
+          <description>description of key p28</description>
+          <value>2000-01-01T00:00:00+09:00</value>
+        </property>
+         <property key="p29" xsi:type="decimalListType" units="unit12">
+          <description>description of key p29</description>
+          <value>0.0 0.0</value>
+        </property>
+         <property key="p30" xsi:type="doubleListType" units="unit13">
+          <description>description of key p30</description>
+          <value>0.0 0.0</value>
+        </property>
+         <property key="p31" xsi:type="floatListType" units="unit14">
+          <description>description of key p31</description>
+          <value>0.0 0.0</value>
+        </property>
+         <property key="p32" xsi:type="intListType" units="unit15">
+          <description>description of key p32</description>
+          <value>0 0</value>
+        </property>
+         <property key="p33" xsi:type="longListType" units="unit16">
+          <description>description of key p33</description>
+          <value>0 0</value>
+        </property>
+         <property key="p34" xsi:type="shortListType" units="unit17">
+          <description>description of key p34</description>
+          <value>0 0</value>
+        </property>
+         <property key="p35" xsi:type="byteListType" units="unit18">
+          <description>description of key p35</description>
+          <value>0 0</value>
+        </property>
+         <property key="p36" xsi:type="unsignedIntListType" units="unit19">
+          <description>description of key p36</description>
+          <value>0 0</value>
+        </property>
+         <property key="p37" xsi:type="unsignedLongListType" units="unit20">
+          <description>description of key p37</description>
+          <value>0 0</value>
+        </property>
+         <property key="p38" xsi:type="unsignedShortListType" units="unit21">
+          <description>description of key p38</description>
+          <value>0 0</value>
+        </property>
+         <property key="p39" xsi:type="unsignedByteListType" units="unit22">
+          <description>description of key p39</description>
+          <value>0 0</value>
+        </property>
+         <property key="p40" xsi:type="booleanListType">
+          <description>description of key p40</description>
+          <value>true false</value>
+        </property>
+         <property key="p41" xsi:type="base64BinaryListType">
+          <description>description of key p41</description>
+          <value>Base64... Base64...</value>
+        </property>
+         <property key="p42" xsi:type="hexBinaryListType">
+          <description>description of key p42</description>
+          <value>Hex... Hex...</value>
+        </property>
+         <property key="p43" xsi:type="uriListType">
+          <description>description of key p43</description>
+          <value>https://... https://...</value>
+        </property>
+         <property key="p44" xsi:type="uuidListType">
+          <description>description of key p44</description>
+          <value>uuid1 uuid2</value>
+        </property>
+         <property key="p45" xsi:type="languageListType">
+          <description>description of key p45</description>
+          <value>ja en</value>
+        </property>
+      </material>
+      <material id="instance_1771921387263" ref="template_1771914529856">
+        <uuid>987f738e-f033-470d-a687-dc7cb2a995c0</uuid>
+         <property key="p46" xsi:type="propertyListType">
+          <description>chart</description>
+           <content key="N-X" xsi:type="contentIntListType">
+            <description>chart-X</description>
+            <value>1 2 3 4 5</value>
+          </content>
+           <content key="N-Y" xsi:type="contentIntListType">
+            <description>chart-Y</description>
+            <value>1 4 9 16 25</value>
+          </content>
+        </property>
+         <content key="c1" xsi:type="contentStringListType">
+          <description>description of key c1</description>
+          <value>val1 val2</value>
+        </content>
+         <content key="c2" xsi:type="contentIdRefListType">
+          <description>description of key c2</description>
+          <value>id1 id2</value>
+        </content>
+         <content key="c3" xsi:type="contentQualifiedNameListType">
+          <description>description of key c3</description>
+          <value>p:name1 p:name2</value>
+        </content>
+         <content key="c4" xsi:type="contentDateTimeListType">
+          <description>description of key c4</description>
+          <value>2000-01-01T00:00:00+09:00</value>
+        </content>
+         <content key="c5" xsi:type="contentDecimalListType" units="unit23">
+          <description>description of key c5</description>
+          <value>0.0 0.0</value>
+        </content>
+         <content key="c6" xsi:type="contentDoubleListType" units="unit24">
+          <description>description of key c6</description>
+          <value>0.0 0.0</value>
+        </content>
+         <content key="c7" xsi:type="contentFloatListType" units="unit25">
+          <description>description of key c7</description>
+          <value>0.0 0.0</value>
+        </content>
+         <content key="c8" xsi:type="contentIntListType" units="unit26">
+          <description>description of key c8</description>
+          <value>0 0</value>
+        </content>
+         <content key="c9" xsi:type="contentLongListType" units="unit27">
+          <description>description of key c9</description>
+          <value>0 0</value>
+        </content>
+         <content key="c10" xsi:type="contentShortListType" units="unit28">
+          <description>description of key c10</description>
+          <value>0 0</value>
+        </content>
+         <content key="c11" xsi:type="contentByteListType" units="unit29">
+          <description>description of key c11</description>
+          <value>0 0</value>
+        </content>
+         <content key="c12" xsi:type="contentUnsignedIntListType" units="unit30">
+          <description>description of key c12</description>
+          <value>0 0</value>
+        </content>
+         <content key="c13" xsi:type="contentUnsignedLongListType" units="unit31">
+          <description>description of key c13</description>
+          <value>0 0</value>
+        </content>
+         <content key="c14" xsi:type="contentUnsignedShortListType" units="unit32">
+          <description>description of key c14</description>
+          <value>0 0</value>
+        </content>
+         <content key="c15" xsi:type="contentUnsignedByteListType" units="unit33">
+          <description>description of key c15</description>
+          <value>0 0</value>
+        </content>
+         <content key="c16" xsi:type="contentBooleanListType">
+          <description>description of key c16</description>
+          <value>true false</value>
+        </content>
+         <content key="c17" xsi:type="contentBase64BinaryListType">
+          <description>description of key c17</description>
+          <value>Base64... Base64...</value>
+        </content>
+         <content key="c18" xsi:type="contentHexBinaryListType">
+          <description>description of key c18</description>
+          <value>Hex... Hex...</value>
+        </content>
+         <content key="c19" xsi:type="contentUriListType">
+          <description>description of key c19</description>
+          <value>https://... https://...</value>
+        </content>
+         <content key="c20" xsi:type="contentUuidListType">
+          <description>description of key c20</description>
+          <value>uuid1 uuid2</value>
+        </content>
+         <content key="c21" xsi:type="contentLanguageListType">
+          <description>description of key c21</description>
+          <value>ja en</value>
+        </content>
+         <content key="c22" xsi:type="contentStringEnumType">
+          <description>description of key c22</description>
+          <value>enum value</value>
+        </content>
+      </material>
+    </results>
+  </data>
+  <eventLog id="log1">
+    <uuid>a41377d5-4479-4974-9b9c-e611f6d60ee8</uuid>
+    <log id="log_method_1771914350417" ref="method_1771914350417">
+      <uuid>c471e275-5fba-4a0f-82ca-894aaf577f6d</uuid>
+      <trace id="trace_method_1771914350417" ref="program_method_1771914350417">
+        <uuid>6d9a14e5-39d9-4842-9bd5-e83992644e74</uuid>
+        <event id="event_trans_1_1771915752937" ref="inst_trans_1_method_1771914350417">
+          <uuid>bd396a33-52e3-42b7-96b2-e6a78e0342fd</uuid>
+          <property key="lifecycle:transition" xsi:type="stringType"><value>complete</value></property>
+          <property key="time:timestamp" xsi:type="dateTimeType"><value>2026-02-26T18:13:40+09:00</value></property>
+        </event>
+      </trace>
+    </log>
+  </eventLog>
+</maiml>
