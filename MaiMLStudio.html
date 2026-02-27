@@ -121,12 +121,6 @@
             color: #0f172a;
             /* slate-900 */
         }
-
-        .dark .manual-content {
-            /* Force light theme for manual readability as per design, or invert if desired. 
-                Here keeping it light card on dark modal for contrast or full light area.
-                We will use a white container for the manual to preserve its specific design. */
-        }
     </style>
 </head>
 
@@ -413,7 +407,7 @@
                                             <i
                                                 class="ph ph-arrow-square-in p-1 bg-purple-50 rounded text-purple-500"></i>
                                             <strong class="text-purple-600">Import External Place:</strong> <span
-                                                class="text-xs text-slate-500">他メソッドのPlaceを読取専用(EXT)で取込</span>
+                                                class="text-xs text-slate-500">他メソッドのPlaceと継承関係を結ぶために読取専用(EXT)で取込</span>
                                         </li>
                                     </ul>
                                     <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
@@ -1788,7 +1782,8 @@
             <div id="content-data" class="absolute inset-0 hidden">
                 <div class="flex h-full">
                     <div
-                        class="w-80 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col shrink-0 transition-colors">
+                        class="w-56 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col shrink-0 transition-colors">
+                        <!-- Source Templates 列の幅　w-64(256px) -->
                         <div
                             class="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
                             <h3
@@ -2073,7 +2068,7 @@
         }
 
         // --- Utils ---
-        function showToast(message, type = "success") {
+        function showToast(message, type = "success", duration = 2000) {
             const container = document.getElementById("toast-container");
             const el = document.createElement("div");
             const icon =
@@ -2100,7 +2095,7 @@
                 el.style.opacity = "0";
                 el.style.transform = "translateY(-10px)";
                 setTimeout(() => el.remove(), 300);
-            }, 3000);
+            }, duration);
         }
 
         // UUID
@@ -3797,9 +3792,9 @@ ${state.petriNet.transitions
                     <div class="flex gap-2">
                         ${isProxy
                             ? `<span class="text-xs text-slate-400 italic flex items-center"><i class="ph ph-lock-key mr-1"></i> Read Only</span>`
-                            : `<button onclick="addTemplate('${place.id}', 'material')" class="px-3 py-1.5 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/50 rounded-lg text-sm font-medium transition-colors border border-green-200 dark:border-green-800">+ Add materialTemplate</button>
-                             <button onclick="addTemplate('${place.id}', 'condition')" class="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg text-sm font-medium transition-colors border border-blue-200 dark:border-blue-800">+ Add conditionTemplate</button>
-                             <button onclick="addTemplate('${place.id}', 'result')" class="px-3 py-1.5 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/50 rounded-lg text-sm font-medium transition-colors border border-purple-200 dark:border-purple-800">+ Add resultTemplate</button>`
+                            : `<button onclick="addTemplate('${place.id}', 'material')" class="px-3 py-1.5 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/50 rounded-lg text-sm font-medium transition-colors border border-green-200 dark:border-green-800">+ Add material</button>
+                             <button onclick="addTemplate('${place.id}', 'condition')" class="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg text-sm font-medium transition-colors border border-blue-200 dark:border-blue-800">+ Add condition</button>
+                             <button onclick="addTemplate('${place.id}', 'result')" class="px-3 py-1.5 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/50 rounded-lg text-sm font-medium transition-colors border border-purple-200 dark:border-purple-800">+ Add result</button>`
                         }
                     </div>
                 </div>
@@ -4679,8 +4674,30 @@ ${state.petriNet.transitions
             }
         }
 
-        // --- Data / Instances Logic ---
+        function scrollToCard(cardId) {
+            const card = document.getElementById(cardId);
+            if (!card) return;
+            card.scrollIntoView({ behavior: "smooth", block: "center" });
+            card.classList.add("ring-2", "ring-indigo-400", "ring-offset-2");
+            setTimeout(() => {
+                card.classList.remove("ring-2", "ring-indigo-400", "ring-offset-2");
+            }, 2000);
+        }
 
+        function scrollToInstances(templateId) {
+            const card = document.getElementById("card-inst-" + templateId);
+            if (card) {
+                scrollToCard("card-inst-" + templateId);
+            } else {
+                showToast("No instances yet. Click [Add Instance] to create one.");
+            }
+        }
+
+        function scrollToEvent(transitionId) {
+            scrollToCard("card-evt-" + transitionId);
+        }
+
+        // --- Data / Instances Logic ---
         function renderDataTemplates() {
             const list = document.getElementById("data-templates-list");
             const hasTemplates = state.templates.length > 0;
@@ -4709,27 +4726,29 @@ ${state.petriNet.transitions
                         const typeConfig =
                             tpl.type === "material"
                                 ? {
-                                    border: "border-green-500",
+                                    border: "border-l-green-500",
                                     text: "text-green-700 dark:text-green-400",
                                     bg: "hover:bg-green-50 dark:hover:bg-green-900/20",
                                 }
                                 : tpl.type === "condition"
                                     ? {
-                                        border: "border-blue-500",
+                                        border: "border-l-blue-500",
                                         text: "text-blue-700 dark:text-blue-400",
                                         bg: "hover:bg-blue-50 dark:hover:bg-blue-900/20",
                                     }
                                     : {
-                                        border: "border-purple-500",
+                                        border: "border-l-purple-500",
                                         text: "text-purple-700 dark:text-purple-400",
                                         bg: "hover:bg-purple-50 dark:hover:bg-purple-900/20",
                                     };
 
-                        return `<div class="bg-white dark:bg-slate-800 border-l-4 ${typeConfig.border} p-4 shadow-sm transition-all rounded-r border-y border-r border-slate-200 dark:border-slate-700 mb-3 group">
+                        // return `<div onclick="scrollToInstances('${tpl.id}')" class="cursor-pointer bg-white dark:bg-slate-800 border-l-4 ${typeConfig.border} p-4 shadow-sm hover:shadow-md transition-all rounded-r border-y border-r border-slate-200 dark:border-slate-700 mb-3 group">
+                        // return `<div onclick="scrollToInstances('${tpl.id}')" class="cursor-pointer bg-white dark:bg-slate-800 border-l-4 ${typeConfig.border} p-4 shadow-sm hover:shadow-md ${typeConfig.bg} transition-all rounded-r border-y border-r border-slate-200 dark:border-slate-700 mb-3 group">
+                        return `<div onclick="scrollToInstances('${tpl.id}')" class="cursor-pointer bg-white dark:bg-slate-800 border-l-4 ${typeConfig.border} p-4 shadow-sm hover:shadow-md ${typeConfig.bg} transition-all rounded-r border-y border-r border-slate-200 dark:border-y-slate-700 dark:border-r-slate-700 mb-3 group">        
                 <div class="flex justify-between items-start">
                     <div>
                         <div class="font-bold text-sm capitalize ${typeConfig.text}">${tpl.type}</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1"><i class="ph ph-map-pin"></i> ${placeLabel}</div>
+                        <div class="text-xs text-slate-700 dark:text-slate-200 mt-1 flex items-start gap-1" title="${placeLabel}"><i class="ph ph-map-pin shrink-0 mt-0.5"></i><span class="break-all">${placeLabel}</span></div>
                     </div>
                 </div>
                 <div class="text-xs text-slate-400 mt-2 flex gap-3">
@@ -4737,11 +4756,11 @@ ${state.petriNet.transitions
                     <span title="Contents"><i class="ph ph-files"></i> ${tpl.contents.length}</span>
                 </div>
                 <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700">
-                    <button onclick="createInstance('${tpl.id}')"
-                        class="w-full py-1.5 text-xs font-medium rounded-lg border transition-all flex items-center justify-center gap-1.5 opacity-40 group-hover:opacity-100 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/30">
+                    <button onclick="event.stopPropagation(); createInstance('${tpl.id}')"
+                        class="w-full py-1.5 text-xs font-medium rounded-lg border transition-all flex items-center justify-center gap-1.5 opacity-40 group-hover:opacity-100 text-amber-600 dark:text-amber-400 border-amber-300 dark:border-amber-700 hover:bg-amber-50 dark:hover:bg-amber-900/30">
                         <i class="ph ph-plus-circle text-sm"></i> Add Instance
-                    </button>
-                </div>
+                    </button> 
+                    </div>
             </div>`;
                     })
                     .join("");
@@ -4753,7 +4772,7 @@ ${state.petriNet.transitions
                     '<div><div class="text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider px-1">Transitions (Events)</div>';
                 html += state.petriNet.transitions
                     .map((trans) => {
-                        return `<div onclick="createEvent('${trans.id}')" class="cursor-pointer bg-white dark:bg-slate-800 border-l-4 border-orange-500 p-4 shadow-sm hover:shadow-md transition-all rounded-r border-y border-r border-slate-200 dark:border-slate-700 mb-3 hover:bg-orange-50 dark:hover:bg-orange-900/20 group">
+                        return `<div onclick="scrollToEvent('${trans.id}')" class="cursor-pointer bg-white dark:bg-slate-800 border-l-4 border-orange-500 p-4 shadow-sm hover:shadow-md transition-all rounded-r border-y border-r border-slate-200 dark:border-slate-700 mb-3 hover:bg-orange-50 dark:hover:bg-orange-900/20 group">
                                     <div class="flex justify-between items-start">
                                         <div>
                                             <div class="font-bold text-sm text-orange-700 dark:text-orange-400">${trans.label}</div>
@@ -4818,6 +4837,9 @@ ${state.petriNet.transitions
 
             state.instances.push(newInstance);
             renderDataInstances();
+            const place = state.petriNet.places.find(p => p.id === template.placeId);
+            const placeLabel = place ? place.label : template.type;
+            showToast(`${template.type} instance added: ${placeLabel}`);
         }
 
         function addInstanceProperty(instIdx) {
@@ -5812,15 +5834,14 @@ ${state.petriNet.transitions
                                 icon: "ph-chart-line-up",
                                 text: "text-purple-800 dark:text-purple-300",
                             };
-
                 let instanceHTML = `
-                                    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden mb-6 animate-fade-in transition-colors">
+            <div id="card-inst-${inst.templateId}" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden mb-6 animate-fade-in transition-colors">
             <div class="px-4 py-3 ${styleConfig.header} flex justify-between items-center">
                 <div class="flex items-center gap-2.5">
                     <div class="p-1.5 rounded-md bg-white/60 dark:bg-black/20 text-${styleConfig.text.split("-")[1]}-600"><i class="ph ${styleConfig.icon} text-lg"></i></div>
                     <div>
                         <span class="font-bold text-slate-800 dark:text-slate-200 capitalize">${inst.type}</span> 
-                        <span class="text-xs font-medium text-slate-500 dark:text-slate-400 ml-1 px-1.5 py-0.5 rounded-full bg-white/50 dark:bg-black/20 border border-slate-200/50 dark:border-slate-700/50">Place: ${placeLabel}</span>
+                        <span class="font-medium text-slate-800 dark:text-slate-200 ml-1 px-1.5 py-0.5 rounded-full bg-white/50 dark:bg-black/20 border border-slate-200/50 dark:border-slate-700/50">Place: ${placeLabel}</span>
                         ${isProxy ? '<span class="ml-2 text-xs font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded border border-purple-200"><i class="ph ph-lock-key mr-1"></i>Read Only</span>' : ""}
                     </div>
                 </div>
@@ -6147,8 +6168,8 @@ ${state.petriNet.transitions
             // Events
             events.forEach((evt, idx) => {
                 html += `
-                                    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-orange-200 dark:border-orange-900 overflow-hidden mb-6 animate-fade-in relative transition-colors">
-            <div class="absolute inset-y-0 left-0 w-1 bg-orange-400 dark:bg-orange-600"></div>
+                <div id="card-evt-${evt.transitionId}" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-orange-200 dark:border-orange-900 overflow-hidden mb-6 animate-fade-in relative transition-colors">
+                <div class="absolute inset-y-0 left-0 w-1 bg-orange-400 dark:bg-orange-600"></div>
             <div class="px-4 py-3 bg-orange-50 dark:bg-orange-900/20 border-b border-orange-100 dark:border-orange-900/50 flex justify-between items-center">
                 <div class="flex items-center gap-2.5">
                     <div class="p-1.5 rounded-md bg-white dark:bg-slate-800 border border-orange-200 dark:border-orange-800 text-orange-600 dark:text-orange-400"><i class="ph ph-lightning text-lg"></i></div>
@@ -7041,12 +7062,11 @@ ${state.petriNet.transitions
                         const isActive =
                             m.id === state._activeMethodId && !isOverviewMode;
                         const activeClass = isActive
-                            ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border-indigo-500 border-t-2"
+                            ? "bg-indigo-500 dark:bg-indigo-500 text-white border-indigo-600 dark:border-indigo-500 border-t-2 shadow-sm"
                             : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 border-transparent border-t-2";
-
                         return `
                                     <div onclick="switchMethod('${m.id}')" class="cursor-pointer px-4 py-2 text-xs font-bold tracking-wider transition-all border-x border-slate-200 dark:border-slate-800 first:border-l last:border-r -ml-px first:ml-0 flex items-center gap-2 group ${activeClass}">
-                                    <i class="ph ph-tree-structure ${isActive ? "text-indigo-500 dark:text-indigo-400" : "text-slate-400 dark:text-slate-500"} text-sm"></i>
+                                    <i class="ph ph-tree-structure ${isActive ? "text-white" : "text-slate-400 dark:text-slate-500"} text-sm"></i>
                                       ${m.name}
                         ${isActive
                                 ? `
@@ -7555,7 +7575,14 @@ ${state.petriNet.transitions
                 return;
             }
 
-            placeSelect.innerHTML = method.petriNet.places
+            const filteredPlaces = method.petriNet.places.filter(
+                (p) => p.type !== "proxy"
+            );
+            if (filteredPlaces.length === 0) {
+                placeSelect.innerHTML = "<option disabled>No places found</option>";
+                return;
+            }
+            placeSelect.innerHTML = filteredPlaces
                 .map((p) => `<option value="${p.id}">${p.label}</option>`)
                 .join("");
         }
