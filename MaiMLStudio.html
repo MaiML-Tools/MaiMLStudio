@@ -99,6 +99,13 @@
             animation: slideIn 0.3s ease-out forwards;
         }
 
+        /* ブラウザネイティブのパスワード表示ボタンを非表示（独自実装と重複するため） */
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear,
+        input[type="password"]::-webkit-credentials-auto-fill-button {
+            display: none !important;
+        }
+
         /* Petri Net Background Pattern */
         .bg-pattern-light {
             background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiNjYmQ1ZTEiIGZpbGwtb3BhY2l0eT0iMC40Ii8+PC9zdmc+");
@@ -489,6 +496,7 @@
                             </div>
                     </section>
 
+
                     <section>
                         <h2
                             class="text-2xl font-bold text-slate-900 border-b-2 border-indigo-500 pb-2 mb-6 flex items-center gap-2">
@@ -744,6 +752,63 @@
                             </div>
                         </div>
                     </section>
+                    <section>
+                        <h2
+                            class="text-2xl font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 flex items-center gap-2">
+                            <i class="ph ph-lock-key"></i> 6. XML暗号化機能 (JIS K0200)
+                        </h2>
+                        <div class="space-y-4">
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="ph ph-info text-amber-500"></i>概要</h3>
+                                <p class="text-sm text-slate-600 mb-3">MaiML規格 (JIS K0200) に準拠したXML暗号化機能です。<code>property</code>要素や<code>content</code>要素を選択的に秘匿できます。</p>
+                                <div class="overflow-x-auto mb-3">
+                                    <table class="w-full text-xs text-left border-collapse">
+                                        <tbody class="divide-y divide-slate-100">
+                                            <tr><td class="p-2 font-bold text-slate-600 w-1/3">暗号化アルゴリズム</td><td class="p-2 text-slate-600"><strong>AES-256-GCM</strong>（認証付き暗号化・改ざん検知内蔵）</td></tr>
+                                            <tr><td class="p-2 font-bold text-slate-600">鍵導出</td><td class="p-2 text-slate-600">PBKDF2-SHA256（反復回数 100,000 回）</td></tr>
+                                            <tr><td class="p-2 font-bold text-slate-600">暗号化方式</td><td class="p-2 text-slate-600">コンテンツ暗号化（Type=#Content）— 親要素タグ・属性はそのまま残し、子要素のみ暗号化。UPA違反なし。</td></tr>
+                                            <tr><td class="p-2 font-bold text-slate-600">準拠仕様</td><td class="p-2 text-slate-600">W3C XML Encryption 1.1 / JIS K0200</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-800">
+                                    <strong>⚠️ 注意：</strong>パスワードを忘れると復号できません。安全な場所に保管してください。
+                                </div>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-lg mb-3">暗号化の手順</h3>
+                                <ol class="list-decimal list-inside space-y-2 text-sm text-slate-600 ml-2">
+                                    <li><strong>Templates タブ</strong>または <strong>Data タブ</strong>で、暗号化したい property / content 行の右端にある <i class="ph ph-lock-open text-slate-400"></i> アイコンをクリックします。</li>
+                                    <li>アイコンが <i class="ph ph-lock-key text-amber-500"></i>（アンバー色）に変わると「暗号化対象」としてマークされます。再クリックで解除できます。</li>
+                                    <li>通常通り <strong>MaiML出力 (XML)</strong> ボタンをクリックします。</li>
+                                    <li>暗号化パスワードの設定ダイアログが表示されます。4文字以上のパスワードを2回入力して確認します。</li>
+                                    <li>出力されたMaiMLファイル内で、対象要素の子要素が <code>&lt;xenc:EncryptedData&gt;</code> に置き換えられます。</li>
+                                </ol>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-lg mb-3">暗号化対象の指定箇所</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                                    <div class="bg-indigo-50 p-3 rounded border border-indigo-100">
+                                        <strong class="text-indigo-700 block mb-1">Templates タブ</strong>
+                                        <p class="text-slate-600 text-xs">テンプレートの property / content 行。ここで設定した暗号化フラグはインスタンスにも引き継がれます。</p>
+                                    </div>
+                                    <div class="bg-teal-50 p-3 rounded border border-teal-100">
+                                        <strong class="text-teal-700 block mb-1">Data タブ（継承プロパティ）</strong>
+                                        <p class="text-slate-600 text-xs">テンプレートから継承した property / content 行に個別で暗号化を設定できます。</p>
+                                    </div>
+                                    <div class="bg-purple-50 p-3 rounded border border-purple-100">
+                                        <strong class="text-purple-700 block mb-1">Data タブ（追加フィールド）</strong>
+                                        <p class="text-slate-600 text-xs">インスタンスに独自追加した instanceProperty / instanceContent 行。</p>
+                                    </div>
+                                    <div class="bg-slate-50 p-3 rounded border border-slate-200">
+                                        <strong class="text-slate-600 block mb-1">ネスト構造の暗号化</strong>
+                                        <p class="text-slate-600 text-xs">propertyListType の親要素を暗号化すると、子の property / content / uncertainty もまとめて暗号化されます。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
 
                     <section class="bg-slate-800 text-white p-8 rounded-2xl mt-12 mb-8">
                         <h2 class="text-xl font-bold mb-4 flex items-center gap-2 !text-white">
@@ -1361,6 +1426,63 @@
                         </div>
                     </section>
 
+                    <section>
+                        <h2
+                            class="text-2xl font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 flex items-center gap-2">
+                            <i class="ph ph-lock-key"></i> 6. XML Encryption (JIS K0200)
+                        </h2>
+                        <div class="space-y-4">
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="ph ph-info text-amber-500"></i>Overview</h3>
+                                <p class="text-sm text-slate-600 mb-3">Selective encryption of <code>property</code> and <code>content</code> elements, compliant with JIS K0200.</p>
+                                <div class="overflow-x-auto mb-3">
+                                    <table class="w-full text-xs text-left border-collapse">
+                                        <tbody class="divide-y divide-slate-100">
+                                            <tr><td class="p-2 font-bold text-slate-600 w-1/3">Algorithm</td><td class="p-2 text-slate-600"><strong>AES-256-GCM</strong> (Authenticated Encryption with built-in tamper detection)</td></tr>
+                                            <tr><td class="p-2 font-bold text-slate-600">Key Derivation</td><td class="p-2 text-slate-600">PBKDF2-SHA256 (100,000 iterations)</td></tr>
+                                            <tr><td class="p-2 font-bold text-slate-600">Encryption Type</td><td class="p-2 text-slate-600">Content Encryption (Type=#Content) — parent tag and attributes remain intact; only child elements are encrypted. No UPA violation.</td></tr>
+                                            <tr><td class="p-2 font-bold text-slate-600">Compliance</td><td class="p-2 text-slate-600">W3C XML Encryption 1.1 / JIS K0200</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-800">
+                                    <strong>⚠️ Note:</strong> If you forget the password, decryption is impossible. Keep it in a safe place.
+                                </div>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-lg mb-3">How to Encrypt</h3>
+                                <ol class="list-decimal list-inside space-y-2 text-sm text-slate-600 ml-2">
+                                    <li>In the <strong>Templates</strong> or <strong>Data</strong> tab, click the <i class="ph ph-lock-open text-slate-400"></i> icon at the right end of the property / content row you want to encrypt.</li>
+                                    <li>The icon turns <i class="ph ph-lock-key text-amber-500"></i> amber to mark it as an encryption target. Click again to deselect.</li>
+                                    <li>Click the <strong>MaiML Export (XML)</strong> button as usual.</li>
+                                    <li>A password dialog will appear. Enter a password (4+ characters) and confirm it.</li>
+                                    <li>In the exported MaiML file, the child elements of the target are replaced with <code>&lt;xenc:EncryptedData&gt;</code>.</li>
+                                </ol>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-lg mb-3">Where to Mark Encryption Targets</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                                    <div class="bg-indigo-50 p-3 rounded border border-indigo-100">
+                                        <strong class="text-indigo-700 block mb-1">Templates Tab</strong>
+                                        <p class="text-slate-600 text-xs">Property / content rows in templates. The encryption flag is inherited by instances.</p>
+                                    </div>
+                                    <div class="bg-teal-50 p-3 rounded border border-teal-100">
+                                        <strong class="text-teal-700 block mb-1">Data Tab (Inherited fields)</strong>
+                                        <p class="text-slate-600 text-xs">Property / content rows inherited from templates can be individually marked.</p>
+                                    </div>
+                                    <div class="bg-purple-50 p-3 rounded border border-purple-100">
+                                        <strong class="text-purple-700 block mb-1">Data Tab (Additional fields)</strong>
+                                        <p class="text-slate-600 text-xs">instanceProperty / instanceContent rows added directly to an instance.</p>
+                                    </div>
+                                    <div class="bg-slate-50 p-3 rounded border border-slate-200">
+                                        <strong class="text-slate-600 block mb-1">Nested Structures</strong>
+                                        <p class="text-slate-600 text-xs">Encrypting a propertyListType parent encrypts all child property / content / uncertainty elements together.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
                     <section class="bg-slate-800 text-white p-8 rounded-2xl mt-12 mb-8">
                         <h2 class="text-xl font-bold mb-4 flex items-center gap-2 !text-white">
                             <i class="ph ph-check-circle text-green-400"></i> Data Export
@@ -1479,15 +1601,17 @@
                 <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
 
                 <button onclick="toggleTheme()"
-                    class="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                    class="flex items-center gap-1.5 px-3 py-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                     title="Toggle Theme">
                     <i id="theme-icon" class="ph ph-moon text-xl"></i>
+                    <span class="text-xs font-medium">Theme</span>
                 </button>
 
                 <button onclick="toggleHelpModal()"
-                    class="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                    class="flex items-center gap-1.5 px-3 py-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                     title="Help & Manual">
                     <i class="ph ph-question text-xl"></i>
+                    <span class="text-xs font-medium">Help</span>
                 </button>
             </div>
         </header>
@@ -4018,6 +4142,7 @@ ${state.petriNet.transitions
             depth,
             parentPath = [],
             isReadOnly = false,
+            parentEncrypt = false,  // 親が暗号化ON → 子ボタンをグレーアウト
         ) {
             if (!items) return [];
 
@@ -4102,12 +4227,24 @@ ${state.petriNet.transitions
                                         </button>` : ""}
 
                                         ${!isReadOnly
-                        ? `
-                                        <button onclick="removeTemplateField(${templateIdx}, '${fieldType}', ${itemIdx}, [${serializePath(parentPath)}])"
-                                            class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
-                                            <i class="ph ph-trash text-sm"></i>
-                                        </button>
-                                        `
+                        ? (parentEncrypt
+                            ? `<button disabled class="p-1 text-slate-200 dark:text-slate-700 rounded cursor-not-allowed opacity-40"
+                                title="Parent element is already encrypted — no need to encrypt individually.">
+                                <i class="ph ph-lock-key text-sm"></i>
+                              </button>
+                              <button onclick="removeTemplateField(${templateIdx}, '${fieldType}', ${itemIdx}, [${serializePath(parentPath)}])"
+                                class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
+                                <i class="ph ph-trash text-sm"></i>
+                              </button>`
+                            : `<button onclick="toggleTemplateFieldEncrypt(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}])"
+                                class="p-1 ${item.encrypt ? 'text-amber-500 bg-amber-50 dark:bg-amber-900/30' : 'text-slate-300 hover:text-amber-500 dark:text-slate-600 dark:hover:text-amber-400'} rounded transition-colors"
+                                title="${item.encrypt ? 'Encryption ON (click to disable)' : 'Encryption OFF (click to enable)'}">
+                                <i class="ph ph-${item.encrypt ? 'lock-key' : 'lock-open'} text-sm"></i>
+                              </button>
+                              <button onclick="removeTemplateField(${templateIdx}, '${fieldType}', ${itemIdx}, [${serializePath(parentPath)}])"
+                                class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
+                                <i class="ph ph-trash text-sm"></i>
+                              </button>`)
                         : ""
                     }
                                     </div>
@@ -4160,6 +4297,7 @@ ${state.petriNet.transitions
                                 depth + 1,
                                 [...currentPath, "properties"],
                                 isReadOnly,
+                                item.encrypt || parentEncrypt,
                             ).join("")
                             : ""
                         }
@@ -4168,10 +4306,11 @@ ${state.petriNet.transitions
                             ? renderContentsHierarchy(
                                 item.children.contents,
                                 templateIdx,
-                                fieldType, // Note: recursive content calls might use same fieldType or switch? The logic suggests keeping structure.
+                                fieldType,
                                 depth + 1,
                                 [...currentPath, "contents"],
                                 isReadOnly,
+                                item.encrypt || parentEncrypt,
                             ).join("")
                             : ""
                         }
@@ -4284,6 +4423,41 @@ ${state.petriNet.transitions
             return isValid;
         }
 
+
+        // Toggle encrypt flag on a template property or content element
+        // 親をONにすると子のencryptフラグをすべてOFFにリセット（二重暗号化防止）
+        function toggleTemplateFieldEncrypt(templateIdx, fieldType, path) {
+            const arrayName = fieldType === "property" ? "properties" : "contents";
+            let target = state.templates[templateIdx][arrayName];
+            for (let i = 0; i < path.length - 1; i++) {
+                const idx = path[i];
+                if (idx === "properties" || idx === "contents") {
+                    target = target[idx];
+                } else {
+                    if (target[idx].children && Array.isArray(target[idx].children)) {
+                        target[idx].children = { properties: target[idx].children, contents: [] };
+                    }
+                    target = target[idx].children;
+                }
+            }
+            const lastIdx = path[path.length - 1];
+            const item = target[lastIdx];
+            item.encrypt = !item.encrypt;
+            // 親をONにした場合、子孫のencryptをすべてOFFにリセット
+            if (item.encrypt) clearChildEncrypt(item);
+            renderTemplates();
+        }
+
+        // 子孫のencryptフラグを再帰的にOFFにする
+        function clearChildEncrypt(item) {
+            if (!item.children) return;
+            const ch = Array.isArray(item.children)
+                ? { properties: item.children, contents: [] }
+                : item.children;
+            for (const p of (ch.properties || [])) { p.encrypt = false; clearChildEncrypt(p); }
+            for (const c of (ch.contents  || [])) { c.encrypt = false; clearChildEncrypt(c); }
+        }
+
         // Add child to propertyListType (can be property or content)
         function addChildToPropertyList(templateIdx, fieldType, path, childType) {
             const arrayName = fieldType === "property" ? "properties" : "contents";
@@ -4369,6 +4543,7 @@ ${state.petriNet.transitions
             depth,
             parentPath = [],
             isReadOnly = false,
+            parentEncrypt = false,
         ) {
             if (!items) return [];
 
@@ -4433,12 +4608,25 @@ ${state.petriNet.transitions
                                         class="px-2 py-1 text-xs text-slate-500 hover:text-purple-600 transition-colors bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded flex items-center gap-1 ">
                                         Details <i class="ph ph-caret-down"></i>
                                     </button>
-                                    ${!isReadOnly ? `
-                                        <button onclick="removeTemplateField(${templateIdx}, '${fieldType}', ${itemIdx}, [${serializePath(parentPath)}])"
+                                    ${!isReadOnly ? (parentEncrypt
+                                        ? `<button disabled class="p-1 text-slate-200 dark:text-slate-700 rounded cursor-not-allowed opacity-40"
+                                            title="Parent element is already encrypted — no need to encrypt individually.">
+                                            <i class="ph ph-lock-key text-sm"></i>
+                                           </button>
+                                           <button onclick="removeTemplateField(${templateIdx}, '${fieldType}', ${itemIdx}, [${serializePath(parentPath)}])"
                                             class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
                                             <i class="ph ph-trash text-sm"></i>
-                                        </button>
-                                        ` : ""}
+                                           </button>`
+                                        : `<button onclick="toggleTemplateFieldEncrypt(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}])"
+                                            class="p-1 ${item.encrypt ? 'text-amber-500 bg-amber-50 dark:bg-amber-900/30' : 'text-slate-300 hover:text-amber-500 dark:text-slate-600 dark:hover:text-amber-400'} rounded transition-colors"
+                                            title="${item.encrypt ? 'Encryption ON (click to disable)' : 'Encryption OFF (click to enable)'}">
+                                            <i class="ph ph-${item.encrypt ? 'lock-key' : 'lock-open'} text-sm"></i>
+                                           </button>
+                                           <button onclick="removeTemplateField(${templateIdx}, '${fieldType}', ${itemIdx}, [${serializePath(parentPath)}])"
+                                            class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
+                                            <i class="ph ph-trash text-sm"></i>
+                                           </button>`)
+                                        : ""}
                                 </div>
                                 <!-- Template Contents Details Accordion -->
                                 <div class="hidden mt-2 mb-2 p-3 bg-purple-50/20 dark:bg-purple-900/10 rounded border border-purple-200 dark:border-purple-800 text-xs">
@@ -4966,6 +5154,7 @@ ${state.petriNet.transitions
             depth,
             parentPath,
             isReadOnly,
+            parentEncrypt = false,
         ) {
             if (!items) return "";
             return items
@@ -5033,11 +5222,28 @@ ${state.petriNet.transitions
                         class="px-2 py-1 text-xs text-slate-500 hover:text-indigo-600 transition-colors bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded flex items-center gap-1 ">
                                         Details <i class="ph ph-caret-down"></i>
                     </button>` : ""}
+                    ${item.encrypt
+                            ? `<span title="Encrypted" class="p-1 text-amber-500"><i class="ph ph-lock-key text-sm"></i></span>`
+                            : ""}
                     ${!isReadOnly
-                            ? `<button onclick="removeInstanceAdditionalPropertyNested(${instIdx}, ${itemIdx}, [${serializePath(parentPath)}])"
-                                class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
-                                <i class="ph ph-trash text-sm"></i>
-                            </button>`
+                            ? (parentEncrypt
+                                ? `<button disabled class="p-1 text-slate-200 dark:text-slate-700 rounded cursor-not-allowed opacity-40"
+                                    title="Parent element is already encrypted — no need to encrypt individually.">
+                                    <i class="ph ph-lock-key text-sm"></i>
+                                   </button>
+                                   <button onclick="removeInstanceAdditionalPropertyNested(${instIdx}, ${itemIdx}, [${serializePath(parentPath)}])"
+                                    class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
+                                    <i class="ph ph-trash text-sm"></i>
+                                   </button>`
+                                : `<button onclick="toggleInstancePropertyEncrypt(${instIdx}, [${serializePath(currentPath)}])"
+                                    class="p-1 ${item.encrypt ? 'text-amber-500 bg-amber-50 dark:bg-amber-900/30' : 'text-slate-300 hover:text-amber-500 dark:text-slate-600 dark:hover:text-amber-400'} rounded transition-colors"
+                                    title="${item.encrypt ? 'Encryption ON (click to disable)' : 'Encryption OFF (click to enable)'}">
+                                    <i class="ph ph-${item.encrypt ? 'lock-key' : 'lock-open'} text-sm"></i>
+                                   </button>
+                                   <button onclick="removeInstanceAdditionalPropertyNested(${instIdx}, ${itemIdx}, [${serializePath(parentPath)}])"
+                                    class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
+                                    <i class="ph ph-trash text-sm"></i>
+                                   </button>`)
                             : ""
                         }
                 </div>
@@ -5117,6 +5323,7 @@ ${state.petriNet.transitions
             depth,
             parentPath,
             isReadOnly,
+            parentEncrypt = false,
         ) {
             if (!items) return "";
             return items
@@ -5172,10 +5379,24 @@ ${state.petriNet.transitions
                                         Details <i class="ph ph-caret-down"></i>
                     </button>
                     ${!isReadOnly
-                            ? `<button onclick="removeInstanceAdditionalContentNested(${instIdx}, ${itemIdx}, [${serializePath(parentPath)}])"
-                                class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
-                                <i class="ph ph-trash text-sm"></i>
-                            </button>`
+                            ? (parentEncrypt
+                                ? `<button disabled class="p-1 text-slate-200 dark:text-slate-700 rounded cursor-not-allowed opacity-40"
+                                    title="Parent element is already encrypted — no need to encrypt individually.">
+                                    <i class="ph ph-lock-key text-sm"></i>
+                                   </button>
+                                   <button onclick="removeInstanceAdditionalContentNested(${instIdx}, ${itemIdx}, [${serializePath(parentPath)}])"
+                                    class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
+                                    <i class="ph ph-trash text-sm"></i>
+                                   </button>`
+                                : `<button onclick="toggleInstanceContentEncrypt(${instIdx}, [${serializePath(currentPath)}])"
+                                    class="p-1 ${item.encrypt ? 'text-amber-500 bg-amber-50 dark:bg-amber-900/30' : 'text-slate-300 hover:text-amber-500 dark:text-slate-600 dark:hover:text-amber-400'} rounded transition-colors"
+                                    title="${item.encrypt ? 'Encryption ON (click to disable)' : 'Encryption OFF (click to enable)'}">
+                                    <i class="ph ph-${item.encrypt ? 'lock-key' : 'lock-open'} text-sm"></i>
+                                   </button>
+                                   <button onclick="removeInstanceAdditionalContentNested(${instIdx}, ${itemIdx}, [${serializePath(parentPath)}])"
+                                    class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
+                                    <i class="ph ph-trash text-sm"></i>
+                                   </button>`)
                             : ""
                         }
                 </div>
@@ -5471,6 +5692,7 @@ ${state.petriNet.transitions
             depth = 0,
             parentPath = [],
             isReadOnly = false,
+            parentEncrypt = false,
         ) {
             if (!items || items.length === 0) return "";
 
@@ -5526,6 +5748,18 @@ ${state.petriNet.transitions
                                         class="px-2 py-1 text-xs text-slate-500 hover:text-indigo-600 transition-colors bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded flex items-center gap-1 ">
                                         Details <i class="ph ph-caret-down"></i>
                                     </button>` : ""}
+                                    ${!isReadOnly
+                                        ? (parentEncrypt
+                                            ? `<button disabled class="p-1 text-slate-200 dark:text-slate-700 rounded cursor-not-allowed opacity-40"
+                                                title="Parent element is already encrypted — no need to encrypt individually.">
+                                                <i class="ph ph-lock-key text-sm"></i>
+                                               </button>`
+                                            : `<button onclick="toggleInstanceInheritedPropEncrypt(${instIdx}, [${serializePath(currentPath)}])"
+                                                class="p-1 ${item.encrypt ? 'text-amber-500 bg-amber-50 dark:bg-amber-900/30' : 'text-slate-300 hover:text-amber-500 dark:text-slate-600 dark:hover:text-amber-400'} rounded transition-colors"
+                                                title="${item.encrypt ? 'Encryption ON (click to disable)' : 'Encryption OFF (click to enable)'}">
+                                                <i class="ph ph-${item.encrypt ? 'lock-key' : 'lock-open'} text-sm"></i>
+                                               </button>`)
+                                        : item.encrypt ? `<span class="p-1 text-amber-400" title="Encrypted"><i class="ph ph-lock-key text-sm"></i></span>` : ""}
                                 </div>
                                 ${(isNumeric || isDateTime) ? `
                                 <!-- Instance Properties Details Accordion -->
@@ -5573,6 +5807,7 @@ ${state.petriNet.transitions
                                     depth + 1,
                                     [...currentPath, "properties"],
                                     isReadOnly,
+                                    item.encrypt || parentEncrypt,
                                 ),
                             );
                         }
@@ -5586,6 +5821,7 @@ ${state.petriNet.transitions
                                     depth + 1,
                                     [...currentPath, "contents"],
                                     isReadOnly,
+                                    item.encrypt || parentEncrypt,
                                 ),
                             );
                         }
@@ -5610,6 +5846,7 @@ ${state.petriNet.transitions
             depth = 0,
             parentPath = [],
             isReadOnly = false,
+            parentEncrypt = false,
         ) {
             if (!items || items.length === 0) return "";
 
@@ -5659,6 +5896,18 @@ ${state.petriNet.transitions
                                         class="px-2 py-1 text-xs text-slate-500 hover:text-purple-600 transition-colors bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded flex items-center gap-1 ">
                                         Details <i class="ph ph-caret-down"></i>
                                     </button>
+                                    ${!isReadOnly
+                                        ? (parentEncrypt
+                                            ? `<button disabled class="p-1 text-slate-200 dark:text-slate-700 rounded cursor-not-allowed opacity-40"
+                                                title="Parent element is already encrypted — no need to encrypt individually.">
+                                                <i class="ph ph-lock-key text-sm"></i>
+                                               </button>`
+                                            : `<button onclick="toggleInstanceInheritedContEncrypt(${instIdx}, [${serializePath(currentPath)}])"
+                                                class="p-1 ${item.encrypt ? 'text-amber-500 bg-amber-50 dark:bg-amber-900/30' : 'text-slate-300 hover:text-amber-500 dark:text-slate-600 dark:hover:text-amber-400'} rounded transition-colors"
+                                                title="${item.encrypt ? 'Encryption ON (click to disable)' : 'Encryption OFF (click to enable)'}">
+                                                <i class="ph ph-${item.encrypt ? 'lock-key' : 'lock-open'} text-sm"></i>
+                                               </button>`)
+                                        : item.encrypt ? `<span class="p-1 text-amber-400" title="Encrypted"><i class="ph ph-lock-key text-sm"></i></span>` : ""}
                                 </div>
                                 <!-- Instance Contents Details Accordion -->
                                 <div class="hidden mt-2 mb-2 p-3 bg-purple-50/20 dark:bg-purple-900/10 rounded border border-purple-200 dark:border-purple-800 text-xs">
@@ -6275,6 +6524,64 @@ ${state.petriNet.transitions
             );
         }
 
+        // Toggle encrypt flag on instance INHERITED property (from template, inst.properties)
+        function toggleInstanceInheritedPropEncrypt(instIdx, path) {
+            let target = state.instances[instIdx].properties;
+            for (let i = 0; i < path.length - 1; i++) {
+                const idx = path[i];
+                if (idx === "properties" || idx === "contents") { target = target[idx]; }
+                else { target = target[idx].children || (target[idx].children = { properties: [], contents: [] }); }
+            }
+            const last = path[path.length - 1];
+            target[last].encrypt = !target[last].encrypt;
+            renderDataInstances();
+        }
+
+        // Toggle encrypt flag on instance INHERITED content (from template, inst.contents)
+        function toggleInstanceInheritedContEncrypt(instIdx, path) {
+            let target = state.instances[instIdx].contents;
+            for (let i = 0; i < path.length - 1; i++) {
+                const idx = path[i];
+                if (idx === "properties" || idx === "contents") { target = target[idx]; }
+                else { target = target[idx].children || (target[idx].children = { properties: [], contents: [] }); }
+            }
+            const last = path[path.length - 1];
+            target[last].encrypt = !target[last].encrypt;
+            renderDataInstances();
+        }
+
+        // Toggle encrypt flag on instance additional property (nested)
+        function toggleInstancePropertyEncrypt(instIdx, path) {
+            let target = state.instances[instIdx].instanceProperties;
+            for (let i = 0; i < path.length - 1; i++) {
+                const idx = path[i];
+                if (idx === "properties" || idx === "contents") { target = target[idx]; }
+                else {
+                    if (!target[idx].children) target[idx].children = { properties: [], contents: [] };
+                    target = target[idx].children;
+                }
+            }
+            const last = path[path.length - 1];
+            target[last].encrypt = !target[last].encrypt;
+            renderDataInstances();
+        }
+
+        // Toggle encrypt flag on instance additional content (nested)
+        function toggleInstanceContentEncrypt(instIdx, path) {
+            let target = state.instances[instIdx].instanceContents;
+            for (let i = 0; i < path.length - 1; i++) {
+                const idx = path[i];
+                if (idx === "properties" || idx === "contents") { target = target[idx]; }
+                else {
+                    if (!target[idx].children) target[idx].children = { properties: [], contents: [] };
+                    target = target[idx].children;
+                }
+            }
+            const last = path[path.length - 1];
+            target[last].encrypt = !target[last].encrypt;
+            renderDataInstances();
+        }
+
         async function addInstanceInsertion(idx, file) {
             if (!file) return;
 
@@ -6414,66 +6721,216 @@ ${state.petriNet.transitions
         }
 
         // Helper function to recursively output properties to XML
-        function outputPropertiesToXML(properties, indent = "          ") {
-            if (!properties || properties.length === 0) return "";
+        // ===== XML Encryption Utilities (W3C XML Encryption / JIS K0200) =====
 
-            let xml = "";
-            properties.forEach((p) => {
-                const isPropertyList = p.type === "propertyListType";
-                xml += `${indent} <property key="${p.key}" xsi:type="${p.type}"${p.units ? ` units="${p.units}"` : ""}${p.formatString ? ` formatString="${p.formatString}"` : ""}${p.scaleFactor !== "" && p.scaleFactor !== undefined && p.scaleFactor !== null ? ` scaleFactor="${p.scaleFactor}"` : ""}>\n`;
-                if (p.description)
-                    xml += `${indent}  <description>${p.description}</description>\n`;
-                if (!isPropertyList && p.value)
-                    xml += `${indent}  <value>${p.value}</value>\n`;
+        // Prompt for password via modal — returns Promise<string|null>
+        function promptEncryptPassword(mode = "encrypt") {
+            return new Promise((resolve) => {
+                const modal = document.getElementById("encrypt-password-modal");
+                const titleEl = document.getElementById("encrypt-modal-title");
+                const descEl = document.getElementById("encrypt-modal-desc");
+                const confirmWrap = document.getElementById("encrypt-password-confirm-wrap");
+                const input1 = document.getElementById("encrypt-password-input");
+                const input2 = document.getElementById("encrypt-password-confirm");
+                const errorEl = document.getElementById("encrypt-password-error");
+                const okBtn = document.getElementById("encrypt-modal-ok");
 
-                // Output children if propertyListType
-                if (isPropertyList && p.children) {
-                    // Convert old array format to new object format if needed
-                    if (Array.isArray(p.children)) {
-                        p.children = { properties: p.children, contents: [] };
-                    }
+                input1.value = ""; input2.value = ""; errorEl.textContent = "";
 
-                    // First output child properties
-                    if (p.children.properties && p.children.properties.length > 0) {
-                        xml += outputPropertiesToXML(
-                            p.children.properties,
-                            indent + "  ",
-                        );
-                    }
-
-                    // Then output child contents
-                    if (p.children.contents && p.children.contents.length > 0) {
-                        xml += outputContentsToXML(p.children.contents, indent + "  ");
-                    }
+                if (mode === "encrypt") {
+                    titleEl.textContent = "Set Encryption Password";
+                    descEl.textContent = "Set a password to protect the encrypted elements. Without this password, decryption will not be possible.";
+                    confirmWrap.classList.remove("hidden");
+                    okBtn.textContent = "Encrypt & Export";
+                } else {
+                    titleEl.textContent = "Enter Decryption Password";
+                    descEl.textContent = "Enter the password to decrypt the encrypted MaiML file.";
+                    confirmWrap.classList.add("hidden");
+                    okBtn.textContent = "Decrypt";
                 }
 
-                xml += `${indent}</property>\n`;
+                modal.classList.remove("hidden");
+                setTimeout(() => input1.focus(), 50);
+
+                const cleanup = () => {
+                    modal.classList.add("hidden");
+                    okBtn.removeEventListener("click", onOk);
+                    document.getElementById("encrypt-modal-cancel").removeEventListener("click", onCancel);
+                    input1.onkeydown = null; input2.onkeydown = null;
+                };
+                const onOk = () => {
+                    const pw = input1.value, pw2 = input2.value;
+                    if (!pw || pw.length < 4) { errorEl.textContent = "Password must be at least 4 characters."; return; }
+                    if (mode === "encrypt" && pw !== pw2) { errorEl.textContent = "Passwords do not match."; return; }
+                    cleanup(); resolve(pw);
+                };
+                const onCancel = () => { cleanup(); resolve(null); };
+                okBtn.addEventListener("click", onOk);
+                document.getElementById("encrypt-modal-cancel").addEventListener("click", onCancel);
+                input1.onkeydown = input2.onkeydown = (e) => { if (e.key === "Enter") onOk(); };
             });
-            return xml;
         }
 
-        // Helper function to recursively output contents to XML
-        function outputContentsToXML(contents, indent = "          ") {
-            if (!contents || contents.length === 0) return "";
+        // Derive AES-256 key from password using PBKDF2-SHA256
+        async function deriveAesKey(password, salt) {
+            const enc = new TextEncoder();
+            const km = await crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveKey"]);
+            return crypto.subtle.deriveKey(
+                { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
+                km, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]
+            );
+        }
 
+        // Encrypt an XML string → base64(salt[16]+iv[12]+ciphertext+tag[16])
+        // AES-256-GCM: iv=12byte、認証タグ16byteはciphertextに自動付与
+        async function encryptXmlString(xmlStr, password) {
+            const salt = crypto.getRandomValues(new Uint8Array(16));
+            const iv   = crypto.getRandomValues(new Uint8Array(12));
+            const key  = await deriveAesKey(password, salt);
+            const ct   = new Uint8Array(await crypto.subtle.encrypt(
+                { name: "AES-GCM", iv, tagLength: 128 }, key, new TextEncoder().encode(xmlStr)));
+            const out  = new Uint8Array(16 + 12 + ct.length);
+            out.set(salt, 0); out.set(iv, 16); out.set(ct, 28);
+            let bin = ""; out.forEach(b => bin += String.fromCharCode(b));
+            return btoa(bin);
+        }
+
+        // Decrypt a CipherValue base64 with password → original XML string
+        // CipherValue format: salt[16] + iv[12] + ciphertext+tag[variable]
+        async function decryptXmlString(b64, password) {
+            const bin = atob(b64);
+            const buf = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+            const key = await deriveAesKey(password, buf.slice(0, 16));
+            const pt  = await crypto.subtle.decrypt(
+                { name: "AES-GCM", iv: buf.slice(16, 28), tagLength: 128 }, key, buf.slice(28));
+            return new TextDecoder().decode(pt);
+        }
+
+        // Wrap ciphertext in W3C EncryptedData element
+        // Type = Content: 子要素のみ暗号化、親タグ(property/content)は残す → UPA違反なし (JIS K0200)
+        function buildEncryptedDataXml(cipherValue, indent) {
+            return `${indent}<xenc:EncryptedData xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" Type="http://www.w3.org/2001/04/xmlenc#Content">\n` +
+                   `${indent}  <xenc:EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#aes256-gcm"/>\n` +
+                   `${indent}  <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">\n` +
+                   `${indent}    <xenc:EncryptedKey>\n` +
+                   `${indent}      <xenc:EncryptionMethod Algorithm="urn:ietf:params:xml:ns:keyprov:pskc:pbkdf2">\n` +
+                   `${indent}        <IterationCount>100000</IterationCount>\n` +
+                   `${indent}        <PRF>HMAC-SHA256</PRF>\n` +
+                   `${indent}      </xenc:EncryptionMethod>\n` +
+                   `${indent}      <xenc:CipherData><xenc:CipherValue/></xenc:CipherData>\n` +
+                   `${indent}    </xenc:EncryptedKey>\n` +
+                   `${indent}  </ds:KeyInfo>\n` +
+                   `${indent}  <xenc:CipherData>\n` +
+                   `${indent}    <xenc:CipherValue>${cipherValue}</xenc:CipherValue>\n` +
+                   `${indent}  </xenc:CipherData>\n` +
+                   `${indent}</xenc:EncryptedData>\n`;
+        }
+
+        // Check if any elements to be exported have encrypt:true
+        function hasEncryptedFields() {
+            const chk = (items) => {
+                if (!items) return false;
+                return items.some(it => {
+                    if (it.encrypt) return true;
+                    if (it.children) {
+                        const c = Array.isArray(it.children) ? { properties: it.children, contents: [] } : it.children;
+                        return chk(c.properties) || chk(c.contents);
+                    }
+                    return false;
+                });
+            };
+            for (const m of state._methods) {
+                for (const t of m.templates) { if (chk(t.properties) || chk(t.contents)) return true; }
+                for (const i of m.instances) {
+                    if (chk(i.properties) || chk(i.contents) || chk(i.instanceProperties) || chk(i.instanceContents)) return true;
+                }
+            }
+            if (chk(state.document.properties)) return true;
+            return false;
+        }
+
+        // Recursively output properties to XML (async, encryption-aware)
+        // 暗号化方式: Content暗号化 (Type=#Content)
+        //   property要素の属性(key,xsi:type等)はそのまま残し、子要素(description/value/nested)を暗号化
+        //   → UPA違反なし。スキーマから見て<property>要素は存在し続ける。
+        // 暗号化方式: Content暗号化 (Type=#Content)
+        // 親要素が暗号化される場合、子要素は暗号化しない（二重暗号化を防ぐ）
+        // → 親の暗号文の中に子の平文が含まれる形になる
+        async function outputPropertiesToXML(properties, indent = "          ", password = null) {
+            if (!properties || properties.length === 0) return "";
             let xml = "";
-            contents.forEach((c) => {
-                xml += `${indent} <content key="${c.key}" xsi:type="${c.type}"${c.units ? ` units="${c.units}"` : ""}${c.formatString ? ` formatString="${c.formatString}"` : ""}${c.scaleFactor !== "" && c.scaleFactor !== undefined && c.scaleFactor !== null ? ` scaleFactor="${c.scaleFactor}"` : ""}${c.axis ? ` axis="${c.axis}"` : ""}${c.size !== "" && c.size !== undefined && c.size !== null ? ` size="${c.size}"` : ""}${c.id ? ` id="${c.id}"` : ""}${c.ref ? ` ref="${c.ref}"` : ""}>\n`;
-                if (c.description)
-                    xml += `${indent}  <description>${c.description}</description>\n`;
-                if (c.value) xml += `${indent}  <value>${c.value}</value>\n`;
-                xml += `${indent}</content>\n`;
-            });
+            for (const p of properties) {
+                const isPropertyList = p.type === "propertyListType";
+                // 親が暗号化される場合、子への password を null にして二重暗号化を防ぐ
+                const childPw = (p.encrypt && password) ? null : password;
+                let inner = "";
+                if (p.description) inner += `${indent}  <description>${p.description}</description>\n`;
+                if (!isPropertyList && p.value) inner += `${indent}  <value>${p.value}</value>\n`;
+                if (isPropertyList && p.children) {
+                    if (Array.isArray(p.children)) p.children = { properties: p.children, contents: [] };
+                    if (p.children.properties && p.children.properties.length > 0)
+                        inner += await outputPropertiesToXML(p.children.properties, indent + "  ", childPw);
+                    if (p.children.contents && p.children.contents.length > 0)
+                        inner += await outputContentsToXML(p.children.contents, indent + "  ", childPw);
+                }
+                const attrs = `key="${p.key}" xsi:type="${p.type}"` +
+                    (p.units ? ` units="${p.units}"` : "") +
+                    (p.formatString ? ` formatString="${p.formatString}"` : "") +
+                    (p.scaleFactor !== "" && p.scaleFactor !== undefined && p.scaleFactor !== null ? ` scaleFactor="${p.scaleFactor}"` : "");
+                if (p.encrypt && password) {
+                    // 親要素を暗号化（子は平文のままinnerに含まれる）
+                    const cv = await encryptXmlString(inner, password);
+                    xml += `${indent}<property ${attrs}>\n`;
+                    xml += buildEncryptedDataXml(cv, indent + "  ");
+                    xml += `${indent}</property>\n`;
+                } else {
+                    xml += `${indent}<property ${attrs}>\n${inner}${indent}</property>\n`;
+                }
+            }
             return xml;
         }
+
+        // Recursively output contents to XML (async, encryption-aware)
+        // 暗号化方式: Content暗号化 (Type=#Content)
+        //   content要素の属性はそのまま残し、子要素(description/value)を暗号化
+        //   → UPA違反なし
+        async function outputContentsToXML(contents, indent = "          ", password = null) {
+            if (!contents || contents.length === 0) return "";
+            let xml = "";
+            for (const c of contents) {
+                const attrs = `key="${c.key}" xsi:type="${c.type}"` +
+                    (c.units ? ` units="${c.units}"` : "") +
+                    (c.formatString ? ` formatString="${c.formatString}"` : "") +
+                    (c.scaleFactor !== "" && c.scaleFactor !== undefined && c.scaleFactor !== null ? ` scaleFactor="${c.scaleFactor}"` : "") +
+                    (c.axis ? ` axis="${c.axis}"` : "") +
+                    (c.size !== "" && c.size !== undefined && c.size !== null ? ` size="${c.size}"` : "") +
+                    (c.id ? ` id="${c.id}"` : "") +
+                    (c.ref ? ` ref="${c.ref}"` : "");
+                let inner = "";
+                if (c.description) inner += `${indent}  <description>${c.description}</description>\n`;
+                if (c.value) inner += `${indent}  <value>${c.value}</value>\n`;
+                if (c.encrypt && password) {
+                    // Content暗号化: <content attrs>タグは残し、子要素だけを暗号化する
+                    const cv = await encryptXmlString(inner, password);
+                    xml += `${indent}<content ${attrs}>\n`;
+                    xml += buildEncryptedDataXml(cv, indent + "  ");
+                    xml += `${indent}</content>\n`;
+                } else {
+                    xml += `${indent}<content ${attrs}>\n${inner}${indent}</content>\n`;
+                }
+            }
+            return xml;
+        }
+
 
         async function saveXML() {
             try {
                 // インスタンスにテンプレートのdescriptionを同期
-                state.instances.forEach(inst => {
-                    if (!inst.templateId) return;
+                for (const inst of state.instances) {
+                    if (!inst.templateId) continue;
                     const srcTemplate = state.templates.find(t => t.id === inst.templateId);
-                    if (!srcTemplate) return;
+                    if (!srcTemplate) continue;
                     (inst.properties || []).forEach((prop, idx) => {
                         if (srcTemplate.properties[idx] !== undefined) {
                             prop.description = srcTemplate.properties[idx].description || prop.description || "";
@@ -6484,7 +6941,7 @@ ${state.petriNet.transitions
                             cont.description = srcTemplate.contents[idx].description || cont.description || "";
                         }
                     });
-                });
+                }
 
                 if (document.getElementById("doc-id"))
                     state.document.id = document.getElementById("doc-id").value;
@@ -6496,8 +6953,18 @@ ${state.petriNet.transitions
                     state.document.description =
                         document.getElementById("doc-description").value;
 
+                // --- 暗号化パスワード取得 ---
+                let _encPassword = null;
+                if (hasEncryptedFields()) {
+                    _encPassword = await promptEncryptPassword("encrypt");
+                    if (_encPassword === null) {
+                        showToast("Encryption cancelled. Export aborted.", "warning");
+                        return;
+                    }
+                }
+                const password = _encPassword;
+
                 let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-                // xml += `<maiml xmlns="http://www.maiml.org/schemas" xmlns:concept="http://www.xes-standard.org/concept.xesext#" xmlns:lifecycle="http://www.xes-standard.org/lifecycle.xesext#" xmlns:time="http://www.xes-standard.org/time.xesext#" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" features="nested-attributes" version="1.0" xsi:type="maimlRootType">\n`;
                 const userNamespaces = (state.document.namespaces || [])
                     .filter(ns => ns.prefix && ns.prefix.trim() !== "" && ns.uri && ns.uri.trim() !== "")
                     .map(ns => `xmlns:${ns.prefix.trim()}="${ns.uri.trim()}"`)
@@ -6511,12 +6978,12 @@ ${state.petriNet.transitions
                 xml += `    <description>${state.document.description || ""}</description>\n`;
 
                 if (state.document.properties) {
-                    xml += outputPropertiesToXML(state.document.properties, "    ");
+                    xml += await outputPropertiesToXML(state.document.properties, "    ", password);
                 }
 
                 // Creator
                 if (state.document.creators) {
-                    state.document.creators.forEach((item) => {
+                    for (const item of state.document.creators) {
                         if (item.id) {
                             xml += `    <creator id="${item.id}">\n`;
                             xml += `      <uuid>${item.uuid || crypto.randomUUID()}</uuid>\n`;
@@ -6535,12 +7002,12 @@ ${state.petriNet.transitions
                                 );
                             xml += `    </creator>\n`;
                         }
-                    });
+                    }
                 }
 
                 // Vendor
                 if (state.document.vendors) {
-                    state.document.vendors.forEach((item) => {
+                    for (const item of state.document.vendors) {
                         if (item.id) {
                             xml += `    <vendor id="${item.id}">\n`;
                             xml += `      <uuid>${item.uuid || crypto.randomUUID()}</uuid>\n`;
@@ -6549,12 +7016,12 @@ ${state.petriNet.transitions
                                 xml += `      <description>${item.description}</description>\n`;
                             xml += `    </vendor>\n`;
                         }
-                    });
+                    }
                 }
 
                 // Owner
                 if (state.document.owners) {
-                    state.document.owners.forEach((item) => {
+                    for (const item of state.document.owners) {
                         if (item.id) {
                             xml += `    <owner id="${item.id}">\n`;
                             xml += `      <uuid>${item.uuid || crypto.randomUUID()}</uuid>\n`;
@@ -6563,12 +7030,12 @@ ${state.petriNet.transitions
                                 xml += `      <description>${item.description}</description>\n`;
                             xml += `    </owner>\n`;
                         }
-                    });
+                    }
                 }
 
                 // Instrument
                 if (state.document.instruments) {
-                    state.document.instruments.forEach((item) => {
+                    for (const item of state.document.instruments) {
                         if (item.id) {
                             xml += `    <instrument id="${item.id}">\n`;
                             xml += `      <uuid>${item.uuid || crypto.randomUUID()}</uuid>\n`;
@@ -6577,7 +7044,7 @@ ${state.petriNet.transitions
                                 xml += `      <description>${item.description}</description>\n`;
                             xml += `    </instrument>\n`;
                         }
-                    });
+                    }
                 }
 
                 const now = new Date();
@@ -6592,7 +7059,7 @@ ${state.petriNet.transitions
                 xml += `  <protocol id="protocol">\n`;
                 xml += `    <uuid>${crypto.randomUUID()}</uuid>\n`;
 
-                state._methods.forEach((method) => {
+                for (const method of state._methods) {
                     xml += `    <method id="${method.id}">\n`;
                     xml += `      <uuid>${method.uuid || crypto.randomUUID()}</uuid>\n`;
                     xml += `      <name>${method.name}</name>\n`;
@@ -6600,26 +7067,23 @@ ${state.petriNet.transitions
                     // Petri Net (pnml)
                     xml += `      <pnml id="pnml_${method.id}">\n`;
                     xml += `        <uuid>${crypto.randomUUID()}</uuid>\n`;
-                    method.petriNet.places
-                        .filter((p) => p.type !== "proxy")
-                        .forEach((p) => {
-                            xml += `        <place id="${p.label}" />\n`;
-                        });
-                    method.petriNet.transitions.forEach((t) => {
+                    for (const p of method.petriNet.places.filter((p) => p.type !== "proxy")) {
+                        xml += `        <place id="${p.label}" />\n`;
+                    }
+                    for (const t of method.petriNet.transitions) {
                         xml += `        <transition id="${t.label}" />\n`;
-                    });
-                    method.petriNet.arcs.forEach((a) => {
+                    }
+                    for (const a of method.petriNet.arcs) {
                         const src =
                             method.petriNet.places.find((p) => p.id === a.source) ||
                             method.petriNet.transitions.find((t) => t.id === a.source);
                         const tgt =
                             method.petriNet.places.find((p) => p.id === a.target) ||
                             method.petriNet.transitions.find((t) => t.id === a.target);
-                        if (src && src.type === "proxy") return; // Don't output arcs connected to proxy places (should not happen in valid Petri net anyway)
-                        if (tgt && tgt.type === "proxy") return;
-
+                        if (src && src.type === "proxy") continue;
+                        if (tgt && tgt.type === "proxy") continue;
                         xml += `        <arc id="${a.id}" source="${src ? src.label : a.source}" target="${tgt ? tgt.label : a.target}" />\n`;
-                    });
+                    }
                     xml += `      </pnml>\n`;
 
                     // Program
@@ -6627,7 +7091,7 @@ ${state.petriNet.transitions
                     xml += `        <uuid>${crypto.randomUUID()}</uuid>\n`;
 
                     const usedTrans = new Set();
-                    method.events.forEach((evt) => {
+                    for (const evt of method.events) {
                         if (!usedTrans.has(evt.transitionId)) {
                             const transObj = method.petriNet.transitions.find(
                                 (t) => t.id === evt.transitionId,
@@ -6640,88 +7104,82 @@ ${state.petriNet.transitions
                             xml += `        </instruction>\n`;
                             usedTrans.add(evt.transitionId);
                         }
-                    });
+                    }
 
                     // Templates
-                    ["material", "condition", "result"].forEach((type) => {
-                        method.templates
-                            .filter((t) => t.type === type)
-                            .forEach((tpl) => {
-                                const placeObj = method.petriNet.places.find(
-                                    (p) => p.id === tpl.placeId,
+                    for (const type of ["material", "condition", "result"]) {
+                        for (const tpl of method.templates.filter((t) => t.type === type)) {
+                            const placeObj = method.petriNet.places.find(
+                                (p) => p.id === tpl.placeId,
+                            );
+
+                            // Skip proxy place templates (Read-only)
+                            if (placeObj && placeObj.type === "proxy") continue;
+
+                            const placeLabel = placeObj ? placeObj.label : tpl.placeId;
+                            const tagName = `${type}Template`;
+                            const autoName = tpl.name || `${placeLabel}_${tagName}`;
+
+                            xml += `        <${tagName} id="${tpl.id}">\n`;
+                            xml += `          <uuid>${tpl.uuid || crypto.randomUUID()}</uuid>\n`;
+                            xml += `          <name>${autoName}</name>\n`;
+                            if (tpl.properties && tpl.properties.length > 0)
+                                xml += await outputPropertiesToXML(tpl.properties, "          ", password);
+                            if (tpl.contents && tpl.contents.length > 0)
+                                xml += await outputContentsToXML(tpl.contents, "          ", password);
+                            xml += `          <placeRef id="pref_${tpl.id}" ref="${placeLabel}" />\n`;
+
+                            // Template Refs
+                            const refs = method.petriNet.templateRefs.filter(
+                                (r) => r.source === tpl.placeId,
+                            );
+                            for (const r of refs) {
+                                const targetPlace = method.petriNet.places.find(
+                                    (p) => p.id === r.target,
                                 );
-
-                                // Skip proxy place templates (Read-only)
-                                if (placeObj && placeObj.type === "proxy") return;
-
-                                const placeLabel = placeObj ? placeObj.label : tpl.placeId;
-                                const tagName = `${type}Template`;
-                                const autoName = tpl.name || `${placeLabel}_${tagName}`;
-
-                                xml += `        <${tagName} id="${tpl.id}">\n`;
-                                xml += `          <uuid>${tpl.uuid || crypto.randomUUID()}</uuid>\n`;
-                                xml += `          <name>${autoName}</name>\n`;
-                                if (tpl.properties && tpl.properties.length > 0)
-                                    xml += outputPropertiesToXML(tpl.properties);
-                                if (tpl.contents && tpl.contents.length > 0)
-                                    xml += outputContentsToXML(tpl.contents);
-                                xml += `          <placeRef id="pref_${tpl.id}" ref="${placeLabel}" />\n`;
-
-                                // Template Refs
-                                const refs = method.petriNet.templateRefs.filter(
-                                    (r) => r.source === tpl.placeId,
-                                );
-                                refs.forEach((r) => {
-                                    // Check if target is a proxy place
-                                    const targetPlace = method.petriNet.places.find(
-                                        (p) => p.id === r.target,
+                                if (targetPlace && targetPlace.type === "proxy") {
+                                    const extMethod = state._methods.find(
+                                        (m) => m.id === targetPlace.originalMethodId,
                                     );
-
-                                    if (targetPlace && targetPlace.type === "proxy") {
-                                        // Resolve link to external method
-                                        const extMethod = state._methods.find(
-                                            (m) => m.id === targetPlace.originalMethodId,
+                                    if (extMethod) {
+                                        const extTemplates = extMethod.templates.filter(
+                                            (t) => t.placeId === targetPlace.originalPlaceId,
                                         );
-                                        if (extMethod) {
-                                            const extTemplates = extMethod.templates.filter(
-                                                (t) => t.placeId === targetPlace.originalPlaceId,
-                                            );
-                                            extTemplates.forEach((tt) => {
-                                                xml += `          <templateRef id="tref_${generateUUID()}" ref="${tt.id}" />\n`;
-                                            });
-                                        }
-                                    } else {
-                                        // Internal link
-                                        const targetTemplates = method.templates.filter(
-                                            (t) => t.placeId === r.target,
-                                        );
-                                        targetTemplates.forEach((tt) => {
+                                        for (const tt of extTemplates) {
                                             xml += `          <templateRef id="tref_${generateUUID()}" ref="${tt.id}" />\n`;
-                                        });
+                                        }
                                     }
-                                });
-                                xml += `        </${tagName}>\n`;
-                            });
-                    });
+                                } else {
+                                    const targetTemplates = method.templates.filter(
+                                        (t) => t.placeId === r.target,
+                                    );
+                                    for (const tt of targetTemplates) {
+                                        xml += `          <templateRef id="tref_${generateUUID()}" ref="${tt.id}" />\n`;
+                                    }
+                                }
+                            }
+                            xml += `        </${tagName}>\n`;
+                        }
+                    }
                     xml += `      </program>\n`;
                     xml += `    </method>\n`;
-                });
+                }
                 xml += `  </protocol>\n`;
 
                 // 3. <data>
                 xml += `  <data id="data1">\n`;
                 xml += `    <uuid>${crypto.randomUUID()}</uuid>\n`;
 
-                state._methods.forEach((method) => {
+                for (const method of state._methods) {
                     const methodResultsId = "results_" + method.id;
                     xml += `    <results id="${methodResultsId}">\n`;
                     xml += `      <uuid>${crypto.randomUUID()}</uuid>\n`;
 
-                    ["material", "condition", "result"].forEach((type) => {
+                    for (const type of ["material", "condition", "result"]) {
                         const typeInstances = method.instances.filter(
                             (i) => i.type === type,
                         );
-                        typeInstances.forEach((inst) => {
+                        for (const inst of typeInstances) {
                             // Check for proxy/read-only template
                             const instTemplate = method.templates.find(
                                 (t) => t.id === inst.templateId,
@@ -6730,7 +7188,7 @@ ${state.petriNet.transitions
                                 const placeObj = method.petriNet.places.find(
                                     (p) => p.id === instTemplate.placeId,
                                 );
-                                if (placeObj && placeObj.type === "proxy") return;
+                                if (placeObj && placeObj.type === "proxy") continue;
                             }
 
                             xml += `      <${inst.type} id="${inst.id}" ref="${inst.templateId}">\n`;
@@ -6741,23 +7199,23 @@ ${state.petriNet.transitions
                                 ...(inst.instanceProperties || []),
                             ];
                             if (allProps.length > 0)
-                                xml += outputPropertiesToXML(allProps, "        ");
+                                xml += await outputPropertiesToXML(allProps, "        ", password);
 
                             const allConts = [
                                 ...(inst.contents || []),
                                 ...(inst.instanceContents || []),
                             ];
                             if (allConts.length > 0)
-                                xml += outputContentsToXML(allConts, "        ");
+                                xml += await outputContentsToXML(allConts, "        ", password);
 
                             if (inst.insertions && inst.insertions.length > 0) {
-                                inst.insertions.forEach((ins) => {
+                                for (const ins of inst.insertions) {
                                     xml += `        <insertion>\n`;
                                     xml += `          <uri>${ins.name}</uri>\n`;
                                     xml += `          <hash algorithm="${ins.hashAlgorithm}">${ins.hash}</hash>\n`;
                                     xml += `          <format>${ins.mimeType}</format>\n`;
                                     xml += `        </insertion>\n`;
-                                });
+                                }
                             }
 
                             // Instance Refs
@@ -6765,37 +7223,26 @@ ${state.petriNet.transitions
                                 const refs = method.petriNet.instanceRefs.filter(
                                     (r) => r.source === instTemplate.placeId,
                                 );
-                                refs.forEach((r) => {
-                                    // Check if target is a proxy place
+                                for (const r of refs) {
                                     const targetPlace = method.petriNet.places.find(
                                         (p) => p.id === r.target,
                                     );
-
                                     if (targetPlace && targetPlace.type === "proxy") {
-                                        // Resolve link to external method
                                         const extMethod = state._methods.find(
                                             (m) => m.id === targetPlace.originalMethodId,
                                         );
                                         if (extMethod) {
-                                            // Find templates in external method linked to original place
                                             const extTemplates = extMethod.templates.filter(
                                                 (t) => t.placeId === targetPlace.originalPlaceId,
                                             );
-                                            // Find instances in external method linked to those templates (wait, instanceRef points to Instance, not Template directly via Place?)
-                                            // The logic in original: r.target (Place ID) -> targetTemplates -> targetInstances
-
-                                            // Wait, InstanceRef source is Place ID of the *Source Instance's Template's Place*.
-                                            // Target is Place ID of the *Target Instance's Template's Place*.
-                                            // So we find ALL instances in the target place.
-
-                                            extTemplates.forEach((et) => {
+                                            for (const et of extTemplates) {
                                                 const extInstances = extMethod.instances.filter(
                                                     (i) => i.templateId === et.id,
                                                 );
-                                                extInstances.forEach((ei) => {
+                                                for (const ei of extInstances) {
                                                     xml += `        <instanceRef id="iref_${generateUUID()}" ref="${ei.id}" />\n`;
-                                                });
-                                            });
+                                                }
+                                            }
                                         }
                                     } else {
                                         const targetInstances = method.instances.filter((i) => {
@@ -6804,31 +7251,31 @@ ${state.petriNet.transitions
                                             );
                                             return t && t.placeId === r.target;
                                         });
-                                        targetInstances.forEach((ti) => {
+                                        for (const ti of targetInstances) {
                                             xml += `        <instanceRef id="iref_${generateUUID()}" ref="${ti.id}" />\n`;
-                                        });
+                                        }
                                     }
-                                });
+                                }
                             }
                             xml += `      </${inst.type}>\n`;
-                        });
-                    });
+                        }
+                    }
                     xml += `    </results>\n`;
-                });
+                }
                 xml += `  </data>\n`;
 
                 // 4. <eventLog>
                 xml += `  <eventLog id="log1">\n`;
                 xml += `    <uuid>${crypto.randomUUID()}</uuid>\n`;
 
-                state._methods.forEach((method) => {
+                for (const method of state._methods) {
                     const methodLogId = "log_" + method.id;
                     xml += `    <log id="${methodLogId}" ref="${method.id}">\n`;
                     xml += `      <uuid>${crypto.randomUUID()}</uuid>\n`;
                     xml += `      <trace id="trace_${method.id}" ref="program_${method.id}">\n`;
                     xml += `        <uuid>${crypto.randomUUID()}</uuid>\n`;
 
-                    method.events.forEach((evt) => {
+                    for (const evt of method.events) {
                         const transObj = method.petriNet.transitions.find(
                             (t) => t.id === evt.transitionId,
                         );
@@ -6846,10 +7293,10 @@ ${state.petriNet.transitions
                         })();
                         xml += `          <property key="time:timestamp" xsi:type="dateTimeType"><value>${exportTimestamp}</value></property>\n`;
                         xml += `        </event>\n`;
-                    });
+                    }
                     xml += `      </trace>\n`;
                     xml += `    </log>\n`;
-                });
+                }
                 xml += `  </eventLog>\n`;
                 xml += `</maiml>`;
 
@@ -7688,6 +8135,66 @@ ${state.petriNet.transitions
             </div>
         </div>
     </div>
+
+    <!-- Encrypt Password Modal -->
+    <div id="encrypt-password-modal"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[200] hidden flex items-center justify-center">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-[440px] max-w-[92vw] overflow-hidden border border-slate-200 dark:border-slate-700">
+            <!-- Header -->
+            <div class="px-6 py-4 bg-gradient-to-r from-amber-500 to-amber-600 flex items-center gap-3">
+                <div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="ph ph-lock-key text-white text-xl"></i>
+                </div>
+                <h3 class="font-bold text-white text-lg" id="encrypt-modal-title">Set Encryption Password</h3>
+            </div>
+            <!-- Body -->
+            <div class="p-6 space-y-4">
+                <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed" id="encrypt-modal-desc">
+                    Set a password to protect the encrypted elements.
+                </p>
+                <!-- Info box -->
+                <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 text-xs text-amber-800 dark:text-amber-300 flex gap-2">
+                    <i class="ph ph-info text-base shrink-0 mt-0.5"></i>
+                    <span>Encrypted with AES-256-GCM + PBKDF2 (SHA-256, 100,000 iterations).<br>Compliant with W3C XML Encryption 1.1 / JIS K0200.</span>
+                </div>
+                <!-- Password input -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Password</label>
+                    <div class="relative">
+                        <input type="password" id="encrypt-password-input" autocomplete="new-password"
+                            class="w-full pl-4 pr-10 py-2.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all"
+                            placeholder="At least 4 characters">
+                        <button type="button" onclick="const i=document.getElementById('encrypt-password-input'); i.type=i.type==='password'?'text':'password';"
+                            class="absolute right-2 top-2.5 text-slate-400 hover:text-slate-600">
+                            <i class="ph ph-eye text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Confirm password (encrypt mode only) -->
+                <div id="encrypt-password-confirm-wrap">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Confirm Password</label>
+                    <input type="password" id="encrypt-password-confirm" autocomplete="new-password"
+                        class="w-full px-4 py-2.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all"
+                        placeholder="Re-enter password">
+                </div>
+                <!-- Error -->
+                <p id="encrypt-password-error" class="text-xs text-red-600 dark:text-red-400 min-h-[1rem]"></p>
+            </div>
+            <!-- Footer -->
+            <div class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
+                <button id="encrypt-modal-cancel"
+                    class="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-all">
+                    Cancel
+                </button>
+                <button id="encrypt-modal-ok"
+                    class="px-5 py-2.5 text-sm font-semibold text-white bg-amber-500 hover:bg-amber-600 rounded-xl shadow-sm shadow-amber-500/20 transition-all flex items-center gap-2">
+                    <i class="ph ph-lock-key"></i>
+                    Encrypt &amp; Export
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Namespace prefix datalist (globally available) -->
     <datalist id="ns-prefix-list"></datalist>
 </body>
