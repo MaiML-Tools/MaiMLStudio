@@ -1,0 +1,1344 @@
+{
+  "document": {
+    "id": "MaiML_DataFile_CP",
+    "uuid": "",
+    "name": "MaiML_DataFile_CP",
+    "description": "MaiML DataFile CP",
+    "properties": [
+      {
+        "key": "CompanyC:projectName",
+        "type": "stringType",
+        "description": "desc. of projectName",
+        "value": "Secret"
+      },
+      {
+        "key": "CompanyC:sectionNumber",
+        "type": "stringType",
+        "description": "desc. of sectionNumber",
+        "value": "XYZ-999"
+      }
+    ],
+    "creators": [
+      {
+        "id": "creator_1770964389391",
+        "uuid": "",
+        "name": "VendorA:CP-SeriesXXX",
+        "description": "CP-SeriesXXX",
+        "vendorRefs": [
+          "vendor_1770964351593"
+        ],
+        "instrumentRefs": [
+          "instrument_1770964362317"
+        ]
+      }
+    ],
+    "owners": [
+      {
+        "id": "owner_1770964378501",
+        "uuid": "",
+        "name": "CompanyC:annonymous",
+        "description": "annonymous@company_c.co.jp"
+      }
+    ],
+    "vendors": [
+      {
+        "id": "vendor_1770964351593",
+        "uuid": "",
+        "name": "VendorA:CP_Vendor",
+        "description": "CP Vendor"
+      }
+    ],
+    "instruments": [
+      {
+        "id": "instrument_1770964362317",
+        "uuid": "",
+        "name": "VendorA:CP",
+        "description": "CP"
+      }
+    ],
+    "namespaces": [
+      {
+        "prefix": "VendorA",
+        "uri": "http://www.vendor_a.co.jp/NS/"
+      },
+      {
+        "prefix": "VendorB",
+        "uri": "http://www.vendor_b.co.jp/NS/"
+      },
+      {
+        "prefix": "CompanyC",
+        "uri": "http://www.company_c.co.jp/NS/"
+      }
+    ],
+    "chains": []
+  },
+  "_methods": [
+    {
+      "id": "method_1770964067784",
+      "uuid": "885d9981-1a60-4612-8bcd-9cfd3cf8531b",
+      "name": "CP_Method",
+      "petriNet": {
+        "places": [
+          {
+            "id": "place_1",
+            "label": "Material",
+            "x": 312,
+            "y": 112,
+            "type": "node"
+          },
+          {
+            "id": "place_2",
+            "label": "processedMaterial1",
+            "x": 535.5220332664065,
+            "y": 114.57036967996272,
+            "type": "node"
+          },
+          {
+            "id": "place_5",
+            "label": "cpCondition",
+            "x": 314,
+            "y": 250,
+            "type": "node"
+          },
+          {
+            "id": "place_6",
+            "label": "processedMaterial2",
+            "x": 534.198074765379,
+            "y": 186.09169820261602,
+            "type": "node"
+          },
+          {
+            "id": "place_7",
+            "label": "processedMaterial3",
+            "x": 544.1014019382667,
+            "y": 277.2023081931826,
+            "type": "node"
+          }
+        ],
+        "transitions": [
+          {
+            "id": "trans_1",
+            "label": "CP_Processing",
+            "x": 424.2416820677808,
+            "y": 175
+          }
+        ],
+        "arcs": [
+          {
+            "id": "arc_1770964111462",
+            "source": "place_1",
+            "target": "trans_1"
+          },
+          {
+            "id": "arc_1770964114642",
+            "source": "trans_1",
+            "target": "place_2"
+          },
+          {
+            "id": "arc_1770969725257",
+            "source": "place_5",
+            "target": "trans_1"
+          },
+          {
+            "id": "arc_1774328754355",
+            "source": "trans_1",
+            "target": "place_6"
+          },
+          {
+            "id": "arc_1774328756121",
+            "source": "trans_1",
+            "target": "place_7"
+          }
+        ],
+        "templateRefs": [],
+        "instanceRefs": []
+      },
+      "templates": [
+        {
+          "id": "template_1772078788293",
+          "uuid": "67efa482-d9e9-412f-8b13-1d0de9c1c706",
+          "placeId": "place_1",
+          "type": "material",
+          "properties": [
+            {
+              "key": "VendorA:BeforeSampleName",
+              "type": "stringType",
+              "units": "",
+              "description": "Before Sample Name",
+              "value": ""
+            },
+            {
+              "key": "VendorA:BeforeSampleID",
+              "type": "stringType",
+              "units": "",
+              "description": "Before Sample ID",
+              "value": ""
+            }
+          ],
+          "contents": []
+        },
+        {
+          "id": "template_1772078790283",
+          "uuid": "b8d5944f-5898-4a15-afe5-f8db04abe29a",
+          "placeId": "place_2",
+          "type": "material",
+          "properties": [
+            {
+              "key": "VendorA:AfterSampleName",
+              "type": "stringType",
+              "units": "",
+              "description": "After Sample Name",
+              "value": ""
+            },
+            {
+              "key": "VendorA:AfterSampleID",
+              "type": "stringType",
+              "units": "",
+              "description": "After Sample ID",
+              "value": ""
+            }
+          ],
+          "contents": []
+        },
+        {
+          "id": "template_1772078791581",
+          "uuid": "1beaad3b-619b-4ef4-a66b-37abe6d14d06",
+          "placeId": "place_5",
+          "type": "condition",
+          "properties": [
+            {
+              "key": "VendorA:IonAcceleratingVoltage",
+              "type": "intType",
+              "units": "keV",
+              "description": "Ion accelerating voltage",
+              "value": "0",
+              "scaleFactor": "1"
+            },
+            {
+              "key": "VendorA:MillingTime",
+              "type": "intType",
+              "units": "hour",
+              "description": "Milling time",
+              "value": "0",
+              "scaleFactor": "1"
+            },
+            {
+              "key": "VendorA:TargetVacuumLevel",
+              "type": "floatType",
+              "units": "Pa",
+              "description": "Target vacuum level",
+              "value": "0.0",
+              "scaleFactor": "1.0",
+              "formatString": "0.0"
+            },
+            {
+              "key": "VendorA:CoolingTemperature",
+              "type": "floatType",
+              "units": "℃",
+              "description": "Cooling temperature",
+              "value": "0.0",
+              "scaleFactor": "1.0",
+              "formatString": "0.0"
+            }
+          ],
+          "contents": []
+        },
+        {
+          "id": "template_1774328784039",
+          "uuid": "2aeb086a-1609-469f-92a3-847560cf8d92",
+          "placeId": "place_6",
+          "type": "material",
+          "properties": [
+            {
+              "key": "VendorA:AfterSampleName",
+              "type": "stringType",
+              "units": "",
+              "description": "After Sample Name",
+              "value": "",
+              "size": "",
+              "axis": "",
+              "scaleFactor": "",
+              "formatString": ""
+            },
+            {
+              "key": "VendorA:AfterSampleID",
+              "type": "stringType",
+              "units": "",
+              "description": "After Sample ID",
+              "value": "",
+              "size": "",
+              "axis": "",
+              "scaleFactor": "",
+              "formatString": ""
+            }
+          ],
+          "contents": []
+        },
+        {
+          "id": "template_1774328867178",
+          "uuid": "2f69d259-fa4d-4ed6-aa5f-8a4a1f1883ed",
+          "placeId": "place_7",
+          "type": "material",
+          "properties": [
+            {
+              "key": "VendorA:AfterSampleName",
+              "type": "stringType",
+              "units": "",
+              "description": "After Sample Name",
+              "value": "",
+              "size": "",
+              "axis": "",
+              "scaleFactor": "",
+              "formatString": ""
+            },
+            {
+              "key": "VendorA:AfterSampleID",
+              "type": "stringType",
+              "units": "",
+              "description": "After Sample ID",
+              "value": "",
+              "size": "",
+              "axis": "",
+              "scaleFactor": "",
+              "formatString": ""
+            }
+          ],
+          "contents": []
+        }
+      ],
+      "instances": [
+        {
+          "id": "instance_1772093275452",
+          "uuid": "b4fb1c9b-6007-4279-ad4d-ad8a339bdb8f",
+          "templateId": "template_1772078788293",
+          "type": "material",
+          "properties": [
+            {
+              "key": "VendorA:BeforeSampleName",
+              "type": "stringType",
+              "units": "",
+              "description": "Before Sample Name",
+              "value": "CP-AAA"
+            },
+            {
+              "key": "VendorA:BeforeSampleID",
+              "type": "stringType",
+              "units": "",
+              "description": "Before Sample ID",
+              "value": "CP-123"
+            }
+          ],
+          "contents": [],
+          "instanceProperties": [],
+          "instanceContents": [],
+          "insertions": []
+        },
+        {
+          "id": "instance_1772093276809",
+          "uuid": "d553cd51-3559-4362-ba80-5476003554f5",
+          "templateId": "template_1772078791581",
+          "type": "condition",
+          "properties": [
+            {
+              "key": "VendorA:IonAcceleratingVoltage",
+              "type": "intType",
+              "units": "keV",
+              "description": "Ion accelerating voltage",
+              "value": "8"
+            },
+            {
+              "key": "VendorA:MillingTime",
+              "type": "intType",
+              "units": "hour",
+              "description": "Milling time",
+              "value": "2"
+            },
+            {
+              "key": "VendorA:TargetVacuumLevel",
+              "type": "floatType",
+              "units": "Pa",
+              "description": "Target vacuum level",
+              "value": "5.0e-4",
+              "scaleFactor": "1.0",
+              "formatString": "0.0e0"
+            },
+            {
+              "key": "VendorA:CoolingTemperature",
+              "type": "floatType",
+              "units": "℃",
+              "description": "Cooling temperature",
+              "value": "-120.0",
+              "scaleFactor": "1.0",
+              "formatString": "0.0"
+            }
+          ],
+          "contents": [],
+          "instanceProperties": [],
+          "instanceContents": [],
+          "insertions": []
+        },
+        {
+          "id": "instance_1772093278139",
+          "uuid": "c474ac21-d9b6-4afc-8023-745501c66739",
+          "templateId": "template_1772078790283",
+          "type": "material",
+          "properties": [
+            {
+              "key": "VendorA:AfterSampleName",
+              "type": "stringType",
+              "units": "",
+              "description": "After Sample Name",
+              "value": "CP-BBB"
+            },
+            {
+              "key": "VendorA:AfterSampleID",
+              "type": "stringType",
+              "units": "",
+              "description": "After Sample ID",
+              "value": "CP-456"
+            }
+          ],
+          "contents": [],
+          "instanceProperties": [],
+          "instanceContents": [],
+          "insertions": []
+        },
+        {
+          "id": "instance_1774328884627",
+          "uuid": "c4cd197e-3397-469e-a153-e386dc9fc94c",
+          "templateId": "template_1774328784039",
+          "type": "material",
+          "properties": [
+            {
+              "key": "VendorA:AfterSampleName",
+              "type": "stringType",
+              "units": "",
+              "description": "After Sample Name",
+              "value": "CP-BBB",
+              "size": "",
+              "axis": "",
+              "scaleFactor": "",
+              "formatString": ""
+            },
+            {
+              "key": "VendorA:AfterSampleID",
+              "type": "stringType",
+              "units": "",
+              "description": "After Sample ID",
+              "value": "CP-789",
+              "size": "",
+              "axis": "",
+              "scaleFactor": "",
+              "formatString": ""
+            }
+          ],
+          "contents": [],
+          "instanceProperties": [],
+          "instanceContents": [],
+          "insertions": []
+        },
+        {
+          "id": "instance_1774328886295",
+          "uuid": "17fc9cc8-22f0-40e3-b7d1-bab5273bfbc6",
+          "templateId": "template_1774328867178",
+          "type": "material",
+          "properties": [
+            {
+              "key": "VendorA:AfterSampleName",
+              "type": "stringType",
+              "units": "",
+              "description": "After Sample Name",
+              "value": "CP-BBB",
+              "size": "",
+              "axis": "",
+              "scaleFactor": "",
+              "formatString": ""
+            },
+            {
+              "key": "VendorA:AfterSampleID",
+              "type": "stringType",
+              "units": "",
+              "description": "After Sample ID",
+              "value": "CP-999",
+              "size": "",
+              "axis": "",
+              "scaleFactor": "",
+              "formatString": ""
+            }
+          ],
+          "contents": [],
+          "instanceProperties": [],
+          "instanceContents": [],
+          "insertions": []
+        }
+      ],
+      "events": [
+        {
+          "id": "event_trans_1_1770964232050",
+          "uuid": "3abbfd9f-ca19-4ddb-b45a-acd31358a0c6",
+          "transitionId": "trans_1",
+          "transitionLabel": "trans_1",
+          "lifecycle": "complete",
+          "timestamp": "2026-02-20T15:30:32+09:00"
+        }
+      ],
+      "canvasTranslate": {
+        "x": 99.58726987445954,
+        "y": 89.20111451954347
+      },
+      "canvasScale": 1.0097616513546062
+    }
+  ],
+  "_activeMethodId": "method_1770964067784",
+  "activeMethod": {
+    "id": "method_1770964067784",
+    "uuid": "885d9981-1a60-4612-8bcd-9cfd3cf8531b",
+    "name": "CP_Method",
+    "petriNet": {
+      "places": [
+        {
+          "id": "place_1",
+          "label": "Material",
+          "x": 312,
+          "y": 112,
+          "type": "node"
+        },
+        {
+          "id": "place_2",
+          "label": "processedMaterial1",
+          "x": 535.5220332664065,
+          "y": 114.57036967996272,
+          "type": "node"
+        },
+        {
+          "id": "place_5",
+          "label": "cpCondition",
+          "x": 314,
+          "y": 250,
+          "type": "node"
+        },
+        {
+          "id": "place_6",
+          "label": "processedMaterial2",
+          "x": 534.198074765379,
+          "y": 186.09169820261602,
+          "type": "node"
+        },
+        {
+          "id": "place_7",
+          "label": "processedMaterial3",
+          "x": 544.1014019382667,
+          "y": 277.2023081931826,
+          "type": "node"
+        }
+      ],
+      "transitions": [
+        {
+          "id": "trans_1",
+          "label": "CP_Processing",
+          "x": 424.2416820677808,
+          "y": 175
+        }
+      ],
+      "arcs": [
+        {
+          "id": "arc_1770964111462",
+          "source": "place_1",
+          "target": "trans_1"
+        },
+        {
+          "id": "arc_1770964114642",
+          "source": "trans_1",
+          "target": "place_2"
+        },
+        {
+          "id": "arc_1770969725257",
+          "source": "place_5",
+          "target": "trans_1"
+        },
+        {
+          "id": "arc_1774328754355",
+          "source": "trans_1",
+          "target": "place_6"
+        },
+        {
+          "id": "arc_1774328756121",
+          "source": "trans_1",
+          "target": "place_7"
+        }
+      ],
+      "templateRefs": [],
+      "instanceRefs": []
+    },
+    "templates": [
+      {
+        "id": "template_1772078788293",
+        "uuid": "67efa482-d9e9-412f-8b13-1d0de9c1c706",
+        "placeId": "place_1",
+        "type": "material",
+        "properties": [
+          {
+            "key": "VendorA:BeforeSampleName",
+            "type": "stringType",
+            "units": "",
+            "description": "Before Sample Name",
+            "value": ""
+          },
+          {
+            "key": "VendorA:BeforeSampleID",
+            "type": "stringType",
+            "units": "",
+            "description": "Before Sample ID",
+            "value": ""
+          }
+        ],
+        "contents": []
+      },
+      {
+        "id": "template_1772078790283",
+        "uuid": "b8d5944f-5898-4a15-afe5-f8db04abe29a",
+        "placeId": "place_2",
+        "type": "material",
+        "properties": [
+          {
+            "key": "VendorA:AfterSampleName",
+            "type": "stringType",
+            "units": "",
+            "description": "After Sample Name",
+            "value": ""
+          },
+          {
+            "key": "VendorA:AfterSampleID",
+            "type": "stringType",
+            "units": "",
+            "description": "After Sample ID",
+            "value": ""
+          }
+        ],
+        "contents": []
+      },
+      {
+        "id": "template_1772078791581",
+        "uuid": "1beaad3b-619b-4ef4-a66b-37abe6d14d06",
+        "placeId": "place_5",
+        "type": "condition",
+        "properties": [
+          {
+            "key": "VendorA:IonAcceleratingVoltage",
+            "type": "intType",
+            "units": "keV",
+            "description": "Ion accelerating voltage",
+            "value": "0",
+            "scaleFactor": "1"
+          },
+          {
+            "key": "VendorA:MillingTime",
+            "type": "intType",
+            "units": "hour",
+            "description": "Milling time",
+            "value": "0",
+            "scaleFactor": "1"
+          },
+          {
+            "key": "VendorA:TargetVacuumLevel",
+            "type": "floatType",
+            "units": "Pa",
+            "description": "Target vacuum level",
+            "value": "0.0",
+            "scaleFactor": "1.0",
+            "formatString": "0.0"
+          },
+          {
+            "key": "VendorA:CoolingTemperature",
+            "type": "floatType",
+            "units": "℃",
+            "description": "Cooling temperature",
+            "value": "0.0",
+            "scaleFactor": "1.0",
+            "formatString": "0.0"
+          }
+        ],
+        "contents": []
+      },
+      {
+        "id": "template_1774328784039",
+        "uuid": "2aeb086a-1609-469f-92a3-847560cf8d92",
+        "placeId": "place_6",
+        "type": "material",
+        "properties": [
+          {
+            "key": "VendorA:AfterSampleName",
+            "type": "stringType",
+            "units": "",
+            "description": "After Sample Name",
+            "value": "",
+            "size": "",
+            "axis": "",
+            "scaleFactor": "",
+            "formatString": ""
+          },
+          {
+            "key": "VendorA:AfterSampleID",
+            "type": "stringType",
+            "units": "",
+            "description": "After Sample ID",
+            "value": "",
+            "size": "",
+            "axis": "",
+            "scaleFactor": "",
+            "formatString": ""
+          }
+        ],
+        "contents": []
+      },
+      {
+        "id": "template_1774328867178",
+        "uuid": "2f69d259-fa4d-4ed6-aa5f-8a4a1f1883ed",
+        "placeId": "place_7",
+        "type": "material",
+        "properties": [
+          {
+            "key": "VendorA:AfterSampleName",
+            "type": "stringType",
+            "units": "",
+            "description": "After Sample Name",
+            "value": "",
+            "size": "",
+            "axis": "",
+            "scaleFactor": "",
+            "formatString": ""
+          },
+          {
+            "key": "VendorA:AfterSampleID",
+            "type": "stringType",
+            "units": "",
+            "description": "After Sample ID",
+            "value": "",
+            "size": "",
+            "axis": "",
+            "scaleFactor": "",
+            "formatString": ""
+          }
+        ],
+        "contents": []
+      }
+    ],
+    "instances": [
+      {
+        "id": "instance_1772093275452",
+        "uuid": "b4fb1c9b-6007-4279-ad4d-ad8a339bdb8f",
+        "templateId": "template_1772078788293",
+        "type": "material",
+        "properties": [
+          {
+            "key": "VendorA:BeforeSampleName",
+            "type": "stringType",
+            "units": "",
+            "description": "Before Sample Name",
+            "value": "CP-AAA"
+          },
+          {
+            "key": "VendorA:BeforeSampleID",
+            "type": "stringType",
+            "units": "",
+            "description": "Before Sample ID",
+            "value": "CP-123"
+          }
+        ],
+        "contents": [],
+        "instanceProperties": [],
+        "instanceContents": [],
+        "insertions": []
+      },
+      {
+        "id": "instance_1772093276809",
+        "uuid": "d553cd51-3559-4362-ba80-5476003554f5",
+        "templateId": "template_1772078791581",
+        "type": "condition",
+        "properties": [
+          {
+            "key": "VendorA:IonAcceleratingVoltage",
+            "type": "intType",
+            "units": "keV",
+            "description": "Ion accelerating voltage",
+            "value": "8"
+          },
+          {
+            "key": "VendorA:MillingTime",
+            "type": "intType",
+            "units": "hour",
+            "description": "Milling time",
+            "value": "2"
+          },
+          {
+            "key": "VendorA:TargetVacuumLevel",
+            "type": "floatType",
+            "units": "Pa",
+            "description": "Target vacuum level",
+            "value": "5.0e-4",
+            "scaleFactor": "1.0",
+            "formatString": "0.0e0"
+          },
+          {
+            "key": "VendorA:CoolingTemperature",
+            "type": "floatType",
+            "units": "℃",
+            "description": "Cooling temperature",
+            "value": "-120.0",
+            "scaleFactor": "1.0",
+            "formatString": "0.0"
+          }
+        ],
+        "contents": [],
+        "instanceProperties": [],
+        "instanceContents": [],
+        "insertions": []
+      },
+      {
+        "id": "instance_1772093278139",
+        "uuid": "c474ac21-d9b6-4afc-8023-745501c66739",
+        "templateId": "template_1772078790283",
+        "type": "material",
+        "properties": [
+          {
+            "key": "VendorA:AfterSampleName",
+            "type": "stringType",
+            "units": "",
+            "description": "After Sample Name",
+            "value": "CP-BBB"
+          },
+          {
+            "key": "VendorA:AfterSampleID",
+            "type": "stringType",
+            "units": "",
+            "description": "After Sample ID",
+            "value": "CP-456"
+          }
+        ],
+        "contents": [],
+        "instanceProperties": [],
+        "instanceContents": [],
+        "insertions": []
+      },
+      {
+        "id": "instance_1774328884627",
+        "uuid": "c4cd197e-3397-469e-a153-e386dc9fc94c",
+        "templateId": "template_1774328784039",
+        "type": "material",
+        "properties": [
+          {
+            "key": "VendorA:AfterSampleName",
+            "type": "stringType",
+            "units": "",
+            "description": "After Sample Name",
+            "value": "CP-BBB",
+            "size": "",
+            "axis": "",
+            "scaleFactor": "",
+            "formatString": ""
+          },
+          {
+            "key": "VendorA:AfterSampleID",
+            "type": "stringType",
+            "units": "",
+            "description": "After Sample ID",
+            "value": "CP-789",
+            "size": "",
+            "axis": "",
+            "scaleFactor": "",
+            "formatString": ""
+          }
+        ],
+        "contents": [],
+        "instanceProperties": [],
+        "instanceContents": [],
+        "insertions": []
+      },
+      {
+        "id": "instance_1774328886295",
+        "uuid": "17fc9cc8-22f0-40e3-b7d1-bab5273bfbc6",
+        "templateId": "template_1774328867178",
+        "type": "material",
+        "properties": [
+          {
+            "key": "VendorA:AfterSampleName",
+            "type": "stringType",
+            "units": "",
+            "description": "After Sample Name",
+            "value": "CP-BBB",
+            "size": "",
+            "axis": "",
+            "scaleFactor": "",
+            "formatString": ""
+          },
+          {
+            "key": "VendorA:AfterSampleID",
+            "type": "stringType",
+            "units": "",
+            "description": "After Sample ID",
+            "value": "CP-999",
+            "size": "",
+            "axis": "",
+            "scaleFactor": "",
+            "formatString": ""
+          }
+        ],
+        "contents": [],
+        "instanceProperties": [],
+        "instanceContents": [],
+        "insertions": []
+      }
+    ],
+    "events": [
+      {
+        "id": "event_trans_1_1770964232050",
+        "uuid": "3abbfd9f-ca19-4ddb-b45a-acd31358a0c6",
+        "transitionId": "trans_1",
+        "transitionLabel": "trans_1",
+        "lifecycle": "complete",
+        "timestamp": "2026-02-20T15:30:32+09:00"
+      }
+    ],
+    "canvasTranslate": {
+      "x": 99.58726987445954,
+      "y": 89.20111451954347
+    },
+    "canvasScale": 1.0097616513546062
+  },
+  "petriNet": {
+    "places": [
+      {
+        "id": "place_1",
+        "label": "Material",
+        "x": 312,
+        "y": 112,
+        "type": "node"
+      },
+      {
+        "id": "place_2",
+        "label": "processedMaterial1",
+        "x": 535.5220332664065,
+        "y": 114.57036967996272,
+        "type": "node"
+      },
+      {
+        "id": "place_5",
+        "label": "cpCondition",
+        "x": 314,
+        "y": 250,
+        "type": "node"
+      },
+      {
+        "id": "place_6",
+        "label": "processedMaterial2",
+        "x": 534.198074765379,
+        "y": 186.09169820261602,
+        "type": "node"
+      },
+      {
+        "id": "place_7",
+        "label": "processedMaterial3",
+        "x": 544.1014019382667,
+        "y": 277.2023081931826,
+        "type": "node"
+      }
+    ],
+    "transitions": [
+      {
+        "id": "trans_1",
+        "label": "CP_Processing",
+        "x": 424.2416820677808,
+        "y": 175
+      }
+    ],
+    "arcs": [
+      {
+        "id": "arc_1770964111462",
+        "source": "place_1",
+        "target": "trans_1"
+      },
+      {
+        "id": "arc_1770964114642",
+        "source": "trans_1",
+        "target": "place_2"
+      },
+      {
+        "id": "arc_1770969725257",
+        "source": "place_5",
+        "target": "trans_1"
+      },
+      {
+        "id": "arc_1774328754355",
+        "source": "trans_1",
+        "target": "place_6"
+      },
+      {
+        "id": "arc_1774328756121",
+        "source": "trans_1",
+        "target": "place_7"
+      }
+    ],
+    "templateRefs": [],
+    "instanceRefs": []
+  },
+  "templates": [
+    {
+      "id": "template_1772078788293",
+      "uuid": "67efa482-d9e9-412f-8b13-1d0de9c1c706",
+      "placeId": "place_1",
+      "type": "material",
+      "properties": [
+        {
+          "key": "VendorA:BeforeSampleName",
+          "type": "stringType",
+          "units": "",
+          "description": "Before Sample Name",
+          "value": ""
+        },
+        {
+          "key": "VendorA:BeforeSampleID",
+          "type": "stringType",
+          "units": "",
+          "description": "Before Sample ID",
+          "value": ""
+        }
+      ],
+      "contents": []
+    },
+    {
+      "id": "template_1772078790283",
+      "uuid": "b8d5944f-5898-4a15-afe5-f8db04abe29a",
+      "placeId": "place_2",
+      "type": "material",
+      "properties": [
+        {
+          "key": "VendorA:AfterSampleName",
+          "type": "stringType",
+          "units": "",
+          "description": "After Sample Name",
+          "value": ""
+        },
+        {
+          "key": "VendorA:AfterSampleID",
+          "type": "stringType",
+          "units": "",
+          "description": "After Sample ID",
+          "value": ""
+        }
+      ],
+      "contents": []
+    },
+    {
+      "id": "template_1772078791581",
+      "uuid": "1beaad3b-619b-4ef4-a66b-37abe6d14d06",
+      "placeId": "place_5",
+      "type": "condition",
+      "properties": [
+        {
+          "key": "VendorA:IonAcceleratingVoltage",
+          "type": "intType",
+          "units": "keV",
+          "description": "Ion accelerating voltage",
+          "value": "0",
+          "scaleFactor": "1"
+        },
+        {
+          "key": "VendorA:MillingTime",
+          "type": "intType",
+          "units": "hour",
+          "description": "Milling time",
+          "value": "0",
+          "scaleFactor": "1"
+        },
+        {
+          "key": "VendorA:TargetVacuumLevel",
+          "type": "floatType",
+          "units": "Pa",
+          "description": "Target vacuum level",
+          "value": "0.0",
+          "scaleFactor": "1.0",
+          "formatString": "0.0"
+        },
+        {
+          "key": "VendorA:CoolingTemperature",
+          "type": "floatType",
+          "units": "℃",
+          "description": "Cooling temperature",
+          "value": "0.0",
+          "scaleFactor": "1.0",
+          "formatString": "0.0"
+        }
+      ],
+      "contents": []
+    },
+    {
+      "id": "template_1774328784039",
+      "uuid": "2aeb086a-1609-469f-92a3-847560cf8d92",
+      "placeId": "place_6",
+      "type": "material",
+      "properties": [
+        {
+          "key": "VendorA:AfterSampleName",
+          "type": "stringType",
+          "units": "",
+          "description": "After Sample Name",
+          "value": "",
+          "size": "",
+          "axis": "",
+          "scaleFactor": "",
+          "formatString": ""
+        },
+        {
+          "key": "VendorA:AfterSampleID",
+          "type": "stringType",
+          "units": "",
+          "description": "After Sample ID",
+          "value": "",
+          "size": "",
+          "axis": "",
+          "scaleFactor": "",
+          "formatString": ""
+        }
+      ],
+      "contents": []
+    },
+    {
+      "id": "template_1774328867178",
+      "uuid": "2f69d259-fa4d-4ed6-aa5f-8a4a1f1883ed",
+      "placeId": "place_7",
+      "type": "material",
+      "properties": [
+        {
+          "key": "VendorA:AfterSampleName",
+          "type": "stringType",
+          "units": "",
+          "description": "After Sample Name",
+          "value": "",
+          "size": "",
+          "axis": "",
+          "scaleFactor": "",
+          "formatString": ""
+        },
+        {
+          "key": "VendorA:AfterSampleID",
+          "type": "stringType",
+          "units": "",
+          "description": "After Sample ID",
+          "value": "",
+          "size": "",
+          "axis": "",
+          "scaleFactor": "",
+          "formatString": ""
+        }
+      ],
+      "contents": []
+    }
+  ],
+  "instances": [
+    {
+      "id": "instance_1772093275452",
+      "uuid": "b4fb1c9b-6007-4279-ad4d-ad8a339bdb8f",
+      "templateId": "template_1772078788293",
+      "type": "material",
+      "properties": [
+        {
+          "key": "VendorA:BeforeSampleName",
+          "type": "stringType",
+          "units": "",
+          "description": "Before Sample Name",
+          "value": "CP-AAA"
+        },
+        {
+          "key": "VendorA:BeforeSampleID",
+          "type": "stringType",
+          "units": "",
+          "description": "Before Sample ID",
+          "value": "CP-123"
+        }
+      ],
+      "contents": [],
+      "instanceProperties": [],
+      "instanceContents": [],
+      "insertions": []
+    },
+    {
+      "id": "instance_1772093276809",
+      "uuid": "d553cd51-3559-4362-ba80-5476003554f5",
+      "templateId": "template_1772078791581",
+      "type": "condition",
+      "properties": [
+        {
+          "key": "VendorA:IonAcceleratingVoltage",
+          "type": "intType",
+          "units": "keV",
+          "description": "Ion accelerating voltage",
+          "value": "8"
+        },
+        {
+          "key": "VendorA:MillingTime",
+          "type": "intType",
+          "units": "hour",
+          "description": "Milling time",
+          "value": "2"
+        },
+        {
+          "key": "VendorA:TargetVacuumLevel",
+          "type": "floatType",
+          "units": "Pa",
+          "description": "Target vacuum level",
+          "value": "5.0e-4",
+          "scaleFactor": "1.0",
+          "formatString": "0.0e0"
+        },
+        {
+          "key": "VendorA:CoolingTemperature",
+          "type": "floatType",
+          "units": "℃",
+          "description": "Cooling temperature",
+          "value": "-120.0",
+          "scaleFactor": "1.0",
+          "formatString": "0.0"
+        }
+      ],
+      "contents": [],
+      "instanceProperties": [],
+      "instanceContents": [],
+      "insertions": []
+    },
+    {
+      "id": "instance_1772093278139",
+      "uuid": "c474ac21-d9b6-4afc-8023-745501c66739",
+      "templateId": "template_1772078790283",
+      "type": "material",
+      "properties": [
+        {
+          "key": "VendorA:AfterSampleName",
+          "type": "stringType",
+          "units": "",
+          "description": "After Sample Name",
+          "value": "CP-BBB"
+        },
+        {
+          "key": "VendorA:AfterSampleID",
+          "type": "stringType",
+          "units": "",
+          "description": "After Sample ID",
+          "value": "CP-456"
+        }
+      ],
+      "contents": [],
+      "instanceProperties": [],
+      "instanceContents": [],
+      "insertions": []
+    },
+    {
+      "id": "instance_1774328884627",
+      "uuid": "c4cd197e-3397-469e-a153-e386dc9fc94c",
+      "templateId": "template_1774328784039",
+      "type": "material",
+      "properties": [
+        {
+          "key": "VendorA:AfterSampleName",
+          "type": "stringType",
+          "units": "",
+          "description": "After Sample Name",
+          "value": "CP-BBB",
+          "size": "",
+          "axis": "",
+          "scaleFactor": "",
+          "formatString": ""
+        },
+        {
+          "key": "VendorA:AfterSampleID",
+          "type": "stringType",
+          "units": "",
+          "description": "After Sample ID",
+          "value": "CP-789",
+          "size": "",
+          "axis": "",
+          "scaleFactor": "",
+          "formatString": ""
+        }
+      ],
+      "contents": [],
+      "instanceProperties": [],
+      "instanceContents": [],
+      "insertions": []
+    },
+    {
+      "id": "instance_1774328886295",
+      "uuid": "17fc9cc8-22f0-40e3-b7d1-bab5273bfbc6",
+      "templateId": "template_1774328867178",
+      "type": "material",
+      "properties": [
+        {
+          "key": "VendorA:AfterSampleName",
+          "type": "stringType",
+          "units": "",
+          "description": "After Sample Name",
+          "value": "CP-BBB",
+          "size": "",
+          "axis": "",
+          "scaleFactor": "",
+          "formatString": ""
+        },
+        {
+          "key": "VendorA:AfterSampleID",
+          "type": "stringType",
+          "units": "",
+          "description": "After Sample ID",
+          "value": "CP-999",
+          "size": "",
+          "axis": "",
+          "scaleFactor": "",
+          "formatString": ""
+        }
+      ],
+      "contents": [],
+      "instanceProperties": [],
+      "instanceContents": [],
+      "insertions": []
+    }
+  ],
+  "events": [
+    {
+      "id": "event_trans_1_1770964232050",
+      "uuid": "3abbfd9f-ca19-4ddb-b45a-acd31358a0c6",
+      "transitionId": "trans_1",
+      "transitionLabel": "trans_1",
+      "lifecycle": "complete",
+      "timestamp": "2026-02-20T15:30:32+09:00"
+    }
+  ],
+  "canvasTranslate": {
+    "x": 99.58726987445954,
+    "y": 89.20111451954347
+  },
+  "canvasScale": 1.0097616513546062,
+  "mode": "select",
+  "selectedNode": {
+    "id": "place_7",
+    "label": "processedMaterial3",
+    "x": 537.1690729172453,
+    "y": 352.4675947071289,
+    "type": "place",
+    "previousValidLabel": "processedMaterial3"
+  },
+  "arcStart": null,
+  "arcDragging": false,
+  "arcPreview": null,
+  "arcHoverTarget": null,
+  "petriNetSubView": "canvas",
+  "activeTab": "data",
+  "draggingNode": null,
+  "dragOffset": {
+    "x": -2.970998151866297,
+    "y": -7.922661738310126
+  },
+  "isPanning": false,
+  "lastMousePos": {
+    "x": 783,
+    "y": 364
+  },
+  "panMoved": false
+}

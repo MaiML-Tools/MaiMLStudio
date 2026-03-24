@@ -1,0 +1,1557 @@
+{
+  "document": {
+    "id": "MaiML_DataFile_SEM",
+    "uuid": "",
+    "name": "MaiML_DataFile_SEM",
+    "description": "MaiML DataFile SEM",
+    "properties": [
+      {
+        "key": "CompanyC:projectName",
+        "type": "stringType",
+        "description": "desc. of projectName",
+        "value": "Secret"
+      },
+      {
+        "key": "CompanyC:sectionNumber",
+        "type": "stringType",
+        "description": "desc. of sectionNumber",
+        "value": "XYZ-999"
+      }
+    ],
+    "creators": [
+      {
+        "id": "creator_1770964466916",
+        "uuid": "",
+        "name": "VendorB:SEM-SeriesYYY",
+        "description": "SEM-SeriesYYY",
+        "vendorRefs": [
+          "vendor_1770964351593"
+        ],
+        "instrumentRefs": [
+          "instrument_1770964373554"
+        ]
+      }
+    ],
+    "owners": [
+      {
+        "id": "owner_1770964378501",
+        "uuid": "",
+        "name": "CompanyC:annonymous",
+        "description": "annonymous@company_c.co.jp"
+      }
+    ],
+    "vendors": [
+      {
+        "id": "vendor_1772095871681",
+        "uuid": "",
+        "name": "VendorB:SEM_Vendor",
+        "description": "SEM Vendor"
+      }
+    ],
+    "instruments": [
+      {
+        "id": "instrument_1770964373554",
+        "uuid": "",
+        "name": "VendorB:SEM",
+        "description": "SEM"
+      }
+    ],
+    "namespaces": [
+      {
+        "prefix": "VendorA",
+        "uri": "http://www.vendor_a.co.jp/NS/"
+      },
+      {
+        "prefix": "VendorB",
+        "uri": "http://www.vendor_b.co.jp/NS/"
+      },
+      {
+        "prefix": "CompanyC",
+        "uri": "http://www.company_c.co.jp/NS/"
+      }
+    ],
+    "chains": [
+      {
+        "id": "chain_1774329015842",
+        "key": "chain",
+        "uuid": "7c88ff0a-6eee-443e-a4c3-671d3eddf462",
+        "hash": "PvmObFZ2PB1F9dyQZWS7aZXV9Z5kn+Ks080Siu8lE7Y=",
+        "hashMethod": "SHA-256",
+        "fileName": "MaiML_DataFile_CP.maiml"
+      }
+    ]
+  },
+  "_methods": [
+    {
+      "id": "method_1770964099270",
+      "uuid": "e8134722-7980-4c41-ba5b-d9f889c5931c",
+      "name": "SEM_Method",
+      "petriNet": {
+        "places": [
+          {
+            "id": "place_3",
+            "label": "semMaterial",
+            "x": 239,
+            "y": 116,
+            "type": "node"
+          },
+          {
+            "id": "place_4",
+            "label": "semImage",
+            "x": 477.15467652337975,
+            "y": 154.1160073925348,
+            "type": "node"
+          },
+          {
+            "id": "place_6",
+            "label": "semCondition",
+            "x": 244,
+            "y": 219,
+            "type": "node"
+          }
+        ],
+        "transitions": [
+          {
+            "id": "trans_2",
+            "label": "SEM_Measurement",
+            "x": 357,
+            "y": 153
+          }
+        ],
+        "arcs": [
+          {
+            "id": "arc_1770964124853",
+            "source": "place_3",
+            "target": "trans_2"
+          },
+          {
+            "id": "arc_1770964127391",
+            "source": "trans_2",
+            "target": "place_4"
+          },
+          {
+            "id": "arc_1770969816815",
+            "source": "place_6",
+            "target": "trans_2"
+          }
+        ],
+        "templateRefs": [],
+        "instanceRefs": []
+      },
+      "templates": [
+        {
+          "id": "template_1772078795392",
+          "uuid": "b8d5944f-5898-4a15-afe5-f8db04abe29a",
+          "placeId": "place_3",
+          "type": "material",
+          "properties": [
+            {
+              "key": "VendorB:SampleName",
+              "type": "stringType",
+              "units": "",
+              "description": "SEM Sample Name",
+              "value": ""
+            },
+            {
+              "key": "VendorB:",
+              "type": "stringType",
+              "units": "",
+              "description": "SEM Sample ID",
+              "value": ""
+            }
+          ],
+          "contents": []
+        },
+        {
+          "id": "template_1772078797355",
+          "uuid": "81cb2f4a-441d-44fb-abe5-c0fcc9d80345",
+          "placeId": "place_4",
+          "type": "result",
+          "properties": [
+            {
+              "key": "VendorB:ImageSizeX",
+              "type": "stringType",
+              "units": "",
+              "description": "Image Size X",
+              "value": ""
+            },
+            {
+              "key": "VendorB:ImageSizeY",
+              "type": "stringType",
+              "units": "",
+              "description": "Image Size X",
+              "value": ""
+            },
+            {
+              "key": "VendorB:PixelSize",
+              "type": "doubleType",
+              "units": "um/pixel",
+              "description": "Pixel Size",
+              "value": "0.0000",
+              "formatString": "0.0000",
+              "scaleFactor": "1.0"
+            }
+          ],
+          "contents": []
+        },
+        {
+          "id": "template_1772078798686",
+          "uuid": "a3075542-c49d-4d51-b8aa-1cd821502634",
+          "placeId": "place_6",
+          "type": "condition",
+          "properties": [
+            {
+              "key": "VendorB:AcceleratingVoltage",
+              "type": "floatType",
+              "units": "kV",
+              "description": "Accelerating Voltage",
+              "value": "0.0",
+              "formatString": "0.00",
+              "scaleFactor": "1.00"
+            },
+            {
+              "key": "VendorB:ProbeCurrent",
+              "type": "floatType",
+              "units": "A",
+              "description": "probeCurrent",
+              "value": "0.00",
+              "formatString": "0.00",
+              "scaleFactor": "1.0"
+            },
+            {
+              "key": "VendorB:Magnification",
+              "type": "intType",
+              "units": "",
+              "description": "Magnification",
+              "value": "0",
+              "scaleFactor": "1"
+            },
+            {
+              "key": "VendorB:WorkingDistance",
+              "type": "floatType",
+              "units": "mm",
+              "description": "Working Distance",
+              "value": "0.0",
+              "formatString": "0.00",
+              "scaleFactor": "1.00"
+            },
+            {
+              "key": "VendorB:\tDetector",
+              "type": "stringType",
+              "units": "",
+              "description": "Detector",
+              "value": ""
+            },
+            {
+              "key": "VendorB:VacuumMode",
+              "type": "stringType",
+              "units": "",
+              "description": "Vacuum Mode",
+              "value": ""
+            },
+            {
+              "key": "VendorB:ScanTime",
+              "type": "floatType",
+              "units": "sec",
+              "description": "Scan Time",
+              "value": "\t0.00",
+              "formatString": "\t0.00",
+              "scaleFactor": "1.0"
+            },
+            {
+              "key": "VendorB:Vacuum",
+              "type": "intType",
+              "units": "Pa",
+              "description": "Degree of vacuum",
+              "value": "0",
+              "scaleFactor": "1"
+            },
+            {
+              "key": "VendorB:DwellTime",
+              "type": "intType",
+              "units": "ns",
+              "description": "Dwell Time",
+              "value": "0",
+              "scaleFactor": "1"
+            },
+            {
+              "key": "VendorB:StagePosition",
+              "type": "propertyListType",
+              "units": "",
+              "description": "StagePosition",
+              "value": "",
+              "children": {
+                "properties": [
+                  {
+                    "key": "VendorB:StagePositionX",
+                    "type": "floatType",
+                    "value": "0.00000",
+                    "description": "Stage Position X",
+                    "units": "mm",
+                    "formatString": "0.00000",
+                    "scaleFactor": "1.0"
+                  },
+                  {
+                    "key": "VendorB:StagePositionY",
+                    "type": "floatType",
+                    "value": "0.00000",
+                    "description": "Stage Position Y",
+                    "units": "mm",
+                    "formatString": "0.00000",
+                    "scaleFactor": "1.0"
+                  },
+                  {
+                    "key": "VendorB:StagePositionZ",
+                    "type": "floatType",
+                    "value": "0.00000",
+                    "description": "Stage Position Z",
+                    "units": "mm",
+                    "formatString": "0.00000",
+                    "scaleFactor": "1.0"
+                  },
+                  {
+                    "key": "VendorB:StageTilt",
+                    "type": "floatType",
+                    "value": "0.00000",
+                    "description": "Stage Tilt",
+                    "units": "mm",
+                    "formatString": "0.00000",
+                    "scaleFactor": "1.0"
+                  },
+                  {
+                    "key": "VendorB:StagePositionFineZ",
+                    "type": "floatType",
+                    "value": "0.00000",
+                    "description": "Stage Position Fine Z",
+                    "units": "mm",
+                    "formatString": "0.00000",
+                    "scaleFactor": "1.0"
+                  }
+                ],
+                "contents": []
+              }
+            }
+          ],
+          "contents": []
+        }
+      ],
+      "instances": [
+        {
+          "id": "instance_1772093676880",
+          "uuid": "c4cd197e-3397-469e-a153-e386dc9fc94c",
+          "templateId": "template_1772078795392",
+          "type": "material",
+          "properties": [
+            {
+              "key": "VendorB:SampleName",
+              "type": "stringType",
+              "units": "",
+              "description": "SEM Sample Name",
+              "value": "SEM-AAA"
+            },
+            {
+              "key": "VendorB:",
+              "type": "stringType",
+              "units": "",
+              "description": "SEM Sample ID",
+              "value": "SEM-123"
+            }
+          ],
+          "contents": [],
+          "instanceProperties": [],
+          "instanceContents": [],
+          "insertions": []
+        },
+        {
+          "id": "instance_1772093678212",
+          "uuid": "c5bc28f9-c415-4fba-b6ef-8b3766d3e96c",
+          "templateId": "template_1772078798686",
+          "type": "condition",
+          "properties": [
+            {
+              "key": "VendorB:AcceleratingVoltage",
+              "type": "floatType",
+              "units": "kV",
+              "description": "Accelerating Voltage",
+              "value": "20.0",
+              "formatString": "0.00",
+              "scaleFactor": "1.00"
+            },
+            {
+              "key": "VendorB:ProbeCurrent",
+              "type": "floatType",
+              "units": "A",
+              "description": "probeCurrent",
+              "value": "0.00",
+              "formatString": "0.00",
+              "scaleFactor": "1.0"
+            },
+            {
+              "key": "VendorB:Magnification",
+              "type": "intType",
+              "units": "",
+              "description": "Magnification",
+              "value": "100000",
+              "scaleFactor": "1"
+            },
+            {
+              "key": "VendorB:WorkingDistance",
+              "type": "floatType",
+              "units": "mm",
+              "description": "Working Distance",
+              "value": "6.0",
+              "formatString": "0.00",
+              "scaleFactor": "1.00"
+            },
+            {
+              "key": "VendorB:\tDetector",
+              "type": "stringType",
+              "units": "",
+              "description": "Detector",
+              "value": "BED-C"
+            },
+            {
+              "key": "VendorB:VacuumMode",
+              "type": "stringType",
+              "units": "",
+              "description": "Vacuum Mode",
+              "value": "Low Vaccum"
+            },
+            {
+              "key": "VendorB:ScanTime",
+              "type": "floatType",
+              "units": "sec",
+              "description": "Scan Time",
+              "value": "80.00",
+              "formatString": "\t0.00",
+              "scaleFactor": "1.0"
+            },
+            {
+              "key": "VendorB:Vacuum",
+              "type": "intType",
+              "units": "Pa",
+              "description": "Degree of vacuum",
+              "value": "50",
+              "scaleFactor": "1"
+            },
+            {
+              "key": "VendorB:DwellTime",
+              "type": "intType",
+              "units": "ns",
+              "description": "Dwell Time",
+              "value": "0",
+              "scaleFactor": "1"
+            },
+            {
+              "key": "VendorB:StagePosition",
+              "type": "propertyListType",
+              "units": "",
+              "description": "StagePosition",
+              "value": "",
+              "children": {
+                "properties": [
+                  {
+                    "key": "VendorB:StagePositionX",
+                    "type": "floatType",
+                    "value": "-14.78000",
+                    "description": "Stage Position X",
+                    "units": "mm",
+                    "formatString": "0.00000",
+                    "scaleFactor": "1.0"
+                  },
+                  {
+                    "key": "VendorB:StagePositionY",
+                    "type": "floatType",
+                    "value": "-0.17400",
+                    "description": "Stage Position Y",
+                    "units": "mm",
+                    "formatString": "0.00000",
+                    "scaleFactor": "1.0"
+                  },
+                  {
+                    "key": "VendorB:StagePositionZ",
+                    "type": "floatType",
+                    "value": "6.18700",
+                    "description": "Stage Position Z",
+                    "units": "mm",
+                    "formatString": "0.00000",
+                    "scaleFactor": "1.0"
+                  },
+                  {
+                    "key": "VendorB:StageTilt",
+                    "type": "floatType",
+                    "value": "359.99600",
+                    "description": "Stage Tilt",
+                    "units": "mm",
+                    "formatString": "0.00000",
+                    "scaleFactor": "1.0"
+                  },
+                  {
+                    "key": "VendorB:StagePositionFineZ",
+                    "type": "floatType",
+                    "value": "0.00000",
+                    "description": "Stage Position Fine Z",
+                    "units": "mm",
+                    "formatString": "0.00000",
+                    "scaleFactor": "1.0"
+                  }
+                ],
+                "contents": []
+              }
+            }
+          ],
+          "contents": [],
+          "instanceProperties": [],
+          "instanceContents": [],
+          "insertions": []
+        },
+        {
+          "id": "instance_1772093679402",
+          "uuid": "15917310-4005-460a-8544-eec44f02bc2b",
+          "templateId": "template_1772078797355",
+          "type": "result",
+          "properties": [
+            {
+              "key": "VendorB:ImageSizeX",
+              "type": "stringType",
+              "units": "",
+              "description": "Image Size X",
+              "value": "1280"
+            },
+            {
+              "key": "VendorB:ImageSizeY",
+              "type": "stringType",
+              "units": "",
+              "description": "Image Size X",
+              "value": "960"
+            },
+            {
+              "key": "VendorB:PixelSize",
+              "type": "doubleType",
+              "units": "um/pixel",
+              "description": "Pixel Size",
+              "value": "0.0010",
+              "formatString": "0.0000",
+              "scaleFactor": "1.0"
+            }
+          ],
+          "contents": [],
+          "instanceProperties": [],
+          "instanceContents": [],
+          "insertions": [
+            {
+              "name": "20kV_PC30_WD6_50Pa_x100k_2_BED-C_2.bmp",
+              "size": 1229878,
+              "mimeType": "image/bmp",
+              "hash": "797b7afae05e64a9e59d8a18fe958218c5b0dbfd60404fddf5c118b5fddd8c84",
+              "hashAlgorithm": "SHA-256"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "id": "event_trans_2_1770964230373",
+          "uuid": "17ff9728-765d-4bc5-93c2-498b3998c0ef",
+          "transitionId": "trans_2",
+          "transitionLabel": "trans_2",
+          "lifecycle": "complete",
+          "timestamp": ""
+        }
+      ],
+      "canvasTranslate": {
+        "x": 99.58726987445954,
+        "y": 89.20111451954347
+      },
+      "canvasScale": 1.0097616513546062
+    }
+  ],
+  "_activeMethodId": "method_1770964099270",
+  "activeMethod": {
+    "id": "method_1770964099270",
+    "uuid": "e8134722-7980-4c41-ba5b-d9f889c5931c",
+    "name": "SEM_Method",
+    "petriNet": {
+      "places": [
+        {
+          "id": "place_3",
+          "label": "semMaterial",
+          "x": 239,
+          "y": 116,
+          "type": "node"
+        },
+        {
+          "id": "place_4",
+          "label": "semImage",
+          "x": 477.15467652337975,
+          "y": 154.1160073925348,
+          "type": "node"
+        },
+        {
+          "id": "place_6",
+          "label": "semCondition",
+          "x": 244,
+          "y": 219,
+          "type": "node"
+        }
+      ],
+      "transitions": [
+        {
+          "id": "trans_2",
+          "label": "SEM_Measurement",
+          "x": 357,
+          "y": 153
+        }
+      ],
+      "arcs": [
+        {
+          "id": "arc_1770964124853",
+          "source": "place_3",
+          "target": "trans_2"
+        },
+        {
+          "id": "arc_1770964127391",
+          "source": "trans_2",
+          "target": "place_4"
+        },
+        {
+          "id": "arc_1770969816815",
+          "source": "place_6",
+          "target": "trans_2"
+        }
+      ],
+      "templateRefs": [],
+      "instanceRefs": []
+    },
+    "templates": [
+      {
+        "id": "template_1772078795392",
+        "uuid": "b8d5944f-5898-4a15-afe5-f8db04abe29a",
+        "placeId": "place_3",
+        "type": "material",
+        "properties": [
+          {
+            "key": "VendorB:SampleName",
+            "type": "stringType",
+            "units": "",
+            "description": "SEM Sample Name",
+            "value": ""
+          },
+          {
+            "key": "VendorB:",
+            "type": "stringType",
+            "units": "",
+            "description": "SEM Sample ID",
+            "value": ""
+          }
+        ],
+        "contents": []
+      },
+      {
+        "id": "template_1772078797355",
+        "uuid": "81cb2f4a-441d-44fb-abe5-c0fcc9d80345",
+        "placeId": "place_4",
+        "type": "result",
+        "properties": [
+          {
+            "key": "VendorB:ImageSizeX",
+            "type": "stringType",
+            "units": "",
+            "description": "Image Size X",
+            "value": ""
+          },
+          {
+            "key": "VendorB:ImageSizeY",
+            "type": "stringType",
+            "units": "",
+            "description": "Image Size X",
+            "value": ""
+          },
+          {
+            "key": "VendorB:PixelSize",
+            "type": "doubleType",
+            "units": "um/pixel",
+            "description": "Pixel Size",
+            "value": "0.0000",
+            "formatString": "0.0000",
+            "scaleFactor": "1.0"
+          }
+        ],
+        "contents": []
+      },
+      {
+        "id": "template_1772078798686",
+        "uuid": "a3075542-c49d-4d51-b8aa-1cd821502634",
+        "placeId": "place_6",
+        "type": "condition",
+        "properties": [
+          {
+            "key": "VendorB:AcceleratingVoltage",
+            "type": "floatType",
+            "units": "kV",
+            "description": "Accelerating Voltage",
+            "value": "0.0",
+            "formatString": "0.00",
+            "scaleFactor": "1.00"
+          },
+          {
+            "key": "VendorB:ProbeCurrent",
+            "type": "floatType",
+            "units": "A",
+            "description": "probeCurrent",
+            "value": "0.00",
+            "formatString": "0.00",
+            "scaleFactor": "1.0"
+          },
+          {
+            "key": "VendorB:Magnification",
+            "type": "intType",
+            "units": "",
+            "description": "Magnification",
+            "value": "0",
+            "scaleFactor": "1"
+          },
+          {
+            "key": "VendorB:WorkingDistance",
+            "type": "floatType",
+            "units": "mm",
+            "description": "Working Distance",
+            "value": "0.0",
+            "formatString": "0.00",
+            "scaleFactor": "1.00"
+          },
+          {
+            "key": "VendorB:\tDetector",
+            "type": "stringType",
+            "units": "",
+            "description": "Detector",
+            "value": ""
+          },
+          {
+            "key": "VendorB:VacuumMode",
+            "type": "stringType",
+            "units": "",
+            "description": "Vacuum Mode",
+            "value": ""
+          },
+          {
+            "key": "VendorB:ScanTime",
+            "type": "floatType",
+            "units": "sec",
+            "description": "Scan Time",
+            "value": "\t0.00",
+            "formatString": "\t0.00",
+            "scaleFactor": "1.0"
+          },
+          {
+            "key": "VendorB:Vacuum",
+            "type": "intType",
+            "units": "Pa",
+            "description": "Degree of vacuum",
+            "value": "0",
+            "scaleFactor": "1"
+          },
+          {
+            "key": "VendorB:DwellTime",
+            "type": "intType",
+            "units": "ns",
+            "description": "Dwell Time",
+            "value": "0",
+            "scaleFactor": "1"
+          },
+          {
+            "key": "VendorB:StagePosition",
+            "type": "propertyListType",
+            "units": "",
+            "description": "StagePosition",
+            "value": "",
+            "children": {
+              "properties": [
+                {
+                  "key": "VendorB:StagePositionX",
+                  "type": "floatType",
+                  "value": "0.00000",
+                  "description": "Stage Position X",
+                  "units": "mm",
+                  "formatString": "0.00000",
+                  "scaleFactor": "1.0"
+                },
+                {
+                  "key": "VendorB:StagePositionY",
+                  "type": "floatType",
+                  "value": "0.00000",
+                  "description": "Stage Position Y",
+                  "units": "mm",
+                  "formatString": "0.00000",
+                  "scaleFactor": "1.0"
+                },
+                {
+                  "key": "VendorB:StagePositionZ",
+                  "type": "floatType",
+                  "value": "0.00000",
+                  "description": "Stage Position Z",
+                  "units": "mm",
+                  "formatString": "0.00000",
+                  "scaleFactor": "1.0"
+                },
+                {
+                  "key": "VendorB:StageTilt",
+                  "type": "floatType",
+                  "value": "0.00000",
+                  "description": "Stage Tilt",
+                  "units": "mm",
+                  "formatString": "0.00000",
+                  "scaleFactor": "1.0"
+                },
+                {
+                  "key": "VendorB:StagePositionFineZ",
+                  "type": "floatType",
+                  "value": "0.00000",
+                  "description": "Stage Position Fine Z",
+                  "units": "mm",
+                  "formatString": "0.00000",
+                  "scaleFactor": "1.0"
+                }
+              ],
+              "contents": []
+            }
+          }
+        ],
+        "contents": []
+      }
+    ],
+    "instances": [
+      {
+        "id": "instance_1772093676880",
+        "uuid": "c4cd197e-3397-469e-a153-e386dc9fc94c",
+        "templateId": "template_1772078795392",
+        "type": "material",
+        "properties": [
+          {
+            "key": "VendorB:SampleName",
+            "type": "stringType",
+            "units": "",
+            "description": "SEM Sample Name",
+            "value": "SEM-AAA"
+          },
+          {
+            "key": "VendorB:",
+            "type": "stringType",
+            "units": "",
+            "description": "SEM Sample ID",
+            "value": "SEM-123"
+          }
+        ],
+        "contents": [],
+        "instanceProperties": [],
+        "instanceContents": [],
+        "insertions": []
+      },
+      {
+        "id": "instance_1772093678212",
+        "uuid": "c5bc28f9-c415-4fba-b6ef-8b3766d3e96c",
+        "templateId": "template_1772078798686",
+        "type": "condition",
+        "properties": [
+          {
+            "key": "VendorB:AcceleratingVoltage",
+            "type": "floatType",
+            "units": "kV",
+            "description": "Accelerating Voltage",
+            "value": "20.0",
+            "formatString": "0.00",
+            "scaleFactor": "1.00"
+          },
+          {
+            "key": "VendorB:ProbeCurrent",
+            "type": "floatType",
+            "units": "A",
+            "description": "probeCurrent",
+            "value": "0.00",
+            "formatString": "0.00",
+            "scaleFactor": "1.0"
+          },
+          {
+            "key": "VendorB:Magnification",
+            "type": "intType",
+            "units": "",
+            "description": "Magnification",
+            "value": "100000",
+            "scaleFactor": "1"
+          },
+          {
+            "key": "VendorB:WorkingDistance",
+            "type": "floatType",
+            "units": "mm",
+            "description": "Working Distance",
+            "value": "6.0",
+            "formatString": "0.00",
+            "scaleFactor": "1.00"
+          },
+          {
+            "key": "VendorB:\tDetector",
+            "type": "stringType",
+            "units": "",
+            "description": "Detector",
+            "value": "BED-C"
+          },
+          {
+            "key": "VendorB:VacuumMode",
+            "type": "stringType",
+            "units": "",
+            "description": "Vacuum Mode",
+            "value": "Low Vaccum"
+          },
+          {
+            "key": "VendorB:ScanTime",
+            "type": "floatType",
+            "units": "sec",
+            "description": "Scan Time",
+            "value": "80.00",
+            "formatString": "\t0.00",
+            "scaleFactor": "1.0"
+          },
+          {
+            "key": "VendorB:Vacuum",
+            "type": "intType",
+            "units": "Pa",
+            "description": "Degree of vacuum",
+            "value": "50",
+            "scaleFactor": "1"
+          },
+          {
+            "key": "VendorB:DwellTime",
+            "type": "intType",
+            "units": "ns",
+            "description": "Dwell Time",
+            "value": "0",
+            "scaleFactor": "1"
+          },
+          {
+            "key": "VendorB:StagePosition",
+            "type": "propertyListType",
+            "units": "",
+            "description": "StagePosition",
+            "value": "",
+            "children": {
+              "properties": [
+                {
+                  "key": "VendorB:StagePositionX",
+                  "type": "floatType",
+                  "value": "-14.78000",
+                  "description": "Stage Position X",
+                  "units": "mm",
+                  "formatString": "0.00000",
+                  "scaleFactor": "1.0"
+                },
+                {
+                  "key": "VendorB:StagePositionY",
+                  "type": "floatType",
+                  "value": "-0.17400",
+                  "description": "Stage Position Y",
+                  "units": "mm",
+                  "formatString": "0.00000",
+                  "scaleFactor": "1.0"
+                },
+                {
+                  "key": "VendorB:StagePositionZ",
+                  "type": "floatType",
+                  "value": "6.18700",
+                  "description": "Stage Position Z",
+                  "units": "mm",
+                  "formatString": "0.00000",
+                  "scaleFactor": "1.0"
+                },
+                {
+                  "key": "VendorB:StageTilt",
+                  "type": "floatType",
+                  "value": "359.99600",
+                  "description": "Stage Tilt",
+                  "units": "mm",
+                  "formatString": "0.00000",
+                  "scaleFactor": "1.0"
+                },
+                {
+                  "key": "VendorB:StagePositionFineZ",
+                  "type": "floatType",
+                  "value": "0.00000",
+                  "description": "Stage Position Fine Z",
+                  "units": "mm",
+                  "formatString": "0.00000",
+                  "scaleFactor": "1.0"
+                }
+              ],
+              "contents": []
+            }
+          }
+        ],
+        "contents": [],
+        "instanceProperties": [],
+        "instanceContents": [],
+        "insertions": []
+      },
+      {
+        "id": "instance_1772093679402",
+        "uuid": "15917310-4005-460a-8544-eec44f02bc2b",
+        "templateId": "template_1772078797355",
+        "type": "result",
+        "properties": [
+          {
+            "key": "VendorB:ImageSizeX",
+            "type": "stringType",
+            "units": "",
+            "description": "Image Size X",
+            "value": "1280"
+          },
+          {
+            "key": "VendorB:ImageSizeY",
+            "type": "stringType",
+            "units": "",
+            "description": "Image Size X",
+            "value": "960"
+          },
+          {
+            "key": "VendorB:PixelSize",
+            "type": "doubleType",
+            "units": "um/pixel",
+            "description": "Pixel Size",
+            "value": "0.0010",
+            "formatString": "0.0000",
+            "scaleFactor": "1.0"
+          }
+        ],
+        "contents": [],
+        "instanceProperties": [],
+        "instanceContents": [],
+        "insertions": [
+          {
+            "name": "20kV_PC30_WD6_50Pa_x100k_2_BED-C_2.bmp",
+            "size": 1229878,
+            "mimeType": "image/bmp",
+            "hash": "797b7afae05e64a9e59d8a18fe958218c5b0dbfd60404fddf5c118b5fddd8c84",
+            "hashAlgorithm": "SHA-256"
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "id": "event_trans_2_1770964230373",
+        "uuid": "17ff9728-765d-4bc5-93c2-498b3998c0ef",
+        "transitionId": "trans_2",
+        "transitionLabel": "trans_2",
+        "lifecycle": "complete",
+        "timestamp": ""
+      }
+    ],
+    "canvasTranslate": {
+      "x": 99.58726987445954,
+      "y": 89.20111451954347
+    },
+    "canvasScale": 1.0097616513546062
+  },
+  "petriNet": {
+    "places": [
+      {
+        "id": "place_3",
+        "label": "semMaterial",
+        "x": 239,
+        "y": 116,
+        "type": "node"
+      },
+      {
+        "id": "place_4",
+        "label": "semImage",
+        "x": 477.15467652337975,
+        "y": 154.1160073925348,
+        "type": "node"
+      },
+      {
+        "id": "place_6",
+        "label": "semCondition",
+        "x": 244,
+        "y": 219,
+        "type": "node"
+      }
+    ],
+    "transitions": [
+      {
+        "id": "trans_2",
+        "label": "SEM_Measurement",
+        "x": 357,
+        "y": 153
+      }
+    ],
+    "arcs": [
+      {
+        "id": "arc_1770964124853",
+        "source": "place_3",
+        "target": "trans_2"
+      },
+      {
+        "id": "arc_1770964127391",
+        "source": "trans_2",
+        "target": "place_4"
+      },
+      {
+        "id": "arc_1770969816815",
+        "source": "place_6",
+        "target": "trans_2"
+      }
+    ],
+    "templateRefs": [],
+    "instanceRefs": []
+  },
+  "templates": [
+    {
+      "id": "template_1772078795392",
+      "uuid": "b8d5944f-5898-4a15-afe5-f8db04abe29a",
+      "placeId": "place_3",
+      "type": "material",
+      "properties": [
+        {
+          "key": "VendorB:SampleName",
+          "type": "stringType",
+          "units": "",
+          "description": "SEM Sample Name",
+          "value": ""
+        },
+        {
+          "key": "VendorB:",
+          "type": "stringType",
+          "units": "",
+          "description": "SEM Sample ID",
+          "value": ""
+        }
+      ],
+      "contents": []
+    },
+    {
+      "id": "template_1772078797355",
+      "uuid": "81cb2f4a-441d-44fb-abe5-c0fcc9d80345",
+      "placeId": "place_4",
+      "type": "result",
+      "properties": [
+        {
+          "key": "VendorB:ImageSizeX",
+          "type": "stringType",
+          "units": "",
+          "description": "Image Size X",
+          "value": ""
+        },
+        {
+          "key": "VendorB:ImageSizeY",
+          "type": "stringType",
+          "units": "",
+          "description": "Image Size X",
+          "value": ""
+        },
+        {
+          "key": "VendorB:PixelSize",
+          "type": "doubleType",
+          "units": "um/pixel",
+          "description": "Pixel Size",
+          "value": "0.0000",
+          "formatString": "0.0000",
+          "scaleFactor": "1.0"
+        }
+      ],
+      "contents": []
+    },
+    {
+      "id": "template_1772078798686",
+      "uuid": "a3075542-c49d-4d51-b8aa-1cd821502634",
+      "placeId": "place_6",
+      "type": "condition",
+      "properties": [
+        {
+          "key": "VendorB:AcceleratingVoltage",
+          "type": "floatType",
+          "units": "kV",
+          "description": "Accelerating Voltage",
+          "value": "0.0",
+          "formatString": "0.00",
+          "scaleFactor": "1.00"
+        },
+        {
+          "key": "VendorB:ProbeCurrent",
+          "type": "floatType",
+          "units": "A",
+          "description": "probeCurrent",
+          "value": "0.00",
+          "formatString": "0.00",
+          "scaleFactor": "1.0"
+        },
+        {
+          "key": "VendorB:Magnification",
+          "type": "intType",
+          "units": "",
+          "description": "Magnification",
+          "value": "0",
+          "scaleFactor": "1"
+        },
+        {
+          "key": "VendorB:WorkingDistance",
+          "type": "floatType",
+          "units": "mm",
+          "description": "Working Distance",
+          "value": "0.0",
+          "formatString": "0.00",
+          "scaleFactor": "1.00"
+        },
+        {
+          "key": "VendorB:\tDetector",
+          "type": "stringType",
+          "units": "",
+          "description": "Detector",
+          "value": ""
+        },
+        {
+          "key": "VendorB:VacuumMode",
+          "type": "stringType",
+          "units": "",
+          "description": "Vacuum Mode",
+          "value": ""
+        },
+        {
+          "key": "VendorB:ScanTime",
+          "type": "floatType",
+          "units": "sec",
+          "description": "Scan Time",
+          "value": "\t0.00",
+          "formatString": "\t0.00",
+          "scaleFactor": "1.0"
+        },
+        {
+          "key": "VendorB:Vacuum",
+          "type": "intType",
+          "units": "Pa",
+          "description": "Degree of vacuum",
+          "value": "0",
+          "scaleFactor": "1"
+        },
+        {
+          "key": "VendorB:DwellTime",
+          "type": "intType",
+          "units": "ns",
+          "description": "Dwell Time",
+          "value": "0",
+          "scaleFactor": "1"
+        },
+        {
+          "key": "VendorB:StagePosition",
+          "type": "propertyListType",
+          "units": "",
+          "description": "StagePosition",
+          "value": "",
+          "children": {
+            "properties": [
+              {
+                "key": "VendorB:StagePositionX",
+                "type": "floatType",
+                "value": "0.00000",
+                "description": "Stage Position X",
+                "units": "mm",
+                "formatString": "0.00000",
+                "scaleFactor": "1.0"
+              },
+              {
+                "key": "VendorB:StagePositionY",
+                "type": "floatType",
+                "value": "0.00000",
+                "description": "Stage Position Y",
+                "units": "mm",
+                "formatString": "0.00000",
+                "scaleFactor": "1.0"
+              },
+              {
+                "key": "VendorB:StagePositionZ",
+                "type": "floatType",
+                "value": "0.00000",
+                "description": "Stage Position Z",
+                "units": "mm",
+                "formatString": "0.00000",
+                "scaleFactor": "1.0"
+              },
+              {
+                "key": "VendorB:StageTilt",
+                "type": "floatType",
+                "value": "0.00000",
+                "description": "Stage Tilt",
+                "units": "mm",
+                "formatString": "0.00000",
+                "scaleFactor": "1.0"
+              },
+              {
+                "key": "VendorB:StagePositionFineZ",
+                "type": "floatType",
+                "value": "0.00000",
+                "description": "Stage Position Fine Z",
+                "units": "mm",
+                "formatString": "0.00000",
+                "scaleFactor": "1.0"
+              }
+            ],
+            "contents": []
+          }
+        }
+      ],
+      "contents": []
+    }
+  ],
+  "instances": [
+    {
+      "id": "instance_1772093676880",
+      "uuid": "c4cd197e-3397-469e-a153-e386dc9fc94c",
+      "templateId": "template_1772078795392",
+      "type": "material",
+      "properties": [
+        {
+          "key": "VendorB:SampleName",
+          "type": "stringType",
+          "units": "",
+          "description": "SEM Sample Name",
+          "value": "SEM-AAA"
+        },
+        {
+          "key": "VendorB:",
+          "type": "stringType",
+          "units": "",
+          "description": "SEM Sample ID",
+          "value": "SEM-123"
+        }
+      ],
+      "contents": [],
+      "instanceProperties": [],
+      "instanceContents": [],
+      "insertions": []
+    },
+    {
+      "id": "instance_1772093678212",
+      "uuid": "c5bc28f9-c415-4fba-b6ef-8b3766d3e96c",
+      "templateId": "template_1772078798686",
+      "type": "condition",
+      "properties": [
+        {
+          "key": "VendorB:AcceleratingVoltage",
+          "type": "floatType",
+          "units": "kV",
+          "description": "Accelerating Voltage",
+          "value": "20.0",
+          "formatString": "0.00",
+          "scaleFactor": "1.00"
+        },
+        {
+          "key": "VendorB:ProbeCurrent",
+          "type": "floatType",
+          "units": "A",
+          "description": "probeCurrent",
+          "value": "0.00",
+          "formatString": "0.00",
+          "scaleFactor": "1.0"
+        },
+        {
+          "key": "VendorB:Magnification",
+          "type": "intType",
+          "units": "",
+          "description": "Magnification",
+          "value": "100000",
+          "scaleFactor": "1"
+        },
+        {
+          "key": "VendorB:WorkingDistance",
+          "type": "floatType",
+          "units": "mm",
+          "description": "Working Distance",
+          "value": "6.0",
+          "formatString": "0.00",
+          "scaleFactor": "1.00"
+        },
+        {
+          "key": "VendorB:\tDetector",
+          "type": "stringType",
+          "units": "",
+          "description": "Detector",
+          "value": "BED-C"
+        },
+        {
+          "key": "VendorB:VacuumMode",
+          "type": "stringType",
+          "units": "",
+          "description": "Vacuum Mode",
+          "value": "Low Vaccum"
+        },
+        {
+          "key": "VendorB:ScanTime",
+          "type": "floatType",
+          "units": "sec",
+          "description": "Scan Time",
+          "value": "80.00",
+          "formatString": "\t0.00",
+          "scaleFactor": "1.0"
+        },
+        {
+          "key": "VendorB:Vacuum",
+          "type": "intType",
+          "units": "Pa",
+          "description": "Degree of vacuum",
+          "value": "50",
+          "scaleFactor": "1"
+        },
+        {
+          "key": "VendorB:DwellTime",
+          "type": "intType",
+          "units": "ns",
+          "description": "Dwell Time",
+          "value": "0",
+          "scaleFactor": "1"
+        },
+        {
+          "key": "VendorB:StagePosition",
+          "type": "propertyListType",
+          "units": "",
+          "description": "StagePosition",
+          "value": "",
+          "children": {
+            "properties": [
+              {
+                "key": "VendorB:StagePositionX",
+                "type": "floatType",
+                "value": "-14.78000",
+                "description": "Stage Position X",
+                "units": "mm",
+                "formatString": "0.00000",
+                "scaleFactor": "1.0"
+              },
+              {
+                "key": "VendorB:StagePositionY",
+                "type": "floatType",
+                "value": "-0.17400",
+                "description": "Stage Position Y",
+                "units": "mm",
+                "formatString": "0.00000",
+                "scaleFactor": "1.0"
+              },
+              {
+                "key": "VendorB:StagePositionZ",
+                "type": "floatType",
+                "value": "6.18700",
+                "description": "Stage Position Z",
+                "units": "mm",
+                "formatString": "0.00000",
+                "scaleFactor": "1.0"
+              },
+              {
+                "key": "VendorB:StageTilt",
+                "type": "floatType",
+                "value": "359.99600",
+                "description": "Stage Tilt",
+                "units": "mm",
+                "formatString": "0.00000",
+                "scaleFactor": "1.0"
+              },
+              {
+                "key": "VendorB:StagePositionFineZ",
+                "type": "floatType",
+                "value": "0.00000",
+                "description": "Stage Position Fine Z",
+                "units": "mm",
+                "formatString": "0.00000",
+                "scaleFactor": "1.0"
+              }
+            ],
+            "contents": []
+          }
+        }
+      ],
+      "contents": [],
+      "instanceProperties": [],
+      "instanceContents": [],
+      "insertions": []
+    },
+    {
+      "id": "instance_1772093679402",
+      "uuid": "15917310-4005-460a-8544-eec44f02bc2b",
+      "templateId": "template_1772078797355",
+      "type": "result",
+      "properties": [
+        {
+          "key": "VendorB:ImageSizeX",
+          "type": "stringType",
+          "units": "",
+          "description": "Image Size X",
+          "value": "1280"
+        },
+        {
+          "key": "VendorB:ImageSizeY",
+          "type": "stringType",
+          "units": "",
+          "description": "Image Size X",
+          "value": "960"
+        },
+        {
+          "key": "VendorB:PixelSize",
+          "type": "doubleType",
+          "units": "um/pixel",
+          "description": "Pixel Size",
+          "value": "0.0010",
+          "formatString": "0.0000",
+          "scaleFactor": "1.0"
+        }
+      ],
+      "contents": [],
+      "instanceProperties": [],
+      "instanceContents": [],
+      "insertions": [
+        {
+          "name": "20kV_PC30_WD6_50Pa_x100k_2_BED-C_2.bmp",
+          "size": 1229878,
+          "mimeType": "image/bmp",
+          "hash": "797b7afae05e64a9e59d8a18fe958218c5b0dbfd60404fddf5c118b5fddd8c84",
+          "hashAlgorithm": "SHA-256"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "event_trans_2_1770964230373",
+      "uuid": "17ff9728-765d-4bc5-93c2-498b3998c0ef",
+      "transitionId": "trans_2",
+      "transitionLabel": "trans_2",
+      "lifecycle": "complete",
+      "timestamp": ""
+    }
+  ],
+  "canvasTranslate": {
+    "x": 99.58726987445954,
+    "y": 89.20111451954347
+  },
+  "canvasScale": 1.0097616513546062,
+  "mode": "select",
+  "selectedNode": {
+    "id": "place_7",
+    "label": "processedMaterial3",
+    "x": 537.1690729172453,
+    "y": 352.4675947071289,
+    "type": "place",
+    "previousValidLabel": "processedMaterial3"
+  },
+  "arcStart": null,
+  "arcDragging": false,
+  "arcPreview": null,
+  "arcHoverTarget": null,
+  "petriNetSubView": "canvas",
+  "activeTab": "document",
+  "draggingNode": null,
+  "dragOffset": {
+    "x": -2.970998151866297,
+    "y": -7.922661738310126
+  },
+  "isPanning": false,
+  "lastMousePos": {
+    "x": 783,
+    "y": 364
+  },
+  "panMoved": false
+}

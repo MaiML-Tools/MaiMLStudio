@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<maiml xmlns="http://www.maiml.org/schemas" xmlns:concept="http://www.xes-standard.org/concept.xesext#" xmlns:lifecycle="http://www.xes-standard.org/lifecycle.xesext#" xmlns:time="http://www.xes-standard.org/time.xesext#" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:VendorA="http://www.vendor_a.co.jp/NS/" xmlns:VendorB="http://www.vendor_b.co.jp/NS/" xmlns:CompanyC="http://www.company_c.co.jp/NS/" features="nested-attributes" version="1.0" xsi:type="maimlRootType">
+  <document id="MaiML_DataFile_CP">
+    <uuid>7c88ff0a-6eee-443e-a4c3-671d3eddf462</uuid>
+    <name>MaiML_DataFile_CP</name>
+    <description>MaiML DataFile CP</description>
+    <property key="CompanyC:projectName" xsi:type="stringType">
+      <description>desc. of projectName</description>
+      <value>Secret</value>
+    </property>
+    <property key="CompanyC:sectionNumber" xsi:type="stringType">
+      <description>desc. of sectionNumber</description>
+      <value>XYZ-999</value>
+    </property>
+    <creator id="creator_1770964389391">
+      <uuid>88e30daf-04ab-432c-ac97-680db747cc22</uuid>
+      <name>VendorA:CP-SeriesXXX</name>
+      <description>CP-SeriesXXX</description>
+      <vendorRef id="vref_46452a9a-3dee-4fbf-b1e3-72479c339924" ref="vendor_1770964351593" />
+      <instrumentRef id="iref_1354fd87-15da-4c0a-81c5-b156e1b9405f" ref="instrument_1770964362317" />
+    </creator>
+    <vendor id="vendor_1770964351593">
+      <uuid>8072a0c8-71b4-4852-b16c-a9a5f77f4578</uuid>
+      <name>VendorA:CP_Vendor</name>
+      <description>CP Vendor</description>
+    </vendor>
+    <owner id="owner_1770964378501">
+      <uuid>d7f2f884-7aba-481a-8292-436ce9e59021</uuid>
+      <name>CompanyC:annonymous</name>
+      <description>annonymous@company_c.co.jp</description>
+    </owner>
+    <instrument id="instrument_1770964362317">
+      <uuid>048b6c76-ee48-4ea8-98f4-ad75d5773d92</uuid>
+      <name>VendorA:CP</name>
+      <description>CP</description>
+    </instrument>
+    <date>2026-03-24T14:09:37+09:00</date>
+  </document>
+  <protocol id="protocol">
+    <uuid>db16d43a-5943-4be5-aa63-ca714bc31fd7</uuid>
+    <method id="method_1770964067784">
+      <uuid>885d9981-1a60-4612-8bcd-9cfd3cf8531b</uuid>
+      <name>CP_Method</name>
+      <pnml id="pnml_method_1770964067784">
+        <uuid>8dbf75a8-47b7-4b02-9d73-e08245eec800</uuid>
+        <place id="Material" />
+        <place id="processedMaterial1" />
+        <place id="cpCondition" />
+        <place id="processedMaterial2" />
+        <place id="processedMaterial3" />
+        <transition id="CP_Processing" />
+        <arc id="arc_1770964111462" source="Material" target="CP_Processing" />
+        <arc id="arc_1770964114642" source="CP_Processing" target="processedMaterial1" />
+        <arc id="arc_1770969725257" source="cpCondition" target="CP_Processing" />
+        <arc id="arc_1774328754355" source="CP_Processing" target="processedMaterial2" />
+        <arc id="arc_1774328756121" source="CP_Processing" target="processedMaterial3" />
+      </pnml>
+      <program id="program_method_1770964067784">
+        <uuid>4b7e41bc-6d66-4801-94cd-ddad6322f7f7</uuid>
+        <instruction id="inst_CP_Processing_method_1770964067784" xsi:type="lifecycleTaskType">
+          <uuid>549c64ed-6c5d-4c6d-87bd-570f3d28fe58</uuid>
+          <name>trans_1</name>
+          <transitionRef id="tr_ref_CP_Processing_method_1770964067784" ref="CP_Processing" />
+        </instruction>
+        <materialTemplate id="template_1772078788293">
+          <uuid>67efa482-d9e9-412f-8b13-1d0de9c1c706</uuid>
+          <name>Material_materialTemplate</name>
+          <property key="VendorA:BeforeSampleName" xsi:type="stringType">
+            <description>Before Sample Name</description>
+          </property>
+          <property key="VendorA:BeforeSampleID" xsi:type="stringType">
+            <description>Before Sample ID</description>
+          </property>
+          <placeRef id="pref_template_1772078788293" ref="Material" />
+        </materialTemplate>
+        <materialTemplate id="template_1772078790283">
+          <uuid>b8d5944f-5898-4a15-afe5-f8db04abe29a</uuid>
+          <name>processedMaterial1_materialTemplate</name>
+          <property key="VendorA:AfterSampleName" xsi:type="stringType">
+            <description>After Sample Name</description>
+          </property>
+          <property key="VendorA:AfterSampleID" xsi:type="stringType">
+            <description>After Sample ID</description>
+          </property>
+          <placeRef id="pref_template_1772078790283" ref="processedMaterial1" />
+        </materialTemplate>
+        <materialTemplate id="template_1774328784039">
+          <uuid>2aeb086a-1609-469f-92a3-847560cf8d92</uuid>
+          <name>processedMaterial2_materialTemplate</name>
+          <property key="VendorA:AfterSampleName" xsi:type="stringType">
+            <description>After Sample Name</description>
+          </property>
+          <property key="VendorA:AfterSampleID" xsi:type="stringType">
+            <description>After Sample ID</description>
+          </property>
+          <placeRef id="pref_template_1774328784039" ref="processedMaterial2" />
+        </materialTemplate>
+        <materialTemplate id="template_1774328867178">
+          <uuid>2f69d259-fa4d-4ed6-aa5f-8a4a1f1883ed</uuid>
+          <name>processedMaterial3_materialTemplate</name>
+          <property key="VendorA:AfterSampleName" xsi:type="stringType">
+            <description>After Sample Name</description>
+          </property>
+          <property key="VendorA:AfterSampleID" xsi:type="stringType">
+            <description>After Sample ID</description>
+          </property>
+          <placeRef id="pref_template_1774328867178" ref="processedMaterial3" />
+        </materialTemplate>
+        <conditionTemplate id="template_1772078791581">
+          <uuid>1beaad3b-619b-4ef4-a66b-37abe6d14d06</uuid>
+          <name>cpCondition_conditionTemplate</name>
+          <property key="VendorA:IonAcceleratingVoltage" xsi:type="intType" units="keV" scaleFactor="1">
+            <description>Ion accelerating voltage</description>
+            <value>0</value>
+          </property>
+          <property key="VendorA:MillingTime" xsi:type="intType" units="hour" scaleFactor="1">
+            <description>Milling time</description>
+            <value>0</value>
+          </property>
+          <property key="VendorA:TargetVacuumLevel" xsi:type="floatType" units="Pa" formatString="0.0" scaleFactor="1.0">
+            <description>Target vacuum level</description>
+            <value>0.0</value>
+          </property>
+          <property key="VendorA:CoolingTemperature" xsi:type="floatType" units="℃" formatString="0.0" scaleFactor="1.0">
+            <description>Cooling temperature</description>
+            <value>0.0</value>
+          </property>
+          <placeRef id="pref_template_1772078791581" ref="cpCondition" />
+        </conditionTemplate>
+      </program>
+    </method>
+  </protocol>
+  <data id="data1">
+    <uuid>31e1d887-58ee-45f6-8829-511970367221</uuid>
+    <results id="results_method_1770964067784">
+      <uuid>31630046-e018-42a5-a698-35e626df5b92</uuid>
+      <material id="instance_1772093275452" ref="template_1772078788293">
+        <uuid>b4fb1c9b-6007-4279-ad4d-ad8a339bdb8f</uuid>
+        <property key="VendorA:BeforeSampleName" xsi:type="stringType">
+          <description>Before Sample Name</description>
+          <value>CP-AAA</value>
+        </property>
+        <property key="VendorA:BeforeSampleID" xsi:type="stringType">
+          <description>Before Sample ID</description>
+          <value>CP-123</value>
+        </property>
+      </material>
+      <material id="instance_1772093278139" ref="template_1772078790283">
+        <uuid>c474ac21-d9b6-4afc-8023-745501c66739</uuid>
+        <property key="VendorA:AfterSampleName" xsi:type="stringType">
+          <description>After Sample Name</description>
+          <value>CP-BBB</value>
+        </property>
+        <property key="VendorA:AfterSampleID" xsi:type="stringType">
+          <description>After Sample ID</description>
+          <value>CP-456</value>
+        </property>
+      </material>
+      <material id="instance_1774328884627" ref="template_1774328784039">
+        <uuid>c4cd197e-3397-469e-a153-e386dc9fc94c</uuid>
+        <property key="VendorA:AfterSampleName" xsi:type="stringType">
+          <description>After Sample Name</description>
+          <value>CP-BBB</value>
+        </property>
+        <property key="VendorA:AfterSampleID" xsi:type="stringType">
+          <description>After Sample ID</description>
+          <value>CP-789</value>
+        </property>
+      </material>
+      <material id="instance_1774328886295" ref="template_1774328867178">
+        <uuid>17fc9cc8-22f0-40e3-b7d1-bab5273bfbc6</uuid>
+        <property key="VendorA:AfterSampleName" xsi:type="stringType">
+          <description>After Sample Name</description>
+          <value>CP-BBB</value>
+        </property>
+        <property key="VendorA:AfterSampleID" xsi:type="stringType">
+          <description>After Sample ID</description>
+          <value>CP-999</value>
+        </property>
+      </material>
+      <condition id="instance_1772093276809" ref="template_1772078791581">
+        <uuid>d553cd51-3559-4362-ba80-5476003554f5</uuid>
+        <property key="VendorA:IonAcceleratingVoltage" xsi:type="intType" units="keV">
+          <description>Ion accelerating voltage</description>
+          <value>8</value>
+        </property>
+        <property key="VendorA:MillingTime" xsi:type="intType" units="hour">
+          <description>Milling time</description>
+          <value>2</value>
+        </property>
+        <property key="VendorA:TargetVacuumLevel" xsi:type="floatType" units="Pa" formatString="0.0e0" scaleFactor="1.0">
+          <description>Target vacuum level</description>
+          <value>5.0e-4</value>
+        </property>
+        <property key="VendorA:CoolingTemperature" xsi:type="floatType" units="℃" formatString="0.0" scaleFactor="1.0">
+          <description>Cooling temperature</description>
+          <value>-120.0</value>
+        </property>
+      </condition>
+    </results>
+  </data>
+  <eventLog id="log1">
+    <uuid>a1473a44-976c-409a-b17d-2274893b1c15</uuid>
+    <log id="log_method_1770964067784" ref="method_1770964067784">
+      <uuid>99ff1a0a-f734-4774-b566-3edf9e3096ab</uuid>
+      <trace id="trace_method_1770964067784" ref="program_method_1770964067784">
+        <uuid>c1837a1f-a688-4f57-9dfe-745ff9adc8b5</uuid>
+        <event id="event_trans_1_1770964232050" ref="inst_CP_Processing_method_1770964067784">
+          <uuid>3abbfd9f-ca19-4ddb-b45a-acd31358a0c6</uuid>
+          <property key="lifecycle:transition" xsi:type="stringType"><value>complete</value></property>
+          <property key="time:timestamp" xsi:type="dateTimeType"><value>2026-02-20T15:30:32+09:00</value></property>
+        </event>
+      </trace>
+    </log>
+  </eventLog>
+</maiml>
