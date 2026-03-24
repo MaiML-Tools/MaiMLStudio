@@ -14,6 +14,9 @@ HTMLファイルを Chrome / Edge で開くだけで動作し、追加のイン�
 - **プロジェクト保存/復元** — JSON形式での保存・読み込みに対応
 - **MaiML エクスポート** — MaiML標準規格に準拠したXMLファイルを生成・ダウンロード
 - **ダーク/ライトモード** — OSの設定を初期値として自動反映
+- **Excel インポート機能** — Excelファイルから定義を一括で読み込み
+- **XML 暗号化機能** — AES-256-GCMによる機密データの秘匿
+- **ファイル連携機能** — 複数MaiMLファイルのハッシュベース連携
 
 ---
 
@@ -86,6 +89,19 @@ Petri Net Design で定義した Place に紐づくデータテンプレート�
 
 各テンプレートには `property`（単一値）と `content`（リスト値）を追加でき、`propertyListType` によるネスト構造にも対応しています。他のメソッドのテンプレートをベースに継承（TemplateRef）したテンプレートは読み取り専用で表示されます。
 
+#### 📊 Excel インポート機能
+
+手動入力の代わりに、Excelファイルから一括で定義を読み込めます。対象のExcelファイルには、Placeと同じシート名が必要です。**Key列に`>`記号を使ってネスト構造を表現できます。**
+
+| Element | Key | Type | Units | Description | Value |
+|---------|-----|------|-------|-------------|-------|
+| property | Temperature | propertyListType | | 温度設定 | |
+| property | >Set_Temp | doubleType | °C | 設定温度 | 180 |
+| property | >Control | propertyListType | | 制御パラメータ | |
+| property | >>PID_P | doubleType | | P値 | 1.2 |
+
+**ネスト構造のルール:** `>` = 1階層、`>>` = 2階層。親要素は必ず `propertyListType` である必要があります。
+
 ---
 
 ### 📊 Data & Events タブ
@@ -117,26 +133,54 @@ Templates で定義したスキーマをもとに、実際の計測データ・�
 
 ---
 
-## 動作環境
+## 🔒 XML 暗号化機能（セクション 6）
 
-| ブラウザ | 対応状況 |
-|---------|---------|
-| Google Chrome（最新版） | ✅ 推奨 |
-| Microsoft Edge（最新版） | ✅ 推奨 |
-| Firefox | ⚠ 一部機能が動作しない場合があります |
-| Safari | ⚠ 未確認 |
+MaiML規格（JIS K0200）に準拠したXML暗号化機能です。`property`要素や`content`要素を選択的に秘匿できます。
+
+| 項目 | 説明 |
+|------|------|
+| **暗号化アルゴリズム** | AES-256-GCM（認証付き暗号化・改ざん検知内蔵） |
+| **鍵導出** | PBKDF2-SHA256（反復回数 100,000 回） |
+| **暗号化方式** | コンテンツ暗号化（Type=#Content）— 親要素タグ・属性はそのまま残し、子要素のみ暗号化 |
+| **準拠仕様** | W3C XML Encryption 1.1 / JIS K0200 |
+
+### 暗号化手��
+
+1. **Templates タブ**または **Data タブ**で、暗号化したい property / content 行の右端にあるロックアイコンをクリック
+2. アイコンが🔐（アンバー色）に変わると「暗号化対象」としてマークされます
+3. 通常通り **Export MaiML (XML)** ボタンをクリック
+4. 暗号化パスワードの設定ダイアログが表示されます。4文字以上のパスワードを2回入力
+5. 出力されたMaiMLファイル内で、対象要素の子要素が `<xenc:EncryptedData>` に置き換えられます
+
+⚠️ **注意:** パスワードを忘れると復号できません。安全な場所に保管してください。
 
 ---
 
-## 使用ライブラリ
+## 🔗 ファイル連携機能 `<chain>`（セクション 7）
 
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Phosphor Icons](https://phosphoricons.com/)
-- [SheetJS (xlsx)](https://sheetjs.com/)
-- [CryptoJS](https://github.com/brix/crypto-js)
+MaiML規格（JIS K0200）の `<chain>` 要素を使ったファイル連携機能です。複数のMaiMLファイルを関連付け、改ざん検知（ハッシュ値による整合性確認）を実現します。ブロックチェーンのように「このファイルは別のファイルの内容を受け継いでいる」という時系列の連鎖を記録できます。
 
----
+| 項目 | 説明 |
+|------|------|
+| **ハッシュ方式** | SHA-256（ファイル全体のバイト列） |
+| **出力位置** | `<document>` 要素内の `<date>` 要素の直後 |
+| **key属性** | 規定値は `key="chain"` |
 
-## ライセンス
+### 登録手順
 
-Apache-2.0 license
+1. **Document Metadata** タブの一番下にある **Chained Files** セクションを表示
+2. **Add Chain** ボタンをクリックし、連携先の `.maiml` ファイルを選択
+3. 選択したファイルの `//document/uuid` 値と SHA-256 ハッシュ値が自動的に取得・表示
+4. 通常通り **Export MaiML** ボタンをクリックすると、`<chain>` 要素がMaiMLファイルに書き出されます
+
+### 出力されるXML例
+
+```xml
+<document id="...">
+  ...
+  <date>2025-06-01T10:00:00+09:00</date>
+  <chain id="chain_001" key="chain">
+    <uuid>0bce8354-55f1-4047-b221-988e00c87c79</uuid>
+    <hash method="SHA-256">B1sDhiK3...</hash>
+  </chain>
+</document>
