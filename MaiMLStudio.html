@@ -180,7 +180,7 @@
                     </h3>
                 </div>
 
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-4 text-indigo-600" >Language
                     <div class="flex bg-slate-100 rounded-lg p-1 border border-slate-200">
                         <button onclick="switchHelpLanguage('jp')" id="btn-lang-jp"
                             class="px-3 py-1 text-xs font-bold rounded-md transition-all bg-white text-indigo-600 shadow-sm">
@@ -590,6 +590,10 @@
                                                     <th class="p-1.5 font-bold">Units</th>
                                                     <th class="p-1.5 font-bold">Description</th>
                                                     <th class="p-1.5 font-bold">Value</th>
+                                                    <th class="p-1.5 font-bold">Size</th>
+                                                    <th class="p-1.5 font-bold">Axis</th>
+                                                    <th class="p-1.5 font-bold">ScaleFactor</th>
+                                                    <th class="p-1.5 font-bold">FormatString</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="text-slate-600">
@@ -603,6 +607,10 @@
                                                     </td>
                                                     <td class="p-1.5"></td>
                                                     <td class="p-1.5">温度設定</td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
                                                     <td class="p-1.5"></td>
                                                 </tr>
                                                 <tr class="border-b border-indigo-50 bg-slate-50/30">
@@ -646,6 +654,10 @@
                                                     <td class="p-1.5">s</td>
                                                     <td class="p-1.5">時間記録</td>
                                                     <td class="p-1.5">0 10 20</td>
+                                                    <td class="p-1.5">3</td>
+                                                    <td class="p-1.5">t</td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5">0.00</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="p-1.5 font-bold text-blue-600">
@@ -755,7 +767,7 @@
                     <section>
                         <h2
                             class="text-2xl font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 flex items-center gap-2">
-                            <i class="ph ph-lock-key"></i> 6. XML暗号化機能 (JIS K0200)
+                            <i class="ph ph-lock-key"></i> 6. XML暗号化機能
                         </h2>
                         <div class="space-y-4">
                             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
@@ -809,6 +821,63 @@
                         </div>
                     </section>
 
+                    <section>
+                        <h2
+                            class="text-2xl font-bold text-slate-900 border-b-2 border-teal-500 pb-2 mb-6 flex items-center gap-2">
+                            <i class="ph ph-link"></i> 7. ファイル連携機能 &lt;chain&gt; 
+                        </h2>
+                        <div class="space-y-4">
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="ph ph-info text-teal-500"></i>概要</h3>
+                                <p class="text-sm text-slate-600 mb-3">MaiML規格 (JIS K0200) の <code>&lt;chain&gt;</code> 要素を使ったファイル連携機能です。複数のMaiMLファイルを関連付け、改ざん検知（ハッシュ値による整合性確認）を実現します。ブロックチェーンのように「このファイルは別のファイルの内容を受け継いでいる」という時系列の連鎖を記録できます。</p>
+                                <div class="bg-teal-50 border border-teal-200 rounded-lg p-3 text-xs text-teal-800 mb-3">
+                                    <strong>ユースケース例：</strong> 試料合成(A) → 前処理(B) → 計測(C) という一連の実験工程において、C が B と A を参照・継承していることを記録する。
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-xs text-left border-collapse">
+                                        <tbody class="divide-y divide-slate-100">
+                                            <tr><td class="p-2 font-bold text-slate-600 w-1/3">ハッシュ方式</td><td class="p-2 text-slate-600">SHA-256（ファイル全体のバイト列。署名付きファイルは &lt;ds:DigestValue&gt; を使用）</td></tr>
+                                            <tr><td class="p-2 font-bold text-slate-600">出力位置</td><td class="p-2 text-slate-600">&lt;document&gt; 要素内の &lt;date&gt; 要素の直後</td></tr>
+                                            <tr><td class="p-2 font-bold text-slate-600">key属性</td><td class="p-2 text-slate-600">規定値は <code>key="chain"</code></td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-lg mb-3">登録手順</h3>
+                                <ol class="list-decimal list-inside space-y-2 text-sm text-slate-600 ml-2">
+                                    <li><strong>Document Metadata</strong> タブの一番下にある <strong>Chained Files</strong> セクションを表示します。</li>
+                                    <li><strong>Add Chain</strong> ボタンをクリックし、連携先の <code>.maiml</code> ファイルを選択します。</li>
+                                    <li>選択したファイルの <code>//document/uuid</code> 値と SHA-256 ハッシュ値が自動的に取得・表示されます。</li>
+                                    <li>通常通り <strong>Export MaiML</strong> ボタンをクリックすると、<code>&lt;chain&gt;</code> 要素がMaiMLファイルに書き出されます。</li>
+                                </ol>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-lg mb-3">出力されるXML例</h3>
+                                <pre class="bg-slate-800 text-green-300 text-xs p-4 rounded-lg overflow-x-auto"><code>&lt;document id="..."&gt;
+  ...
+  &lt;date&gt;2025-06-01T10:00:00+09:00&lt;/date&gt;
+  &lt;chain id="chain_001" key="chain"&gt;
+    &lt;uuid&gt;0bce8354-55f1-4047-b221-988e00c87c79&lt;/uuid&gt;
+    &lt;hash method="SHA-256"&gt;B1sDhiK3...&lt;/hash&gt;
+  &lt;/chain&gt;
+&lt;/document&gt;</code></pre>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-lg mb-3">MaiML Viewer での確認</h3>
+                                <p class="text-sm text-slate-600 mb-2">関連するMaiMLファイルを MaiML Viewer に複数同時ロードすると：</p>
+                                <ul class="list-disc list-inside space-y-1 text-sm text-slate-600 ml-2">
+                                    <li>ファイル間の連鎖が <strong>橙色の破線矢印</strong>（🔗 chain）でグラフ上に表示されます。</li>
+                                    <li>Document Metadata パネルにハッシュ検証結果が表示されます（✅ Chain verified / ❌ Hash mismatch / ⚠️ Linked file not loaded）。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                        <h2
+                            class="text-2xl font-bold text-slate-900 border-b-2 border-teal-500 pb-2 mb-6 flex items-center gap-2">
+                            <i class="ph ph-file"></i> 8. MaiMLファイルの生成 
+                        </h2>
 
                     <section class="bg-slate-800 text-white p-8 rounded-2xl mt-12 mb-8">
                         <h2 class="text-xl font-bold mb-4 flex items-center gap-2 !text-white">
@@ -1239,17 +1308,14 @@
                                 </div>
                                 <div class="mt-4 p-3 border border-dashed border-indigo-300 rounded bg-indigo-50/50">
                                     <h4 class="font-bold text-sm text-indigo-700 mb-2">
-                                        <i class="ph ph-microsoft-excel-logo"></i> Excel Import
-                                        Feature
+                                        <i class="ph ph-microsoft-excel-logo"></i> Excel Import / Export
                                     </h4>
                                     <p class="text-xs text-slate-600 mb-3">
-                                        Instead of manual entry, you can bulk-load definitions
-                                        from an Excel file. The Excel file must contain sheets
-                                        named exactly after the corresponding
-                                        <strong>Place</strong>.
-                                        <strong class="text-indigo-700">Use <code>&gt;</code> symbols in the Key column
-                                            to
-                                            represent nested structures.</strong>
+                                        Instead of manual entry, you can bulk-load definitions from an Excel file using the
+                                        <strong>Import Excel</strong> button on each template card.
+                                        Use the <strong>Export Excel</strong> button next to it to download the current template as an Excel file.
+                                        The Excel file must contain a sheet named exactly after the corresponding <strong>Place</strong>.
+                                        <strong class="text-indigo-700">Use <code>&gt;</code> symbols in the Key column to represent nested structures.</strong>
                                     </p>
 
                                     <div class="overflow-hidden rounded border border-indigo-100 bg-white mb-2">
@@ -1262,95 +1328,113 @@
                                                     <th class="p-1.5 font-bold">Units</th>
                                                     <th class="p-1.5 font-bold">Description</th>
                                                     <th class="p-1.5 font-bold">Value</th>
+                                                    <th class="p-1.5 font-bold">Size</th>
+                                                    <th class="p-1.5 font-bold">Axis</th>
+                                                    <th class="p-1.5 font-bold">ScaleFactor</th>
+                                                    <th class="p-1.5 font-bold">FormatString</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="text-slate-600">
                                                 <tr class="border-b border-indigo-50">
-                                                    <td class="p-1.5 font-bold text-blue-600">
-                                                        property
-                                                    </td>
+                                                    <td class="p-1.5 font-bold text-blue-600">property</td>
                                                     <td class="p-1.5">Temperature</td>
-                                                    <td class="p-1.5 font-bold text-indigo-600">
-                                                        propertyListType
-                                                    </td>
+                                                    <td class="p-1.5 font-bold text-indigo-600">propertyListType</td>
                                                     <td class="p-1.5"></td>
                                                     <td class="p-1.5">Temperature Settings</td>
                                                     <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
                                                 </tr>
                                                 <tr class="border-b border-indigo-50 bg-slate-50/30">
-                                                    <td class="p-1.5 font-bold text-blue-600">
-                                                        property
-                                                    </td>
+                                                    <td class="p-1.5 font-bold text-blue-600">property</td>
                                                     <td class="p-1.5">&gt;Set_Temp</td>
                                                     <td class="p-1.5">doubleType</td>
                                                     <td class="p-1.5">°C</td>
                                                     <td class="p-1.5">Set Temperature</td>
                                                     <td class="p-1.5">180</td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5">0.00</td>
                                                 </tr>
                                                 <tr class="border-b border-indigo-50">
-                                                    <td class="p-1.5 font-bold text-blue-600">
-                                                        property
-                                                    </td>
+                                                    <td class="p-1.5 font-bold text-blue-600">property</td>
                                                     <td class="p-1.5">&gt;Control</td>
-                                                    <td class="p-1.5 font-bold text-indigo-600">
-                                                        propertyListType
-                                                    </td>
+                                                    <td class="p-1.5 font-bold text-indigo-600">propertyListType</td>
                                                     <td class="p-1.5"></td>
                                                     <td class="p-1.5">Control Parameters</td>
                                                     <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
                                                 </tr>
                                                 <tr class="border-b border-indigo-50 bg-slate-50/30">
-                                                    <td class="p-1.5 font-bold text-blue-600">
-                                                        property
-                                                    </td>
+                                                    <td class="p-1.5 font-bold text-blue-600">property</td>
                                                     <td class="p-1.5">&gt;&gt;PID_P</td>
                                                     <td class="p-1.5">doubleType</td>
                                                     <td class="p-1.5"></td>
                                                     <td class="p-1.5">P Gain</td>
                                                     <td class="p-1.5">1.2</td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
                                                 </tr>
                                                 <tr class="border-b border-indigo-50">
-                                                    <td class="p-1.5 font-bold text-emerald-600">
-                                                        content
-                                                    </td>
+                                                    <td class="p-1.5 font-bold text-emerald-600">content</td>
                                                     <td class="p-1.5">&gt;&gt;Time_Log</td>
                                                     <td class="p-1.5">contentDoubleListType</td>
                                                     <td class="p-1.5">s</td>
                                                     <td class="p-1.5">Time sequence</td>
                                                     <td class="p-1.5">0 10 20</td>
+                                                    <td class="p-1.5">3</td>
+                                                    <td class="p-1.5">t</td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5">0.00</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="p-1.5 font-bold text-blue-600">
-                                                        property
-                                                    </td>
+                                                    <td class="p-1.5 font-bold text-blue-600">property</td>
                                                     <td class="p-1.5">Operator</td>
                                                     <td class="p-1.5">stringType</td>
                                                     <td class="p-1.5"></td>
                                                     <td class="p-1.5">Operator Name</td>
                                                     <td class="p-1.5">Tanaka</td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
+                                                    <td class="p-1.5"></td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </div>
 
-                                    <p class="text-[10px] text-indigo-600 mt-2">
-                                        <i class="ph ph-info"></i>
-                                        <strong>Nested Structure Rule:</strong> Use
-                                        <code>&gt;</code> symbols at the beginning of the Key to
-                                        represent nesting levels. <code>&gt;</code>=1 level,
-                                        <code>&gt;&gt;</code>=2 levels. Parent elements must be
-                                        <strong>propertyListType</strong>.
-                                    </p>
-
-                                    <p class="text-[10px] text-indigo-600 mt-2">
-                                        <i class="ph ph-info"></i>
-                                        <strong>Sequence Rule:</strong> Within each nesting level,
-                                        list all <strong>property</strong> elements first, then
-                                        <strong>content</strong> elements. Example: At root level:
-                                        property → content order; within nested children: property
-                                        → content order. When returning to parent level, you can
-                                        start with property again.
-                                    </p>
+                                    <div class="mt-2 grid grid-cols-1 gap-1">
+                                        <p class="text-[10px] text-indigo-600">
+                                            <i class="ph ph-info"></i>
+                                            <strong>Columns A–F</strong> are common to all elements.
+                                            <strong>Size</strong> (xs:int, content only): number of data points.
+                                            <strong>Axis</strong> (xs:string, content only): axis label (e.g. "x", "t").
+                                            <strong>ScaleFactor</strong> (xs:double): scale multiplier.
+                                            <strong>FormatString</strong> (xs:string): display format (e.g. "0.00").
+                                            Columns G–J are optional — leave blank if not needed. Older 6-column files remain fully compatible.
+                                        </p>
+                                        <p class="text-[10px] text-indigo-600">
+                                            <i class="ph ph-info"></i>
+                                            <strong>Nested Structure:</strong> Use <code>&gt;</code> at the beginning of the Key.
+                                            <code>&gt;</code>=depth 1, <code>&gt;&gt;</code>=depth 2. Parent elements must be <strong>propertyListType</strong>.
+                                        </p>
+                                        <p class="text-[10px] text-indigo-600">
+                                            <i class="ph ph-info"></i>
+                                            <strong>Order Rule:</strong> Within each nesting level, list <strong>property</strong> elements before <strong>content</strong> elements.
+                                        </p>
+                                        <p class="text-[10px] text-indigo-600">
+                                            <i class="ph ph-info"></i>
+                                            <strong>Export Excel:</strong> The exported file contains two sheets — the template sheet (named after the Place) and a <em>dataType一覧</em> reference sheet listing all available types.
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1429,7 +1513,7 @@
                     <section>
                         <h2
                             class="text-2xl font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 flex items-center gap-2">
-                            <i class="ph ph-lock-key"></i> 6. XML Encryption (JIS K0200)
+                            <i class="ph ph-lock-key"></i> 6. XML Encryption 
                         </h2>
                         <div class="space-y-4">
                             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
@@ -1482,6 +1566,65 @@
                             </div>
                         </div>
                     </section>
+
+                    
+                    <section>
+                        <h2
+                            class="text-2xl font-bold text-slate-900 border-b-2 border-teal-500 pb-2 mb-6 flex items-center gap-2">
+                            <i class="ph ph-link"></i> 7. File Chaining &lt;chain&gt; 
+                        </h2>
+                        <div class="space-y-4">
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="ph ph-info text-teal-500"></i>Overview</h3>
+                                <p class="text-sm text-slate-600 mb-3">File chaining using the <code>&lt;chain&gt;</code> element of JIS K0200. Links multiple MaiML files together and enables tamper detection via hash verification. Like a blockchain, it records the temporal chain of inheritance — "this file is derived from another."</p>
+                                <div class="bg-teal-50 border border-teal-200 rounded-lg p-3 text-xs text-teal-800 mb-3">
+                                    <strong>Example use case:</strong> In an experiment sequence — Synthesis (A) → Pre-processing (B) → Measurement (C) — file C records that it references and inherits from B and A.
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-xs text-left border-collapse">
+                                        <tbody class="divide-y divide-slate-100">
+                                            <tr><td class="p-2 font-bold text-slate-600 w-1/3">Hash method</td><td class="p-2 text-slate-600">SHA-256 (full file byte stream; for signed files, uses <code>&lt;ds:DigestValue&gt;</code>)</td></tr>
+                                            <tr><td class="p-2 font-bold text-slate-600">Output position</td><td class="p-2 text-slate-600">Immediately after the <code>&lt;date&gt;</code> element inside <code>&lt;document&gt;</code></td></tr>
+                                            <tr><td class="p-2 font-bold text-slate-600">key attribute</td><td class="p-2 text-slate-600">Default value: <code>key="chain"</code></td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-lg mb-3">How to Register a Chain</h3>
+                                <ol class="list-decimal list-inside space-y-2 text-sm text-slate-600 ml-2">
+                                    <li>Open the <strong>Document Metadata</strong> tab and scroll to the <strong>Chained Files</strong> section at the bottom.</li>
+                                    <li>Click <strong>Add Chain</strong> and select the target <code>.maiml</code> file to link.</li>
+                                    <li>The <code>//document/uuid</code> value and SHA-256 hash are automatically extracted and displayed.</li>
+                                    <li>Click <strong>Export MaiML</strong> as usual — the <code>&lt;chain&gt;</code> element will be included in the output file.</li>
+                                </ol>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-lg mb-3">Output XML Example</h3>
+                                <pre class="bg-slate-800 text-green-300 text-xs p-4 rounded-lg overflow-x-auto"><code>&lt;document id="..."&gt;
+  ...
+  &lt;date&gt;2025-06-01T10:00:00+09:00&lt;/date&gt;
+  &lt;chain id="chain_001" key="chain"&gt;
+    &lt;uuid&gt;0bce8354-55f1-4047-b221-988e00c87c79&lt;/uuid&gt;
+    &lt;hash method="SHA-256"&gt;B1sDhiK3...&lt;/hash&gt;
+  &lt;/chain&gt;
+&lt;/document&gt;</code></pre>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-lg mb-3">Viewing in MaiML Viewer</h3>
+                                <p class="text-sm text-slate-600 mb-2">When loading multiple related MaiML files simultaneously into MaiML Viewer:</p>
+                                <ul class="list-disc list-inside space-y-1 text-sm text-slate-600 ml-2">
+                                    <li>Chain relationships are visualized as <strong>orange dashed arrows</strong> (🔗 chain) on the graph.</li>
+                                    <li>Hash verification results appear in the Document Metadata panel (✅ Chain verified / ❌ Hash mismatch / ⚠️ Linked file not loaded).</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <h2
+                            class="text-2xl font-bold text-slate-900 border-b-2 border-teal-500 pb-2 mb-6 flex items-center gap-2">
+                            <i class="ph ph-file"></i> 8. Generate MaiML file
+                    </h2>
 
                     <section class="bg-slate-800 text-white p-8 rounded-2xl mt-12 mb-8">
                         <h2 class="text-xl font-bold mb-4 flex items-center gap-2 !text-white">
@@ -1569,7 +1712,7 @@
         </div>
     </aside>
 
-    <main class="flex-1 flex flex-col min-w-0 bg-slate-50/50 dark:bg-slate-950 relative transition-colors duration-200">
+    <main class="flex-1 flex flex-col min-w-0 bg-slate-50/50 dark:bg-slate-950 transition-colors duration-200">
         <header
             class="h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-6 z-10 sticky top-0 transition-colors duration-200">
             <div class="flex items-center gap-2">
@@ -1593,7 +1736,8 @@
                 <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
 
                 <button onclick="saveXML()"
-                    class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium shadow-sm transition-all shadow-indigo-500/20 active:scale-95 mr-2">
+                    class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium shadow-sm transition-all shadow-indigo-500/20 active:scale-95 mr-2"
+                    title="Save As MaiML file">
                     <i class="ph ph-export"></i>
                     Export MaiML
                 </button>
@@ -1601,14 +1745,14 @@
                 <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
 
                 <button onclick="toggleTheme()"
-                    class="flex items-center gap-1.5 px-3 py-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                    class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                     title="Toggle Theme">
                     <i id="theme-icon" class="ph ph-moon text-xl"></i>
                     <span class="text-xs font-medium">Theme</span>
                 </button>
 
                 <button onclick="toggleHelpModal()"
-                    class="flex items-center gap-1.5 px-3 py-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                    class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                     title="Help & Manual">
                     <i class="ph ph-question text-xl"></i>
                     <span class="text-xs font-medium">Help</span>
@@ -1617,11 +1761,11 @@
         </header>
 
         <div id="method-tabs-bar"
-            class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-0 flex items-center gap-1 hidden transition-colors duration-200 overflow-x-auto whitespace-nowrap min-h-[42px]">
+            class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-0 flex items-center gap-1 transition-colors duration-200 overflow-x-auto whitespace-nowrap h-[42px]">
         </div>
 
-        <div class="flex-1 overflow-hidden relative">
-            <div id="content-document" class="absolute inset-0 overflow-auto p-6 md:p-8 animate-fade-in">
+        <div class="flex-1 overflow-hidden flex flex-col min-h-0">
+            <div id="content-document" class="h-full w-full overflow-auto p-6 md:p-8 animate-fade-in">
                 <div class="max-w-[95%] mx-auto space-y-6">
                     <div
                         class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5 transition-colors">
@@ -1801,10 +1945,28 @@
                             <div id="creators-list" class="space-y-4"></div>
                         </div>
                     </div>
+
+                    <!-- Chained Files -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5 transition-colors col-span-1 lg:col-span-2">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <i class="ph ph-link text-lg text-slate-400"></i>
+                                <h3 class="font-semibold text-slate-800 dark:text-slate-100">Chained Files</h3>
+                                <span class="text-xs text-slate-400 dark:text-slate-500">&lt;chain&gt; — linked MaiML files</span>
+                            </div>
+                            <label class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors cursor-pointer" title="Select a MaiML file to link">
+                                <i class="ph ph-paperclip text-base"></i> Add Chain
+                                <input type="file" accept=".maiml,.xml" onchange="addChainFromFile(event)" class="hidden">
+                            </label>
+                        </div>
+                        <div id="chains-list" class="space-y-2"></div>
+                    </div>
+
+                </div>
                 </div>
             </div>
 
-            <div id="content-petriNet" class="absolute inset-0 hidden">
+            <div id="content-petriNet" class="h-full w-full hidden flex flex-col min-h-0">
                 <div id="petriNet-canvas-view" class="flex h-full relative">
                     <div
                         class="absolute left-6 top-6 z-10 flex flex-col gap-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur shadow-lg border border-slate-200 dark:border-slate-700 p-2 rounded-xl">
@@ -1889,7 +2051,7 @@
                 </div>
 
                 <!-- Overview View -->
-                <div id="petriNet-overview-view" class="hidden absolute inset-0 bg-slate-50 dark:bg-slate-950">
+                <div id="petriNet-overview-view" class="hidden h-full w-full bg-slate-50 dark:bg-slate-950">
                     <svg id="overview-svg" class="w-full h-full" style="display: block">
                         <defs id="overview-defs"></defs>
                         <g id="overview-root"></g>
@@ -1897,13 +2059,24 @@
                 </div>
             </div>
 
-            <div id="content-templates" class="absolute inset-0 hidden overflow-auto p-6 md:p-8">
-                <div class="max-w-[95%] mx-auto">
-                    <div id="templates-list" class="space-y-8"></div>
+            <div id="content-templates" class="h-full w-full hidden flex min-h-0">
+                <!-- Templates サイドバー -->
+                <div class="w-48 shrink-0 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col transition-colors">
+                    <div class="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
+                        <h3 class="font-semibold text-slate-700 dark:text-slate-200 text-sm uppercase tracking-wide">Templates</h3>
+                        <p class="text-xs text-slate-400 mt-1">Click to navigate</p>
+                    </div>
+                    <div id="templates-sidebar-list" class="flex-1 overflow-y-auto p-3 space-y-1"></div>
+                </div>
+                <!-- Templates メインエリア -->
+                <div class="flex-1 overflow-auto p-6 md:p-8 min-w-0">
+                    <div class="max-w-[95%] mx-auto">
+                        <div id="templates-list" class="space-y-8"></div>
+                    </div>
                 </div>
             </div>
 
-            <div id="content-data" class="absolute inset-0 hidden">
+            <div id="content-data" class="h-full w-full hidden min-h-0">
                 <div class="flex h-full">
                     <div
                         class="w-56 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col shrink-0 transition-colors">
@@ -1923,7 +2096,7 @@
 
                     <div class="flex-1 bg-slate-50/50 dark:bg-slate-900 flex flex-col min-w-0 transition-colors">
                         <div
-                            class="p-4 border-b border-white dark:border-slate-700 bg-white/50 dark:bg-slate-800/80 backdrop-blur sticky top-0 z-10 flex justify-between items-center px-8 shadow-sm">
+                            class="p-4 border-b border-white dark:border-slate-700 bg-white/50 dark:bg-slate-800/80 backdrop-blur flex justify-between items-center px-8 shadow-sm shrink-0">
                             <div>
                                 <h2 class="font-bold text-lg text-slate-800 dark:text-white">
                                     Execution Timeline
@@ -2042,6 +2215,7 @@
                 owners: [],
                 vendors: [],
                 instruments: [],
+                chains: [],
             },
             _methods: [
                 {
@@ -2460,27 +2634,27 @@
                             : '<div class="w-0"></div>'
                         }
                     <input type="text" value="${p.description || ""}"
-    onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'description', this.value)"
-    placeholder="Description"
-    class="flex-[2] min-w-[140px] px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
-${!isPropertyList
+                        onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'description', this.value)"
+                        placeholder="Description"
+                        class="flex-[2] min-w-[140px] px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                    ${!isPropertyList
                             ? `<input type="text" value="${p.value || ""}"
-            onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'value', this.value)"
-            placeholder="${placeholder}"
-            class="flex-1 px-2 py-1 text-xs font-medium border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">`
+                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'value', this.value)"
+                                placeholder="${placeholder}"
+                                class="flex-1 px-2 py-1 text-xs font-medium border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">`
                             : '<div class="flex-1"></div>'
                         }
                     ${(isNumeric || isDateTime) ? `<button type="button" onclick="const acc = this.parentElement.nextElementSibling; if(acc && acc.classList.contains('hidden') !== undefined) { acc.classList.toggle('hidden'); const i = this.querySelector('i'); i.classList.toggle('ph-caret-down'); i.classList.toggle('ph-caret-up'); }"
                         class="px-2 py-1 text-xs text-slate-500 hover:text-indigo-600 transition-colors bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded flex items-center gap-1">
                         Details <i class="ph ph-caret-down"></i>
-                    </button>` : ""}
-                    <button onclick="removeDocPropertyNested(${itemIdx}, [${serializePath(parentPath)}])"
-                        class="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors opacity-0 group-hover/card:opacity-100">
-                        <i class="ph ph-trash text-sm"></i>
-                    </button>
-                </div>
-                ${(isNumeric || isDateTime) ? `
-                <div class="hidden mt-2 mb-1 p-3 bg-slate-50 dark:bg-slate-800/80 rounded border border-slate-200 dark:border-slate-700 text-xs">
+                        </button>` : ""}
+                        <button onclick="removeDocPropertyNested(${itemIdx}, [${serializePath(parentPath)}])"
+                            class="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors opacity-0 group-hover/card:opacity-100">
+                            <i class="ph ph-trash text-sm"></i>
+                        </button>
+                    </div>
+                    ${(isNumeric || isDateTime) ? `
+                    <div class="hidden mt-2 mb-1 p-3 bg-slate-50 dark:bg-slate-800/80 rounded border border-slate-200 dark:border-slate-700 text-xs">
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
@@ -2766,6 +2940,120 @@ ${!isPropertyList
         }
 
         // --- Instruments ---
+        // --- Chained Files ---
+        async function addChainFromFile(event) {
+            const file = event.target.files[0];
+            event.target.value = ''; // reset input
+            if (!file) return;
+
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+
+                // ファイル全体の SHA-256 ハッシュを計算 → Base64
+                const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+                const hashBase64 = btoa(String.fromCharCode(...new Uint8Array(hashBuffer)));
+
+                // XML から //maiml/document/uuid を取得
+                const text = new TextDecoder().decode(arrayBuffer);
+                const xmlDoc = new DOMParser().parseFromString(text, 'application/xml');
+                if (xmlDoc.querySelector('parsererror')) {
+                    showToast('Failed to parse MaiML file.', 'error');
+                    return;
+                }
+
+                // document要素の直下のuuid要素を取得
+                let docUuid = '';
+                const allEls = Array.from(xmlDoc.getElementsByTagName('*'));
+                const maimlEl = allEls.find(el => el.tagName.split(':').pop().toLowerCase() === 'maiml');
+                const docEl = maimlEl
+                    ? Array.from(maimlEl.children).find(c => c.tagName.split(':').pop().toLowerCase() === 'document')
+                    : null;
+                if (docEl) {
+                    const uuidEl = Array.from(docEl.children).find(c => c.tagName.split(':').pop().toLowerCase() === 'uuid');
+                    if (uuidEl) docUuid = uuidEl.textContent.trim();
+                }
+
+                if (!docUuid) {
+                    showToast('Could not find //document/uuid in the selected file.', 'error');
+                    return;
+                }
+
+                // 重複チェック
+                if (!state.document.chains) state.document.chains = [];
+                if (state.document.chains.some(c => c.uuid === docUuid)) {
+                    showToast('This file is already linked (same UUID).', 'warning');
+                    return;
+                }
+
+                state.document.chains.push({
+                    id: 'chain_' + Date.now(),
+                    key: 'chain',
+                    uuid: docUuid,
+                    hash: hashBase64,
+                    hashMethod: 'SHA-256',
+                    fileName: file.name,
+                });
+                renderChains();
+                showToast(`Linked: ${file.name}`);
+            } catch (e) {
+                showToast('Failed to process file: ' + e.message, 'error');
+                console.error(e);
+            }
+        }
+
+        function renderChains() {
+            const list = document.getElementById('chains-list');
+            if (!list) return;
+            // インラインエスケープ（Studioにはesc()がない）
+            const e = s => (s == null ? '' : String(s))
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            if (!state.document.chains || state.document.chains.length === 0) {
+                list.innerHTML = '<div class="text-sm text-slate-400 italic text-center py-4 border-2 border-dashed border-slate-100 dark:border-slate-700 rounded-lg">No chained files. Click "Add Chain" to link a MaiML file.</div>';
+                return;
+            }
+            list.innerHTML = state.document.chains.map((ch, idx) => `
+                <div class="bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg p-3 group/card hover:border-teal-300 dark:hover:border-teal-700 transition-all">
+                    <div class="flex items-start gap-2">
+                        <i class="ph ph-file-text text-teal-500 text-base mt-0.5 shrink-0"></i>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <span class="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate">${e(ch.fileName || ch.id)}</span>
+                                <span class="text-[10px] px-1.5 py-0.5 bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 rounded font-mono">key="${e(ch.key)}"</span>
+                            </div>
+                            <div class="grid grid-cols-1 gap-1 text-[11px] font-mono">
+                                <div class="flex items-center gap-1">
+                                    <span class="text-slate-400 w-14 shrink-0">UUID:</span>
+                                    <span class="text-slate-600 dark:text-slate-300 truncate" title="${e(ch.uuid)}">${e(ch.uuid)}</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <span class="text-slate-400 w-14 shrink-0">Hash:</span>
+                                    <span class="text-slate-600 dark:text-slate-300 truncate" title="${e(ch.hash)}">${e(ch.hash)}</span>
+                                    <span class="text-[10px] text-slate-400">(${e(ch.hashMethod)})</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="removeChain(${idx})" class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100 shrink-0" title="Remove chain">
+                            <i class="ph ph-trash text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function removeChain(idx) {
+            const ch = state.document.chains[idx];
+            showConfirmModal(
+                'Remove Chain',
+                `Remove link to "${ch.fileName || ch.uuid}"?`,
+                () => {
+                    state.document.chains.splice(idx, 1);
+                    renderChains();
+                    showToast('Chain removed');
+                }
+            );
+        }
+
         function addInstrument() {
             state.document.instruments.push({
                 id: "instrument_" + Date.now(),
@@ -3895,6 +4183,7 @@ ${state.petriNet.transitions
             <div class="text-slate-500 dark:text-slate-400 font-medium">No Editable Places</div>
             <div class="text-slate-400 dark:text-slate-500 text-sm mt-1">Go to Petri Net Design to add places first.</div>
         </div>`;
+                renderTemplatesSidebar([]);
                 return;
             }
 
@@ -3972,6 +4261,15 @@ ${state.petriNet.transitions
                                         </div>
                                         <input type="file" accept=".xlsx,.xls" onchange="handleExcelImport(event, '${t.id}')" class="hidden">
                                     </label>
+                                    <button onclick="handleExcelExport('${t.id}')" class="flex items-center gap-2.5 px-3 py-2 bg-white dark:bg-slate-800 border border-sky-200 dark:border-sky-800 text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/30 rounded-lg transition-all shadow-sm hover:shadow active:scale-95 group/btn" title="Exports template to Excel (sheet: '${place.label}')">
+                                        <i class="ph ph-export text-2xl"></i>
+                                        <div class="flex flex-col items-start leading-tight">
+                                            <span class="text-xs font-bold tracking-wide">Export Excel</span>
+                                            <span class="text-[10px] font-normal opacity-80 normal-case text-slate-500 dark:text-slate-400 group-hover/btn:text-sky-600 dark:group-hover/btn:text-sky-300">
+                                                Sheet: <span class="font-mono font-bold">${place.label}</span>
+                                            </span>
+                                        </div>
+                                    </button>
 
                                     <button onclick="removeTemplate('${t.id}')" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors" title="Delete template">
                                         <i class="ph ph-trash text-lg"></i>
@@ -4033,6 +4331,84 @@ ${state.petriNet.transitions
             </div>`;
                 })
                 .join("");
+            renderTemplatesSidebar(places);
+        }
+
+        // Templatesサイドバー描画
+        function renderTemplatesSidebar(places) {
+            const sb = document.getElementById('templates-sidebar-list');
+            if (!sb) return;
+
+            if (!places || places.length === 0) {
+                sb.innerHTML = '<div class="text-xs text-slate-400 italic text-center py-6">No places defined.</div>';
+                return;
+            }
+
+            // タイプごとのカラー設定（未割当ても含む）
+            const typeStyle = (type) => {
+                if (type === 'material')  return { border: 'border-l-green-500',  text: 'text-green-700 dark:text-green-400',  badge: 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' };
+                if (type === 'condition') return { border: 'border-l-blue-500',   text: 'text-blue-700 dark:text-blue-400',    badge: 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300' };
+                if (type === 'result')    return { border: 'border-l-purple-500', text: 'text-purple-700 dark:text-purple-400',badge: 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300' };
+                // 未割当て
+                return { border: 'border-l-slate-300 dark:border-l-slate-600', text: 'text-slate-400 dark:text-slate-500', badge: 'bg-slate-100 text-slate-400 dark:bg-slate-700 dark:text-slate-500' };
+            };
+
+            sb.innerHTML = places.map(place => {
+                const tmpls = state.templates.filter(t => t.placeId === place.id);
+                // テンプレートなし（未割当て）
+                if (tmpls.length === 0) {
+                    return `<div onclick="scrollToTemplateCard('${place.id}')"
+                        class="cursor-pointer group flex flex-col px-3 py-2 rounded-lg border-l-4 border-l-slate-200 dark:border-l-slate-600
+                               bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all mb-1 shadow-sm">
+                        <span class="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate" title="${place.label}">${place.label}</span>
+                        <span class="text-[10px] mt-0.5 flex items-center gap-1 text-slate-400 dark:text-slate-500">
+                            <i class="ph ph-warning text-amber-400"></i> No type assigned
+                        </span>
+                    </div>`;
+                }
+                // テンプレートあり（複数の場合もあり得る）
+                return tmpls.map(t => {
+                    const s = typeStyle(t.type);
+                    const typeLabel = t.type || 'unassigned';
+                    const tooltip = `${place.label} · ${typeLabel}`;
+                    return `<div onclick="scrollToTemplateCard('${place.id}')"
+                        class="cursor-pointer group flex flex-col px-3 py-2 rounded-lg border-l-4 ${s.border}
+                               bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all mb-1 shadow-sm"
+                        title="${tooltip}">
+                        <span class="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate">${place.label}</span>
+                        <span class="text-[10px] font-bold mt-0.5 ${s.text} capitalize">${typeLabel}</span>
+                    </div>`;
+                }).join('');
+            }).join('');
+        }
+
+        // Templatesサイドバーからカードへスクロール
+        function scrollToTemplateCard(placeId) {
+            // テンプレートパネルが非表示なら切り替え
+            if (state.activeTab !== 'templates') switchTab('templates');
+            // 少し遅延してDOM確定後にスクロール
+            setTimeout(() => {
+                // place.idをdata属性等から探す代わりにplace.labelで見出しを検索
+                const allHeadings = document.querySelectorAll('#templates-list h3');
+                const place = state.petriNet.places.find(p => p.id === placeId);
+                if (!place) return;
+                // h3テキストにplace.labelを含む要素を探す
+                const target = Array.from(allHeadings).find(h => h.textContent.includes(place.label));
+                if (target) {
+                    const card = target.closest('.bg-white, .dark\\:bg-slate-800');
+                    const scrollContainer = document.querySelector('#content-templates .overflow-auto');
+                    if (scrollContainer && card) {
+                        scrollContainer.scrollTo({ top: card.offsetTop - 16, behavior: 'smooth' });
+                    } else if (card) {
+                        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                    // ハイライト
+                    if (card) {
+                        card.classList.add('ring-2', 'ring-indigo-400', 'ring-offset-2');
+                        setTimeout(() => card.classList.remove('ring-2', 'ring-indigo-400', 'ring-offset-2'), 2000);
+                    }
+                }
+            }, 50);
         }
 
         function addTemplate(placeId, type) {
@@ -4774,7 +5150,7 @@ ${state.petriNet.transitions
                 return key.replace(/^>+/, "");
             };
 
-            // ヘルパー関数: アイテムを作成
+            // ヘルパー関数: アイテムを作成（G〜J列: Size/Axis/ScaleFactor/FormatString対応）
             const createItem = (row) => {
                 const rawKey = getVal(row, "Key");
                 return {
@@ -4783,6 +5159,10 @@ ${state.petriNet.transitions
                     units: getVal(row, "Units"),
                     description: getVal(row, "Description"),
                     value: getVal(row, "Value"),
+                    size: getVal(row, "Size"),
+                    axis: getVal(row, "Axis"),
+                    scaleFactor: getVal(row, "ScaleFactor"),
+                    formatString: getVal(row, "FormatString"),
                     _nestLevel: getNestLevel(rawKey),
                     _element: getVal(row, "Element").toLowerCase(),
                 };
@@ -4810,6 +5190,10 @@ ${state.petriNet.transitions
                             units: item.units,
                             description: item.description,
                             value: item.value,
+                            size: item.size || "",
+                            axis: item.axis || "",
+                            scaleFactor: item.scaleFactor || "",
+                            formatString: item.formatString || "",
                         };
 
                         // propertyListTypeの場合、子要素を再帰的に構築
@@ -4860,6 +5244,134 @@ ${state.petriNet.transitions
                 console.error("Excel import error:", error);
                 showToast(`Import failed: ${error.message} `, "error");
             }
+        }
+
+
+        async function handleExcelExport(templateId) {
+            const template = state.templates.find(t => t.id === templateId);
+            if (!template) return;
+
+            const place = state.petriNet.places.find(p => p.id === template.placeId);
+            if (!place || !place.label) {
+                showToast('Error: Place not found for this template.', 'error');
+                return;
+            }
+            const sheetName = place.label;
+
+            // ── ヘッダー行（10列） ──
+            const HEADERS = ['Element', 'Key', 'Type', 'Units', 'Description', 'Value',
+                              'Size', 'Axis', 'ScaleFactor', 'FormatString'];
+
+            const rows = [HEADERS];
+
+            // ── テンプレートのプロパティ/コンテンツを再帰的に行に変換 ──
+            function itemsToRows(properties, contents, nestLevel) {
+                const prefix = '>'.repeat(nestLevel);
+
+                (properties || []).forEach(p => {
+                    rows.push([
+                        'property',
+                        prefix + p.key,
+                        p.type || '',
+                        p.units || '',
+                        p.description || '',
+                        p.value || '',
+                        p.size || '',
+                        p.axis || '',
+                        p.scaleFactor !== undefined && p.scaleFactor !== null ? p.scaleFactor : '',
+                        p.formatString || '',
+                    ]);
+                    // propertyListTypeなら子要素を再帰展開
+                    if (p.type === 'propertyListType' && p.children) {
+                        const ch = Array.isArray(p.children)
+                            ? { properties: p.children, contents: [] }
+                            : p.children;
+                        itemsToRows(ch.properties, ch.contents, nestLevel + 1);
+                    }
+                });
+
+                (contents || []).forEach(c => {
+                    rows.push([
+                        'content',
+                        prefix + c.key,
+                        c.type || '',
+                        c.units || '',
+                        c.description || '',
+                        c.value || '',
+                        c.size || '',
+                        c.axis || '',
+                        c.scaleFactor !== undefined && c.scaleFactor !== null ? c.scaleFactor : '',
+                        c.formatString || '',
+                    ]);
+                });
+            }
+
+            itemsToRows(template.properties, template.contents, 0);
+
+            // ── dataType一覧シートのデータ ──
+            const DATA_TYPES = [
+                'propertyListType','stringType','tokenType','idType','idRefType',
+                'qualifiedNameType','dateTimeType','decimalType','doubleType','floatType',
+                'intType','longType','shortType','byteType','unsignedIntType','unsignedLongType',
+                'unsignedShortType','unsignedByteType','booleanType','base64BinaryType',
+                'hexBinaryType','uriType','uuidType','languageType','stringListType',
+                'idRefListType','qualifiedNameListType','dateTimeListType','decimalListType',
+                'doubleListType','floatListType','intListType','longListType','shortListType',
+                'byteListType','unsignedIntListType','unsignedLongListType','unsignedShortListType',
+                'unsignedByteListType','booleanListType','base64BinaryListType','hexBinaryListType',
+                'uriListType','uuidListType','languageListType','stringEnumType',
+                'contentStringListType','contentIdRefListType','contentQualifiedNameListType',
+                'contentDateTimeListType','contentDecimalListType','contentDoubleListType',
+                'contentFloatListType','contentIntListType','contentLongListType',
+                'contentShortListType','contentByteListType','contentUnsignedIntListType',
+                'contentUnsignedLongListType','contentUnsignedShortListType',
+                'contentUnsignedByteListType','contentBooleanListType',
+                'contentBase64BinaryListType','contentHexBinaryListType',
+                'contentUriListType','contentUuidListType','contentLanguageListType',
+                'contentStringEnumType',
+            ];
+            const dtRows = [['dataType一覧'], ...DATA_TYPES.map(t => [t])];
+
+            // ── XLSXワークブック生成 ──
+            const wb = XLSX.utils.book_new();
+
+            // テンプレートシート
+            const ws = XLSX.utils.aoa_to_sheet(rows);
+
+            // 列幅設定（見やすくする）
+            ws['!cols'] = [
+                {wch: 10},  // Element
+                {wch: 24},  // Key
+                {wch: 28},  // Type
+                {wch: 10},  // Units
+                {wch: 30},  // Description
+                {wch: 20},  // Value
+                {wch: 8},   // Size
+                {wch: 8},   // Axis
+                {wch: 14},  // ScaleFactor
+                {wch: 16},  // FormatString
+            ];
+
+            // ヘッダー行をボールド（スタイルはXLSXライト版では限定的）
+            XLSX.utils.book_append_sheet(wb, ws, sheetName);
+
+            // dataType一覧シート
+            const wsDt = XLSX.utils.aoa_to_sheet(dtRows);
+            wsDt['!cols'] = [{wch: 34}];
+            XLSX.utils.book_append_sheet(wb, wsDt, 'dataType一覧');
+
+            // ── ダウンロード ──
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+            const blob = new Blob([wbout], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `MaiMLStudio_Template_${sheetName}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => { URL.revokeObjectURL(url); document.body.removeChild(a); }, 1000);
+
+            showToast(`Exported: MaiMLStudio_Template_${sheetName}.xlsx`);
         }
 
         function scrollToCard(cardId) {
@@ -4932,16 +5444,22 @@ ${state.petriNet.transitions
 
                         // return `<div onclick="scrollToInstances('${tpl.id}')" class="cursor-pointer bg-white dark:bg-slate-800 border-l-4 ${typeConfig.border} p-4 shadow-sm hover:shadow-md transition-all rounded-r border-y border-r border-slate-200 dark:border-slate-700 mb-3 group">
                         // return `<div onclick="scrollToInstances('${tpl.id}')" class="cursor-pointer bg-white dark:bg-slate-800 border-l-4 ${typeConfig.border} p-4 shadow-sm hover:shadow-md ${typeConfig.bg} transition-all rounded-r border-y border-r border-slate-200 dark:border-slate-700 mb-3 group">
+                        const instCount = state.instances.filter(i => i.templateId === tpl.id).length;
+                        const noInst = instCount === 0;
                         return `<div onclick="scrollToInstances('${tpl.id}')" class="cursor-pointer bg-white dark:bg-slate-800 border-l-4 ${typeConfig.border} p-4 shadow-sm hover:shadow-md ${typeConfig.bg} transition-all rounded-r border-y border-r border-slate-200 dark:border-y-slate-700 dark:border-r-slate-700 mb-3 group">        
                 <div class="flex justify-between items-start">
-                    <div>
+                    <div class="flex-1 min-w-0">
                         <div class="font-bold text-sm capitalize ${typeConfig.text}">${tpl.type}</div>
                         <div class="text-xs text-slate-700 dark:text-slate-200 mt-1 flex items-start gap-1" title="${placeLabel}"><i class="ph ph-map-pin shrink-0 mt-0.5"></i><span class="break-all">${placeLabel}</span></div>
                     </div>
                 </div>
-                <div class="text-xs text-slate-400 mt-2 flex gap-3">
-                    <span title="Properties"><i class="ph ph-list-dashes"></i> ${tpl.properties.length}</span>
-                    <span title="Contents"><i class="ph ph-files"></i> ${tpl.contents.length}</span>
+                <div class="text-xs mt-2 flex gap-3 items-center">
+                    <span class="text-slate-400" title="Properties"><i class="ph ph-list-dashes"></i> ${tpl.properties.length}</span>
+                    <span class="text-slate-400" title="Contents"><i class="ph ph-files"></i> ${tpl.contents.length}</span>
+                    ${noInst
+                        ? `<span class="ml-auto flex items-center gap-0.5 text-amber-500 font-semibold text-[10px]"><i class="ph ph-warning"></i>No instances</span>`
+                        : `<span class="ml-auto text-slate-400 text-[10px]"><i class="ph ph-stack"></i> ${instCount}</span>`
+                    }
                 </div>
                 <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700">
                     <button onclick="event.stopPropagation(); createInstance('${tpl.id}')"
@@ -5025,6 +5543,7 @@ ${state.petriNet.transitions
 
             state.instances.push(newInstance);
             renderDataInstances();
+            renderDataTemplates(); // サイドバーのインスタンス数バッジを即時更新
             const place = state.petriNet.places.find(p => p.id === template.placeId);
             const placeLabel = place ? place.label : template.type;
             showToast(`${template.type} instance added: ${placeLabel}`);
@@ -6052,7 +6571,17 @@ ${state.petriNet.transitions
 
             let html = "";
 
-            instances.forEach((inst, instIdx) => {
+            // テンプレートID順にソートして同一テンプレートのインスタンスを連続表示
+            // instIdx は state.instances 上の実際のインデックス（削除・更新操作に使用）
+            const sortedInstances = [...instances]
+                .map((inst, realIdx) => ({ inst, realIdx }))
+                .sort((a, b) => {
+                    if (a.inst.templateId < b.inst.templateId) return -1;
+                    if (a.inst.templateId > b.inst.templateId) return 1;
+                    return a.realIdx - b.realIdx; // 同一テンプレート内は追加順を維持
+                });
+
+            sortedInstances.forEach(({ inst, realIdx: instIdx }) => {
                 const template = state.templates.find(
                     (t) => t.id === inst.templateId,
                 );
@@ -6488,6 +7017,7 @@ ${state.petriNet.transitions
                 () => {
                     state.instances.splice(idx, 1);
                     renderDataInstances();
+                    renderDataTemplates(); // サイドバーのインスタンス数バッジを即時更新
                     showToast("Instance deleted");
                 },
             );
@@ -7053,6 +7583,17 @@ ${state.petriNet.transitions
                 const pad = (num) => String(num).padStart(2, "0");
                 const dateStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}${diff}${pad(Math.floor(Math.abs(offset) / 60))}:${pad(Math.abs(offset) % 60)}`;
                 xml += `    <date>${dateStr}</date>\n`;
+
+                // <chain> elements（<date>の直後、JIS K0200仕様）
+                if (state.document.chains && state.document.chains.length > 0) {
+                    for (const ch of state.document.chains) {
+                        xml += `    <chain id="${ch.id || ''}" key="${ch.key || 'chain'}">\n`;
+                        xml += `      <uuid>${ch.uuid}</uuid>\n`;
+                        xml += `      <hash method="${ch.hashMethod || 'SHA-256'}">${ch.hash}</hash>\n`;
+                        xml += `    </chain>\n`;
+                    }
+                }
+
                 xml += "  </document>\n";
 
                 // 2. <protocol>
@@ -7474,6 +8015,8 @@ ${state.petriNet.transitions
                 renderInstruments();
                 renderCreators();
                 renderOwners();
+                if (!state.document.chains) state.document.chains = [];
+                renderChains();
 
                 renderMethodTabs(); // Render tabs
                 switchMethod(state._activeMethodId); // This triggers sub-renders
@@ -7494,10 +8037,8 @@ ${state.petriNet.transitions
             if (!container) return;
 
             if (state.activeTab === "document") {
-                container.classList.add("hidden");
+                container.innerHTML = ""; // Document タブ時は中身を空に（高さは維持）
                 return;
-            } else {
-                container.classList.remove("hidden");
             }
 
             const isOverviewMode = state.petriNetSubView === "overview";
@@ -7941,6 +8482,7 @@ ${state.petriNet.transitions
         renderInstruments();
         renderCreators();
         renderOwners();
+        renderChains();
         // Initialize Method Tabs and Views
         renderMethodTabs();
         switchMethod(state._activeMethodId);
