@@ -824,21 +824,29 @@
                     <section>
                         <h2
                             class="text-2xl font-bold text-slate-900 border-b-2 border-teal-500 pb-2 mb-6 flex items-center gap-2">
-                            <i class="ph ph-link"></i> 7. ファイル連携機能 &lt;chain&gt; 
+                            <i class="ph ph-link"></i> 7. ファイル連携機能 &lt;chain&gt; / &lt;parent&gt; 
                         </h2>
                         <div class="space-y-4">
                             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                                 <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="ph ph-info text-teal-500"></i>概要</h3>
-                                <p class="text-sm text-slate-600 mb-3">MaiML規格 (JIS K0200) の <code>&lt;chain&gt;</code> 要素を使ったファイル連携機能です。複数のMaiMLファイルを関連付け、改ざん検知（ハッシュ値による整合性確認）を実現します。ブロックチェーンのように「このファイルは別のファイルの内容を受け継いでいる」という時系列の連鎖を記録できます。</p>
+                                <p class="text-sm text-slate-600 mb-3">MaiML規格 (JIS K0200) の <code>&lt;chain&gt;</code> 要素および <code>&lt;parent&gt;</code> 要素を使ったファイル連携機能です。複数のMaiMLファイルを関連付け、改ざん検知（ハッシュ値による整合性確認）を実現します。</p>
+                                <ul class="list-disc list-inside space-y-1 text-sm text-slate-600 ml-2 mb-3">
+                                    <li><strong>&lt;chain&gt; 要素:</strong> ブロックチェーンのように「このファイルは別のファイルの内容を受け継いでいる」という時系列の連鎖（来歴）を記録します。</li>
+                                    <li><strong>&lt;parent&gt; 要素:</strong> 元ファイルを改訂して新しいファイルを作成した際などに、元のファイルに対する「改訂履歴」としての依存関係（親）を記録します。</li>
+                                </ul>
                                 <div class="bg-teal-50 border border-teal-200 rounded-lg p-3 text-xs text-teal-800 mb-3">
-                                    <strong>ユースケース例：</strong> 試料合成(A) → 前処理(B) → 計測(C) という一連の実験工程において、C が B と A を参照・継承していることを記録する。
+                                    <strong class="block mb-1">ユースケース例：</strong>
+                                    <ul class="space-y-1">
+                                        <li>・<code>chain</code>: 試料合成(A) → 前処理(B) → 計測(C) という一連の実験工程において、C が B と A を参照・継承していることを記録する。</li>
+                                        <li>・<code>parent</code>: 既存のMaiMLファイル(A)を修正・追加して、新しい改訂版のファイル(A')を作成した際に、A' が A を親（改訂元）として参照する。</li>
+                                    </ul>
                                 </div>
                                 <div class="overflow-x-auto">
                                     <table class="w-full text-xs text-left border-collapse">
                                         <tbody class="divide-y divide-slate-100">
                                             <tr><td class="p-2 font-bold text-slate-600 w-1/3">ハッシュ方式</td><td class="p-2 text-slate-600">SHA-256（ファイル全体のバイト列。署名付きファイルは &lt;ds:DigestValue&gt; を使用）</td></tr>
                                             <tr><td class="p-2 font-bold text-slate-600">出力位置</td><td class="p-2 text-slate-600">&lt;document&gt; 要素内の &lt;date&gt; 要素の直後</td></tr>
-                                            <tr><td class="p-2 font-bold text-slate-600">key属性</td><td class="p-2 text-slate-600">規定値は <code>key="chain"</code></td></tr>
+                                            <tr><td class="p-2 font-bold text-slate-600">key属性</td><td class="p-2 text-slate-600">chainの規定値は <code>key="chain"</code><br/>parentの規定値は <code>key="revised"</code></td></tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -846,10 +854,10 @@
                             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                                 <h3 class="font-bold text-lg mb-3">登録手順</h3>
                                 <ol class="list-decimal list-inside space-y-2 text-sm text-slate-600 ml-2">
-                                    <li><strong>Document Metadata</strong> タブの一番下にある <strong>Chained Files</strong> セクションを表示します。</li>
-                                    <li><strong>Add Chain</strong> ボタンをクリックし、連携先の <code>.maiml</code> ファイルを選択します。</li>
+                                    <li><strong>Document Metadata</strong> タブの一番下にある <strong>Chained Files</strong> や <strong>Parent File</strong> セクションを表示します。</li>
+                                    <li><strong>Add Chain</strong> または <strong>Set Parent</strong> ボタンをクリックし、連携先の <code>.maiml</code> ファイルを選択します（それぞれ &lt;chain&gt; / &lt;parent&gt; 要素として登録されます）。</li>
                                     <li>選択したファイルの <code>//document/uuid</code> 値と SHA-256 ハッシュ値が自動的に取得・表示されます。</li>
-                                    <li>通常通り <strong>Export MaiML</strong> ボタンをクリックすると、<code>&lt;chain&gt;</code> 要素がMaiMLファイルに書き出されます。</li>
+                                    <li>通常通り <strong>Export MaiML</strong> ボタンをクリックすると、要素がMaiMLファイルに書き出されます。</li>
                                 </ol>
                             </div>
                             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
@@ -861,14 +869,19 @@
     &lt;uuid&gt;0bce8354-55f1-4047-b221-988e00c87c79&lt;/uuid&gt;
     &lt;hash method="SHA-256"&gt;B1sDhiK3...&lt;/hash&gt;
   &lt;/chain&gt;
+  &lt;parent id="parent_001" key="revised"&gt;
+    &lt;uuid&gt;5c22fb...&lt;/uuid&gt;
+    &lt;hash method="SHA-256"&gt;X3Dk...&lt;/hash&gt;
+  &lt;/parent&gt;
 &lt;/document&gt;</code></pre>
                             </div>
                             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                                 <h3 class="font-bold text-lg mb-3">MaiML Viewer での確認</h3>
                                 <p class="text-sm text-slate-600 mb-2">関連するMaiMLファイルを MaiML Viewer に複数同時ロードすると：</p>
                                 <ul class="list-disc list-inside space-y-1 text-sm text-slate-600 ml-2">
-                                    <li>ファイル間の連鎖が <strong>橙色の破線矢印</strong>（🔗 chain）でグラフ上に表示されます。</li>
-                                    <li>Document Metadata パネルにハッシュ検証結果が表示されます（✅ Chain verified / ❌ Hash mismatch / ⚠️ Linked file not loaded）。</li>
+                                    <li>ファイル間の chain 連鎖が <strong>橙色の破線矢印</strong>（🔗 chain）でグラフ上に表示されます。</li>
+                                    <li>ファイル間の parent 関係が <strong>紫色の破線矢印</strong>（🔗 parent）でグラフ上に表示されます。</li>
+                                    <li>Document Metadata パネルにハッシュ検証結果が表示されます（✅ Verified / ❌ Hash mismatch / ⚠️ Linked file not loaded）。</li>
                                 </ul>
                             </div>
                         </div>
@@ -1571,32 +1584,40 @@
                     <section>
                         <h2
                             class="text-2xl font-bold text-slate-900 border-b-2 border-teal-500 pb-2 mb-6 flex items-center gap-2">
-                            <i class="ph ph-link"></i> 7. File Chaining &lt;chain&gt; 
+                            <i class="ph ph-link"></i> 7. File Linking &lt;chain&gt; / &lt;parent&gt; 
                         </h2>
                         <div class="space-y-4">
                             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                                 <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="ph ph-info text-teal-500"></i>Overview</h3>
-                                <p class="text-sm text-slate-600 mb-3">File chaining using the <code>&lt;chain&gt;</code> element of JIS K0200. Links multiple MaiML files together and enables tamper detection via hash verification. Like a blockchain, it records the temporal chain of inheritance — "this file is derived from another."</p>
+                                <p class="text-sm text-slate-600 mb-3">File linking using the <code>&lt;chain&gt;</code> and <code>&lt;parent&gt;</code> elements of JIS K0200. Links multiple MaiML files together and enables tamper detection via hash verification.</p>
+                                <ul class="list-disc list-inside space-y-1 text-sm text-slate-600 ml-2 mb-3">
+                                    <li><strong>&lt;chain&gt; element:</strong> Like a blockchain, it records the temporal lineage — "this file is chronologically derived from another."</li>
+                                    <li><strong>&lt;parent&gt; element:</strong> Records revision history, representing a parent-child relationship where the current file is a revised version of the original parent file.</li>
+                                </ul>
                                 <div class="bg-teal-50 border border-teal-200 rounded-lg p-3 text-xs text-teal-800 mb-3">
-                                    <strong>Example use case:</strong> In an experiment sequence — Synthesis (A) → Pre-processing (B) → Measurement (C) — file C records that it references and inherits from B and A.
+                                    <strong class="block mb-1">Example use cases:</strong>
+                                    <ul class="space-y-1">
+                                        <li>・<code>chain</code>: In an experiment sequence — Synthesis (A) → Pre-processing (B) → Measurement (C) — file C records that it references and inherits from B and A.</li>
+                                        <li>・<code>parent</code>: When an existing MaiML file (A) is updated to create a new revised file (A'), A' references A as its parent (original source).</li>
+                                    </ul>
                                 </div>
                                 <div class="overflow-x-auto">
                                     <table class="w-full text-xs text-left border-collapse">
                                         <tbody class="divide-y divide-slate-100">
                                             <tr><td class="p-2 font-bold text-slate-600 w-1/3">Hash method</td><td class="p-2 text-slate-600">SHA-256 (full file byte stream; for signed files, uses <code>&lt;ds:DigestValue&gt;</code>)</td></tr>
                                             <tr><td class="p-2 font-bold text-slate-600">Output position</td><td class="p-2 text-slate-600">Immediately after the <code>&lt;date&gt;</code> element inside <code>&lt;document&gt;</code></td></tr>
-                                            <tr><td class="p-2 font-bold text-slate-600">key attribute</td><td class="p-2 text-slate-600">Default value: <code>key="chain"</code></td></tr>
+                                            <tr><td class="p-2 font-bold text-slate-600">key attribute</td><td class="p-2 text-slate-600">Default for chain: <code>key="chain"</code><br/>Default for parent: <code>key="revised"</code></td></tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                                <h3 class="font-bold text-lg mb-3">How to Register a Chain</h3>
+                                <h3 class="font-bold text-lg mb-3">How to Register Links</h3>
                                 <ol class="list-decimal list-inside space-y-2 text-sm text-slate-600 ml-2">
-                                    <li>Open the <strong>Document Metadata</strong> tab and scroll to the <strong>Chained Files</strong> section at the bottom.</li>
-                                    <li>Click <strong>Add Chain</strong> and select the target <code>.maiml</code> file to link.</li>
+                                    <li>Open the <strong>Document Metadata</strong> tab and scroll to the <strong>Chained Files</strong> or <strong>Parent File</strong> sections at the bottom.</li>
+                                    <li>Click <strong>Add Chain</strong> or <strong>Set Parent</strong> and select the target <code>.maiml</code> file to link (registered as an element respectively).</li>
                                     <li>The <code>//document/uuid</code> value and SHA-256 hash are automatically extracted and displayed.</li>
-                                    <li>Click <strong>Export MaiML</strong> as usual — the <code>&lt;chain&gt;</code> element will be included in the output file.</li>
+                                    <li>Click <strong>Export MaiML</strong> as usual — the link elements will be included in the output file.</li>
                                 </ol>
                             </div>
                             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
@@ -1608,6 +1629,10 @@
     &lt;uuid&gt;0bce8354-55f1-4047-b221-988e00c87c79&lt;/uuid&gt;
     &lt;hash method="SHA-256"&gt;B1sDhiK3...&lt;/hash&gt;
   &lt;/chain&gt;
+  &lt;parent id="parent_001" key="revised"&gt;
+    &lt;uuid&gt;5c22fb...&lt;/uuid&gt;
+    &lt;hash method="SHA-256"&gt;X3Dk...&lt;/hash&gt;
+  &lt;/parent&gt;
 &lt;/document&gt;</code></pre>
                             </div>
                             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
@@ -1615,7 +1640,8 @@
                                 <p class="text-sm text-slate-600 mb-2">When loading multiple related MaiML files simultaneously into MaiML Viewer:</p>
                                 <ul class="list-disc list-inside space-y-1 text-sm text-slate-600 ml-2">
                                     <li>Chain relationships are visualized as <strong>orange dashed arrows</strong> (🔗 chain) on the graph.</li>
-                                    <li>Hash verification results appear in the Document Metadata panel (✅ Chain verified / ❌ Hash mismatch / ⚠️ Linked file not loaded).</li>
+                                    <li>Parent relationships are visualized as <strong>purple dashed arrows</strong> (🔗 parent) on the graph.</li>
+                                    <li>Hash verification results appear in the Document Metadata panel (✅ Verified / ❌ Hash mismatch / ⚠️ Linked file not loaded).</li>
                                 </ul>
                             </div>
                         </div>
@@ -1962,6 +1988,22 @@
                         <div id="chains-list" class="space-y-2"></div>
                     </div>
 
+                    <!-- Parent File -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5 transition-colors col-span-1 lg:col-span-2">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <i class="ph ph-git-branch text-lg text-slate-400"></i>
+                                <h3 class="font-semibold text-slate-800 dark:text-slate-100">Parent File</h3>
+                                <span class="text-xs text-slate-400 dark:text-slate-500">&lt;parent&gt; — revision origin (1 file)</span>
+                            </div>
+                            <label id="parent-add-btn" class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/30 rounded-lg transition-colors cursor-pointer" title="Select the original MaiML file this document was revised from">
+                                <i class="ph ph-git-diff text-base"></i> Set Parent
+                                <input type="file" accept=".maiml,.xml" onchange="setParentFromFile(event)" class="hidden">
+                            </label>
+                        </div>
+                        <div id="parent-info"></div>
+                    </div>
+
                 </div>
                 </div>
             </div>
@@ -2216,6 +2258,7 @@
                 vendors: [],
                 instruments: [],
                 chains: [],
+                parent: null,   // {id, key, uuid, hash, hashMethod, fileName}
             },
             _methods: [
                 {
@@ -3050,6 +3093,104 @@
                     state.document.chains.splice(idx, 1);
                     renderChains();
                     showToast('Chain removed');
+                }
+            );
+        }
+
+
+        // --- Parent File ---
+        async function setParentFromFile(event) {
+            const file = event.target.files[0];
+            event.target.value = '';
+            if (!file) return;
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+                const hashBase64 = btoa(String.fromCharCode(...new Uint8Array(hashBuffer)));
+                const text = new TextDecoder().decode(arrayBuffer);
+                const xmlDoc = new DOMParser().parseFromString(text, 'application/xml');
+                if (xmlDoc.querySelector('parsererror')) {
+                    showToast('Failed to parse MaiML file.', 'error'); return;
+                }
+                let docUuid = '';
+                const allEls = Array.from(xmlDoc.getElementsByTagName('*'));
+                const maimlEl = allEls.find(el => el.tagName.split(':').pop().toLowerCase() === 'maiml');
+                const docEl = maimlEl
+                    ? Array.from(maimlEl.children).find(c => c.tagName.split(':').pop().toLowerCase() === 'document')
+                    : null;
+                if (docEl) {
+                    const uuidEl = Array.from(docEl.children).find(c => c.tagName.split(':').pop().toLowerCase() === 'uuid');
+                    if (uuidEl) docUuid = uuidEl.textContent.trim();
+                }
+                if (!docUuid) {
+                    showToast('Could not find //document/uuid in the selected file.', 'error'); return;
+                }
+                state.document.parent = {
+                    id: 'parent_' + Date.now(),
+                    key: 'revised',
+                    uuid: docUuid,
+                    hash: hashBase64,
+                    hashMethod: 'SHA-256',
+                    fileName: file.name,
+                };
+                renderParent();
+                showToast(`Parent set: ${file.name}`);
+            } catch (e) {
+                showToast('Failed to process file: ' + e.message, 'error');
+                console.error(e);
+            }
+        }
+
+        function renderParent() {
+            const info = document.getElementById('parent-info');
+            const addBtn = document.getElementById('parent-add-btn');
+            if (!info) return;
+            const e = s => (s == null ? '' : String(s))
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            if (!state.document.parent) {
+                info.innerHTML = '<div class="text-sm text-slate-400 italic text-center py-4 border-2 border-dashed border-slate-100 dark:border-slate-700 rounded-lg">No parent file. Click "Set Parent" to register the revision origin.</div>';
+                if (addBtn) addBtn.style.display = '';
+                return;
+            }
+            const p = state.document.parent;
+            if (addBtn) addBtn.style.display = 'none'; // 1件のみ → 登録後はボタン非表示
+            info.innerHTML = `
+                <div class="bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg p-3 group/card hover:border-violet-300 dark:hover:border-violet-700 transition-all">
+                    <div class="flex items-start gap-2">
+                        <i class="ph ph-git-diff text-violet-500 text-base mt-0.5 shrink-0"></i>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <span class="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate">${e(p.fileName || p.id)}</span>
+                                <span class="text-[10px] px-1.5 py-0.5 bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 rounded font-mono">key="${e(p.key)}"</span>
+                            </div>
+                            <div class="grid grid-cols-1 gap-1 text-[11px] font-mono">
+                                <div class="flex items-center gap-1">
+                                    <span class="text-slate-400 w-14 shrink-0">UUID:</span>
+                                    <span class="text-slate-600 dark:text-slate-300 truncate" title="${e(p.uuid)}">${e(p.uuid)}</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <span class="text-slate-400 w-14 shrink-0">Hash:</span>
+                                    <span class="text-slate-600 dark:text-slate-300 truncate" title="${e(p.hash)}">${e(p.hash)}</span>
+                                    <span class="text-[10px] text-slate-400">(${e(p.hashMethod)})</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="removeParent()" class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors shrink-0" title="Remove parent">
+                            <i class="ph ph-trash text-sm"></i>
+                        </button>
+                    </div>
+                </div>`;
+        }
+
+        function removeParent() {
+            showConfirmModal(
+                'Remove Parent',
+                `Remove parent file "${state.document.parent?.fileName || ''}"?`,
+                () => {
+                    state.document.parent = null;
+                    renderParent();
+                    showToast('Parent removed');
                 }
             );
         }
@@ -7594,6 +7735,15 @@ ${state.petriNet.transitions
                     }
                 }
 
+                // <parent> element（<chain>の後、JIS K0200仕様）
+                if (state.document.parent) {
+                    const p = state.document.parent;
+                    xml += `    <parent id="${p.id || ''}" key="${p.key || 'revised'}">\n`;
+                    xml += `      <uuid>${p.uuid}</uuid>\n`;
+                    xml += `      <hash method="${p.hashMethod || 'SHA-256'}">${p.hash}</hash>\n`;
+                    xml += `    </parent>\n`;
+                }
+
                 xml += "  </document>\n";
 
                 // 2. <protocol>
@@ -8017,6 +8167,8 @@ ${state.petriNet.transitions
                 renderOwners();
                 if (!state.document.chains) state.document.chains = [];
                 renderChains();
+                if (!state.document.parent) state.document.parent = null;
+                renderParent();
 
                 renderMethodTabs(); // Render tabs
                 switchMethod(state._activeMethodId); // This triggers sub-renders
@@ -8483,6 +8635,7 @@ ${state.petriNet.transitions
         renderCreators();
         renderOwners();
         renderChains();
+        renderParent();
         // Initialize Method Tabs and Views
         renderMethodTabs();
         switchMethod(state._activeMethodId);
