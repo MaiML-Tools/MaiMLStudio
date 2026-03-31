@@ -272,6 +272,16 @@
                                             class="text-xs text-indigo-600">MaiML標準規格に準拠したXMLファイルを生成・ダウンロードします。</span>
                                     </div>
                                 </div>
+                                <div
+                                    class="flex items-start gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-lg">
+                                    <div class="p-2 bg-emerald-600 rounded text-white">
+                                        <i class="ph ph-seal-check text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <span class="font-bold block text-sm text-emerald-700">Export + Sign</span><span
+                                            class="text-xs text-emerald-600">MaiMLファイルにECDSA P-256によるデジタル署名を付与し、改ざん検知可能な形式で出力します。</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <br />
@@ -824,29 +834,21 @@
                     <section>
                         <h2
                             class="text-2xl font-bold text-slate-900 border-b-2 border-teal-500 pb-2 mb-6 flex items-center gap-2">
-                            <i class="ph ph-link"></i> 7. ファイル連携機能 &lt;chain&gt; / &lt;parent&gt; 
+                            <i class="ph ph-link"></i> 7. ファイル連携機能 &lt;chain&gt; 
                         </h2>
                         <div class="space-y-4">
                             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                                 <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="ph ph-info text-teal-500"></i>概要</h3>
-                                <p class="text-sm text-slate-600 mb-3">MaiML規格 (JIS K0200) の <code>&lt;chain&gt;</code> 要素および <code>&lt;parent&gt;</code> 要素を使ったファイル連携機能です。複数のMaiMLファイルを関連付け、改ざん検知（ハッシュ値による整合性確認）を実現します。</p>
-                                <ul class="list-disc list-inside space-y-1 text-sm text-slate-600 ml-2 mb-3">
-                                    <li><strong>&lt;chain&gt; 要素:</strong> ブロックチェーンのように「このファイルは別のファイルの内容を受け継いでいる」という時系列の連鎖（来歴）を記録します。</li>
-                                    <li><strong>&lt;parent&gt; 要素:</strong> 元ファイルを改訂して新しいファイルを作成した際などに、元のファイルに対する「改訂履歴」としての依存関係（親）を記録します。</li>
-                                </ul>
+                                <p class="text-sm text-slate-600 mb-3">MaiML規格 (JIS K0200) の <code>&lt;chain&gt;</code> 要素を使ったファイル連携機能です。複数のMaiMLファイルを関連付け、改ざん検知（ハッシュ値による整合性確認）を実現します。ブロックチェーンのように「このファイルは別のファイルの内容を受け継いでいる」という時系列の連鎖を記録できます。</p>
                                 <div class="bg-teal-50 border border-teal-200 rounded-lg p-3 text-xs text-teal-800 mb-3">
-                                    <strong class="block mb-1">ユースケース例：</strong>
-                                    <ul class="space-y-1">
-                                        <li>・<code>chain</code>: 試料合成(A) → 前処理(B) → 計測(C) という一連の実験工程において、C が B と A を参照・継承していることを記録する。</li>
-                                        <li>・<code>parent</code>: 既存のMaiMLファイル(A)を修正・追加して、新しい改訂版のファイル(A')を作成した際に、A' が A を親（改訂元）として参照する。</li>
-                                    </ul>
+                                    <strong>ユースケース例：</strong> 試料合成(A) → 前処理(B) → 計測(C) という一連の実験工程において、C が B と A を参照・継承していることを記録する。
                                 </div>
                                 <div class="overflow-x-auto">
                                     <table class="w-full text-xs text-left border-collapse">
                                         <tbody class="divide-y divide-slate-100">
                                             <tr><td class="p-2 font-bold text-slate-600 w-1/3">ハッシュ方式</td><td class="p-2 text-slate-600">SHA-256（ファイル全体のバイト列。署名付きファイルは &lt;ds:DigestValue&gt; を使用）</td></tr>
                                             <tr><td class="p-2 font-bold text-slate-600">出力位置</td><td class="p-2 text-slate-600">&lt;document&gt; 要素内の &lt;date&gt; 要素の直後</td></tr>
-                                            <tr><td class="p-2 font-bold text-slate-600">key属性</td><td class="p-2 text-slate-600">chainの規定値は <code>key="chain"</code><br/>parentの規定値は <code>key="revised"</code></td></tr>
+                                            <tr><td class="p-2 font-bold text-slate-600">key属性</td><td class="p-2 text-slate-600">規定値は <code>key="chain"</code></td></tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -854,10 +856,10 @@
                             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                                 <h3 class="font-bold text-lg mb-3">登録手順</h3>
                                 <ol class="list-decimal list-inside space-y-2 text-sm text-slate-600 ml-2">
-                                    <li><strong>Document Metadata</strong> タブの一番下にある <strong>Chained Files</strong> や <strong>Parent File</strong> セクションを表示します。</li>
-                                    <li><strong>Add Chain</strong> または <strong>Set Parent</strong> ボタンをクリックし、連携先の <code>.maiml</code> ファイルを選択します（それぞれ &lt;chain&gt; / &lt;parent&gt; 要素として登録されます）。</li>
+                                    <li><strong>Document Metadata</strong> タブの一番下にある <strong>Chained Files</strong> セクションを表示します。</li>
+                                    <li><strong>Add Chain</strong> ボタンをクリックし、連携先の <code>.maiml</code> ファイルを選択します。</li>
                                     <li>選択したファイルの <code>//document/uuid</code> 値と SHA-256 ハッシュ値が自動的に取得・表示されます。</li>
-                                    <li>通常通り <strong>Export MaiML</strong> ボタンをクリックすると、要素がMaiMLファイルに書き出されます。</li>
+                                    <li>通常通り <strong>Export MaiML</strong> ボタンをクリックすると、<code>&lt;chain&gt;</code> 要素がMaiMLファイルに書き出されます。</li>
                                 </ol>
                             </div>
                             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
@@ -869,19 +871,14 @@
     &lt;uuid&gt;0bce8354-55f1-4047-b221-988e00c87c79&lt;/uuid&gt;
     &lt;hash method="SHA-256"&gt;B1sDhiK3...&lt;/hash&gt;
   &lt;/chain&gt;
-  &lt;parent id="parent_001" key="revised"&gt;
-    &lt;uuid&gt;5c22fb...&lt;/uuid&gt;
-    &lt;hash method="SHA-256"&gt;X3Dk...&lt;/hash&gt;
-  &lt;/parent&gt;
 &lt;/document&gt;</code></pre>
                             </div>
                             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                                 <h3 class="font-bold text-lg mb-3">MaiML Viewer での確認</h3>
                                 <p class="text-sm text-slate-600 mb-2">関連するMaiMLファイルを MaiML Viewer に複数同時ロードすると：</p>
                                 <ul class="list-disc list-inside space-y-1 text-sm text-slate-600 ml-2">
-                                    <li>ファイル間の chain 連鎖が <strong>橙色の破線矢印</strong>（🔗 chain）でグラフ上に表示されます。</li>
-                                    <li>ファイル間の parent 関係が <strong>紫色の破線矢印</strong>（🔗 parent）でグラフ上に表示されます。</li>
-                                    <li>Document Metadata パネルにハッシュ検証結果が表示されます（✅ Verified / ❌ Hash mismatch / ⚠️ Linked file not loaded）。</li>
+                                    <li>ファイル間の連鎖が <strong>橙色の破線矢印</strong>（🔗 chain）でグラフ上に表示されます。</li>
+                                    <li>Document Metadata パネルにハッシュ検証結果が表示されます（✅ Chain verified / ❌ Hash mismatch / ⚠️ Linked file not loaded）。</li>
                                 </ul>
                             </div>
                         </div>
@@ -900,7 +897,8 @@
                         <p class="mb-6 text-slate-300 !text-slate-300">
                             全ての入力が完了したら、ヘッダー右上の
                             <strong>[Export MaiML]</strong> ボタンをクリックしてください。
-                            以下の構造を持つ単一のXMLファイルが生成されます。
+                            以下の構造を持つ単一のXMLファイルが生成されます。<br/><br/>
+                            また、<strong>[Export + Sign]</strong> ボタンを使用することで、ECDSA P-256を用いたXMLデジタル署名（W3C XML Signature準拠）が付与されたMaiMLファイルを出力することもできます。
                         </p>
                         <div
                             class="font-mono text-sm bg-slate-900 p-4 rounded-lg border border-slate-700 text-green-400 overflow-x-auto">
@@ -995,6 +993,16 @@
                                         <span class="text-xs text-indigo-600">Generates and downloads an XML file
                                             compliant with the
                                             MaiML standard.</span>
+                                    </div>
+                                </div>
+                                <div
+                                    class="flex items-start gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-lg">
+                                    <div class="p-2 bg-emerald-600 rounded text-white">
+                                        <i class="ph ph-seal-check text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <span class="font-bold block text-sm text-emerald-700">Export + Sign</span>
+                                        <span class="text-xs text-emerald-600">Applies an ECDSA P-256 digital signature to the MaiML file, enabling tamper detection, and downloads it.</span>
                                     </div>
                                 </div>
                             </div>
@@ -1584,40 +1592,32 @@
                     <section>
                         <h2
                             class="text-2xl font-bold text-slate-900 border-b-2 border-teal-500 pb-2 mb-6 flex items-center gap-2">
-                            <i class="ph ph-link"></i> 7. File Linking &lt;chain&gt; / &lt;parent&gt; 
+                            <i class="ph ph-link"></i> 7. File Chaining &lt;chain&gt; 
                         </h2>
                         <div class="space-y-4">
                             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                                 <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="ph ph-info text-teal-500"></i>Overview</h3>
-                                <p class="text-sm text-slate-600 mb-3">File linking using the <code>&lt;chain&gt;</code> and <code>&lt;parent&gt;</code> elements of JIS K0200. Links multiple MaiML files together and enables tamper detection via hash verification.</p>
-                                <ul class="list-disc list-inside space-y-1 text-sm text-slate-600 ml-2 mb-3">
-                                    <li><strong>&lt;chain&gt; element:</strong> Like a blockchain, it records the temporal lineage — "this file is chronologically derived from another."</li>
-                                    <li><strong>&lt;parent&gt; element:</strong> Records revision history, representing a parent-child relationship where the current file is a revised version of the original parent file.</li>
-                                </ul>
+                                <p class="text-sm text-slate-600 mb-3">File chaining using the <code>&lt;chain&gt;</code> element of JIS K0200. Links multiple MaiML files together and enables tamper detection via hash verification. Like a blockchain, it records the temporal chain of inheritance — "this file is derived from another."</p>
                                 <div class="bg-teal-50 border border-teal-200 rounded-lg p-3 text-xs text-teal-800 mb-3">
-                                    <strong class="block mb-1">Example use cases:</strong>
-                                    <ul class="space-y-1">
-                                        <li>・<code>chain</code>: In an experiment sequence — Synthesis (A) → Pre-processing (B) → Measurement (C) — file C records that it references and inherits from B and A.</li>
-                                        <li>・<code>parent</code>: When an existing MaiML file (A) is updated to create a new revised file (A'), A' references A as its parent (original source).</li>
-                                    </ul>
+                                    <strong>Example use case:</strong> In an experiment sequence — Synthesis (A) → Pre-processing (B) → Measurement (C) — file C records that it references and inherits from B and A.
                                 </div>
                                 <div class="overflow-x-auto">
                                     <table class="w-full text-xs text-left border-collapse">
                                         <tbody class="divide-y divide-slate-100">
                                             <tr><td class="p-2 font-bold text-slate-600 w-1/3">Hash method</td><td class="p-2 text-slate-600">SHA-256 (full file byte stream; for signed files, uses <code>&lt;ds:DigestValue&gt;</code>)</td></tr>
                                             <tr><td class="p-2 font-bold text-slate-600">Output position</td><td class="p-2 text-slate-600">Immediately after the <code>&lt;date&gt;</code> element inside <code>&lt;document&gt;</code></td></tr>
-                                            <tr><td class="p-2 font-bold text-slate-600">key attribute</td><td class="p-2 text-slate-600">Default for chain: <code>key="chain"</code><br/>Default for parent: <code>key="revised"</code></td></tr>
+                                            <tr><td class="p-2 font-bold text-slate-600">key attribute</td><td class="p-2 text-slate-600">Default value: <code>key="chain"</code></td></tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                                <h3 class="font-bold text-lg mb-3">How to Register Links</h3>
+                                <h3 class="font-bold text-lg mb-3">How to Register a Chain</h3>
                                 <ol class="list-decimal list-inside space-y-2 text-sm text-slate-600 ml-2">
-                                    <li>Open the <strong>Document Metadata</strong> tab and scroll to the <strong>Chained Files</strong> or <strong>Parent File</strong> sections at the bottom.</li>
-                                    <li>Click <strong>Add Chain</strong> or <strong>Set Parent</strong> and select the target <code>.maiml</code> file to link (registered as an element respectively).</li>
+                                    <li>Open the <strong>Document Metadata</strong> tab and scroll to the <strong>Chained Files</strong> section at the bottom.</li>
+                                    <li>Click <strong>Add Chain</strong> and select the target <code>.maiml</code> file to link.</li>
                                     <li>The <code>//document/uuid</code> value and SHA-256 hash are automatically extracted and displayed.</li>
-                                    <li>Click <strong>Export MaiML</strong> as usual — the link elements will be included in the output file.</li>
+                                    <li>Click <strong>Export MaiML</strong> as usual — the <code>&lt;chain&gt;</code> element will be included in the output file.</li>
                                 </ol>
                             </div>
                             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
@@ -1629,10 +1629,6 @@
     &lt;uuid&gt;0bce8354-55f1-4047-b221-988e00c87c79&lt;/uuid&gt;
     &lt;hash method="SHA-256"&gt;B1sDhiK3...&lt;/hash&gt;
   &lt;/chain&gt;
-  &lt;parent id="parent_001" key="revised"&gt;
-    &lt;uuid&gt;5c22fb...&lt;/uuid&gt;
-    &lt;hash method="SHA-256"&gt;X3Dk...&lt;/hash&gt;
-  &lt;/parent&gt;
 &lt;/document&gt;</code></pre>
                             </div>
                             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
@@ -1640,8 +1636,7 @@
                                 <p class="text-sm text-slate-600 mb-2">When loading multiple related MaiML files simultaneously into MaiML Viewer:</p>
                                 <ul class="list-disc list-inside space-y-1 text-sm text-slate-600 ml-2">
                                     <li>Chain relationships are visualized as <strong>orange dashed arrows</strong> (🔗 chain) on the graph.</li>
-                                    <li>Parent relationships are visualized as <strong>purple dashed arrows</strong> (🔗 parent) on the graph.</li>
-                                    <li>Hash verification results appear in the Document Metadata panel (✅ Verified / ❌ Hash mismatch / ⚠️ Linked file not loaded).</li>
+                                    <li>Hash verification results appear in the Document Metadata panel (✅ Chain verified / ❌ Hash mismatch / ⚠️ Linked file not loaded).</li>
                                 </ul>
                             </div>
                         </div>
@@ -1660,7 +1655,8 @@
                             When all entries are complete, click the
                             <strong>[Export MaiML]</strong> button in the top right of the
                             header. A single XML file with the following structure will be
-                            generated:
+                            generated:<br/><br/>
+                            Alternatively, you can use the <strong>[Export + Sign]</strong> button to output a MaiML file with an ECDSA P-256 XML digital signature (W3C XML Signature compliant).
                         </p>
                         <div
                             class="font-mono text-sm bg-slate-900 p-4 rounded-lg border border-slate-700 text-green-400 overflow-x-auto">
@@ -1766,6 +1762,12 @@
                     title="Save As MaiML file">
                     <i class="ph ph-export"></i>
                     Export MaiML
+                </button>
+                <button onclick="saveXMLWithSignature()"
+                    class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium shadow-sm transition-all shadow-emerald-500/20 active:scale-95 mr-2"
+                    title="Export MaiML with ECDSA P-256 signature">
+                    <i class="ph ph-seal-check"></i>
+                    Export + Sign
                 </button>
 
                 <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
@@ -2984,6 +2986,19 @@
 
         // --- Instruments ---
         // --- Chained Files ---
+        async function getMaiMLFileHash(arrayBuffer) {
+            const text = new TextDecoder().decode(arrayBuffer);
+            const dvMatch = text.match(/<ds:DigestValue>([^<]+)<\/ds:DigestValue>/) ||
+                            text.match(/<DigestValue[^>]*>([^<]+)<\/DigestValue>/);
+            if (dvMatch) {
+                // Signature付の場合、DigestValueを参照
+                return dvMatch[1].trim();
+            } else {
+                // Signature無しの場合、ファイル全体のSHA-256
+                const hashBuf = await crypto.subtle.digest('SHA-256', arrayBuffer);
+                return btoa(String.fromCharCode(...new Uint8Array(hashBuf)));
+            }
+        }
         async function addChainFromFile(event) {
             const file = event.target.files[0];
             event.target.value = ''; // reset input
@@ -2992,9 +3007,8 @@
             try {
                 const arrayBuffer = await file.arrayBuffer();
 
-                // ファイル全体の SHA-256 ハッシュを計算 → Base64
-                const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
-                const hashBase64 = btoa(String.fromCharCode(...new Uint8Array(hashBuffer)));
+                // 署名付きならDigestValueを、署名なしならファイル全体のSHA-256を計算
+                const hashBase64 = await getMaiMLFileHash(arrayBuffer);
 
                 // XML から //maiml/document/uuid を取得
                 const text = new TextDecoder().decode(arrayBuffer);
@@ -3105,8 +3119,10 @@
             if (!file) return;
             try {
                 const arrayBuffer = await file.arrayBuffer();
-                const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
-                const hashBase64 = btoa(String.fromCharCode(...new Uint8Array(hashBuffer)));
+                
+                // 署名付きならDigestValueを、署名なしならファイル全体のSHA-256を計算
+                const hashBase64 = await getMaiMLFileHash(arrayBuffer);
+                
                 const text = new TextDecoder().decode(arrayBuffer);
                 const xmlDoc = new DOMParser().parseFromString(text, 'application/xml');
                 if (xmlDoc.querySelector('parsererror')) {
@@ -7994,6 +8010,12 @@ ${state.petriNet.transitions
                 // デフォルトのファイル名を設定
                 const defaultFilename = state.document.id || "MaiMLStudio_Export";
 
+                // 署名モードのときはxmlをキャプチャしてファイル保存処理は呼ばない
+                if (window._xmlSignMode) {
+                    window._xmlGenerated = xml;
+                    return;
+                }
+
                 // File System Access API を使用（Chrome, Edge等）
                 if ("showSaveFilePicker" in window) {
                     const handle = await window.showSaveFilePicker({
@@ -8005,7 +8027,6 @@ ${state.petriNet.transitions
                             },
                         ],
                     });
-
                     const writable = await handle.createWritable();
                     await writable.write(xml);
                     await writable.close();
@@ -8044,6 +8065,135 @@ ${state.petriNet.transitions
             if (document.getElementById("doc-description"))
                 state.document.description =
                     document.getElementById("doc-description").value;
+        }
+
+
+        // ============================================================
+        // XML署名 (Enveloped, ECDSA P-256, JIS K0200準拠)
+        // ============================================================
+        // saveXML()内でxml生成が完了した時点でキャプチャするための変数
+        window._xmlSignMode = false;      // trueのとき署名モード
+        window._xmlGenerated = null;      // 生成されたxml文字列
+
+        async function saveXMLWithSignature() {
+            try {
+                showToast('Starting signature process... 🔑');
+
+                // saveXML()を署名モードで実行してxmlをキャプチャ
+                window._xmlSignMode = true;
+                window._xmlGenerated = null;
+                await saveXML();
+                window._xmlSignMode = false;
+
+                const unsignedXml = window._xmlGenerated;
+                if (!unsignedXml) {
+                    showToast('XML generation was cancelled', 'error');
+                    return;
+                }
+
+                // ECDSA P-256 鍵ペアを生成
+                const keyPair = await crypto.subtle.generateKey(
+                    { name: 'ECDSA', namedCurve: 'P-256' },
+                    true, ['sign', 'verify']
+                );
+
+                // <maiml>全体のUTF-8バイト列をSHA-256ダイジェスト
+                const encoder = new TextEncoder();
+                const xmlBytes = encoder.encode(unsignedXml);
+                const digestBuf = await crypto.subtle.digest('SHA-256', xmlBytes);
+                const digestB64 = btoa(String.fromCharCode(...new Uint8Array(digestBuf)));
+
+                // 公開鍵を SPKI(DER) → Base64 → 64文字折り返し
+                const pubDer = await crypto.subtle.exportKey('spki', keyPair.publicKey);
+                const pubB64 = btoa(String.fromCharCode(...new Uint8Array(pubDer)));
+                const pubFmt = pubB64.match(/.{1,64}/g).join('\n              ');
+
+                // SignedInfo を構築して ECDSA 署名
+                const signedInfoXml =
+                    '<ds:SignedInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">' +
+                    '<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>' +
+                    '<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256"/>' +
+                    '<ds:Reference URI="">' +
+                    '<ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></ds:Transforms>' +
+                    '<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>' +
+                    `<ds:DigestValue>${digestB64}</ds:DigestValue>` +
+                    '</ds:Reference>' +
+                    '</ds:SignedInfo>';
+
+                const sigBuf = await crypto.subtle.sign(
+                    { name: 'ECDSA', hash: 'SHA-256' },
+                    keyPair.privateKey,
+                    encoder.encode(signedInfoXml)
+                );
+                const sigB64 = btoa(String.fromCharCode(...new Uint8Array(sigBuf)));
+                const sigFmt = sigB64.match(/.{1,64}/g).join('\n        ');
+
+                // <ds:Signature> 要素を構築
+                const sigElement =
+                    `    <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">\n` +
+                    `      <ds:SignedInfo>\n` +
+                    `        <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>\n` +
+                    `        <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256"/>\n` +
+                    `        <ds:Reference URI="">\n` +
+                    `          <ds:Transforms>\n` +
+                    `            <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>\n` +
+                    `          </ds:Transforms>\n` +
+                    `          <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>\n` +
+                    `          <ds:DigestValue>${digestB64}</ds:DigestValue>\n` +
+                    `        </ds:Reference>\n` +
+                    `      </ds:SignedInfo>\n` +
+                    `      <ds:SignatureValue>\n        ${sigFmt}\n      </ds:SignatureValue>\n` +
+                    `      <ds:KeyInfo>\n` +
+                    `        <ds:KeyValue>\n` +
+                    `          <ds:ECKeyValue xmlns:dsig11="http://www.w3.org/2009/xmldsig11#">\n` +
+                    `            <dsig11:NamedCurve URI="urn:oid:1.2.840.10045.3.1.7"/>\n` +
+                    `            <ds:PublicKey>\n              ${pubFmt}\n            </ds:PublicKey>\n` +
+                    `          </ds:ECKeyValue>\n` +
+                    `        </ds:KeyValue>\n` +
+                    `      </ds:KeyInfo>\n` +
+                    `    </ds:Signature>\n`;
+
+                // <document id="...">\n の直後（<uuid>の前）に <ds:Signature> を挿入
+                const docTagMatch = unsignedXml.match(/  <document[^>]*>\n/);
+                if (!docTagMatch) {
+                    showToast('XML structure error', 'error'); return;
+                }
+                const signedXml = unsignedXml.replace(docTagMatch[0], docTagMatch[0] + sigElement);
+
+                // デフォルトのファイル名を設定
+                const defaultFilename = (state.document.id || "MaiMLStudio_Export").replace(/[^a-zA-Z0-9_\-]/g, '_') + "_signed";
+
+                // File System Access API を使用（Chrome, Edge等）
+                if ("showSaveFilePicker" in window) {
+                    const handle = await window.showSaveFilePicker({
+                        suggestedName: `${defaultFilename}.maiml`,
+                        types: [
+                            {
+                                description: "MaiML Files",
+                                accept: { "application/xml": [".maiml", ".xml"] },
+                            },
+                        ],
+                    });
+                    const writable = await handle.createWritable();
+                    await writable.write(signedXml);
+                    await writable.close();
+                } else {
+                    const fname = (state.document.name || 'maiml_export').replace(/[^a-zA-Z0-9_\-]/g, '_');
+                    // 署名済みMaiMLをダウンロード
+                    const blob = new Blob([signedXml], { type: 'application/xml' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url; a.download = `${fname}_signed.maiml`;
+                    document.body.appendChild(a); a.click();
+                    document.body.removeChild(a); URL.revokeObjectURL(url);
+                }
+
+                showToast('✅ Saved signed MaiML file');
+            } catch (e) {
+                window._xmlSignMode = false;
+                console.error('Signature error:', e);
+                showToast('Signature error: ' + e.message, 'error');
+            }
         }
 
         async function saveProject() {
