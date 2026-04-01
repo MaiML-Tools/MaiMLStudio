@@ -709,68 +709,91 @@
                             Events)
                         </h2>
                         <p class="mb-4 text-slate-600">
-                            設計したプロトコルとテンプレートに基づき、実際の実験記録（インスタンス）を作成します。
+                            設計したプロトコルとテンプレートに基づき、実際の実験記録（インスタンス）を作成します。同一プロトコルで複数回の実験を行った場合は、<strong>Results タブ</strong>を使って実験ごとのデータセットを独立して管理できます。
                         </p>
-                        <div class="flex flex-col md:flex-row gap-6">
-                            <div class="w-full md:w-1/3 space-y-4">
-                                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                                    <h3 class="font-bold text-sm text-slate-700 mb-3 border-b pb-2">
-                                        1. インスタンス生成
-                                    </h3>
-                                    <p class="text-xs text-slate-600 mb-2">
-                                        左サイドバーの「Source
-                                        Templates」をクリックすると、そのテンプレートに基づいた新しいデータインスタンスがタイムラインに追加されます。
-                                    </p>
-                                    <div class="flex flex-col gap-2">
-                                        <div
-                                            class="text-xs bg-green-50 text-green-700 px-2 py-1 rounded border-l-4 border-green-500">
-                                            Material Template
-                                        </div>
-                                        <div
-                                            class="text-xs bg-orange-50 text-orange-700 px-2 py-1 rounded border-l-4 border-orange-500">
-                                            Transition (Event)
-                                        </div>
+
+                        <!-- Results タブ管理 -->
+                        <div class="space-y-4 mb-6">
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-sm text-slate-700 mb-3 border-b pb-2 flex items-center gap-2">
+                                    <i class="ph ph-tabs text-indigo-500"></i> 1. Results タブの管理（複数実験への対応）
+                                </h3>
+                                <p class="text-xs text-slate-600 mb-3">
+                                    Data &amp; Events 画面の上部に <strong>Results タブバー</strong>があります。タブひとつが MaiML の <code>&lt;results&gt;</code> 要素ひとつに対応します。
+                                </p>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                                    <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+                                        <div class="font-bold text-xs text-indigo-700 mb-1">➕ タブを追加</div>
+                                        <p class="text-xs text-slate-600">タブバー右端の <strong>[+ Add Results]</strong> ボタンをクリックします。名前入力ダイアログが開くので、タブ名を入力して OK を押すと新しい Results グループが追加されます。</p>
+                                    </div>
+                                    <div class="bg-teal-50 p-3 rounded-lg border border-teal-100">
+                                        <div class="font-bold text-xs text-teal-700 mb-1">✏️ タブ名を変更</div>
+                                        <p class="text-xs text-slate-600">タブ上の <i class="ph ph-pencil-simple"></i> アイコン（タブにマウスを合わせると表示）をクリックするとリネームダイアログが開きます。</p>
+                                    </div>
+                                    <div class="bg-red-50 p-3 rounded-lg border border-red-100">
+                                        <div class="font-bold text-xs text-red-700 mb-1">🗑️ タブを削除</div>
+                                        <p class="text-xs text-slate-600">タブ上の <i class="ph ph-x"></i> アイコンをクリックします。タブ内のインスタンスとイベントもあわせて削除されます。※ 最後の1つは削除できません。</p>
+                                    </div>
+                                </div>
+                                <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-800">
+                                    <strong>⚠️ タブ名の制約：</strong>タブ名はエクスポート時に <code>&lt;results id="..."&gt;</code> のID属性値として使用されます。IDはファイル内で一意である必要があるため、以下のルールに従ってください。入力ダイアログがリアルタイムで検証します。
+                                    <ul class="list-disc list-inside mt-1 space-y-0.5">
+                                        <li>使用できる文字：英数字・<code>_</code>・<code>-</code>・<code>.</code></li>
+                                        <li>先頭は英字または <code>_</code>（数字や記号は不可）</li>
+                                        <li>他のタブと重複する名前は不可</li>
+                                        <li>予約語（<code>document</code> / <code>protocol</code> / <code>data</code> / <code>eventLog</code>）は使用不可</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- インスタンス生成 -->
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-sm text-slate-700 mb-3 border-b pb-2 flex items-center gap-2">
+                                    <i class="ph ph-plus-circle text-green-500"></i> 2. インスタンスの生成
+                                </h3>
+                                <p class="text-xs text-slate-600 mb-2">
+                                    アクティブな Results タブを選択した状態で、左サイドバーの <strong>「Source Templates」</strong> をクリックすると、そのテンプレートに基づいた新しいデータインスタンスが現在のタブに追加されます。
+                                </p>
+                                <div class="flex flex-wrap gap-2">
+                                    <div class="text-xs bg-green-50 text-green-700 px-2 py-1 rounded border-l-4 border-green-500">Material Template</div>
+                                    <div class="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded border-l-4 border-blue-500">Condition Template</div>
+                                    <div class="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded border-l-4 border-purple-500">Result Template</div>
+                                </div>
+                            </div>
+
+                            <!-- タイムライン編集 -->
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-sm text-slate-700 mb-3 border-b pb-2 flex items-center gap-2">
+                                    <i class="ph ph-pencil text-orange-500"></i> 3. タイムライン編集
+                                </h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <h4 class="font-bold text-xs text-indigo-600 mb-1">値の入力</h4>
+                                        <p class="text-xs text-slate-600">テンプレートで定義した初期値が表示されます。実際の実験値を上書きしてください。必要に応じて「Additional Properties」からこのインスタンス固有のプロパティを追加できます。</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-xs text-orange-600 mb-1">イベントログの記録</h4>
+                                        <p class="text-xs text-slate-600">
+                                            各 Transition に紐づくイベントが自動生成されます。<code>lifecycle</code>（start / complete 等）と <code>timestamp</code>（ISO 8601 形式）を設定してください。イベントは現在アクティブな Results タブに属し、エクスポート時に <code>&lt;resultsRef ref="タブ名"/&gt;</code> として記録されます。
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-xs text-slate-700 mb-1">ファイル添付とハッシュ計算</h4>
+                                        <p class="text-xs text-slate-600">
+                                            <span class="inline-block px-1 bg-slate-100 border rounded text-[10px]"><i class="ph ph-paperclip"></i> INSERTION</span> からファイルを添付できます。ブラウザ内で即座に <strong>SHA-256 ハッシュ値</strong>が計算され、データの改ざん検知用メタデータとして記録されます。
+                                        </p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="w-full md:w-2/3 space-y-4">
-                                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                                    <h3 class="font-bold text-sm text-slate-700 mb-3 border-b pb-2">
-                                        2. タイムライン編集 (Execution Timeline)
-                                    </h3>
-                                    <div class="space-y-4">
-                                        <div>
-                                            <h4 class="font-bold text-xs text-indigo-600 mb-1">
-                                                値の入力
-                                            </h4>
-                                            <p class="text-xs text-slate-600">
-                                                テンプレートで定義した初期値が表示されます。実際の実験値を入力してください。必要に応じて「Additional
-                                                Properties」からこのインスタンス固有のプロパティを追加できます。
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-bold text-xs text-orange-600 mb-1">
-                                                イベントログの記録
-                                            </h4>
-                                            <p class="text-xs text-slate-600">
-                                                Transitionをクリックして生成されたイベントに対し、<code>lifecycle</code>（状態:
-                                                start, complete等）と<code>timestamp</code>（ISO
-                                                8601形式）を設定します。
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-bold text-xs text-slate-700 mb-1">
-                                                ファイル添付とハッシュ計算
-                                            </h4>
-                                            <p class="text-xs text-slate-600">
-                                                <span
-                                                    class="inline-block px-1 bg-slate-100 border rounded text-[10px]"><i
-                                                        class="ph ph-paperclip"></i> INSERTION</span>
-                                                からファイルを添付できます。ブラウザ内で即座に<strong>SHA-256ハッシュ値</strong>が計算され、データの改ざん検知用メタデータとして記録されます。
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+
+                            <!-- Viewer との連携 -->
+                            <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-200">
+                                <h3 class="font-bold text-sm text-indigo-800 mb-2 flex items-center gap-2">
+                                    <i class="ph ph-eye text-indigo-500"></i> MaiML Viewer との連携
+                                </h3>
+                                <p class="text-xs text-indigo-900">
+                                    エクスポートした MaiML を Viewer でロードし、グラフ上のトランジション（四角）をクリックすると、下パネルの Event 情報に各イベントが属する Results タブ名がバッジ表示されます。複数の Results グループが存在する場合でも、どのデータセットのイベントかを一目で確認できます。
+                                </p>
                             </div>
                         </div>
                     </section>
@@ -1468,65 +1491,91 @@
                             Events)
                         </h2>
                         <p class="mb-4 text-slate-600">
-                            Based on the designed protocol and templates, create actual
-                            experimental records (instances).
+                            Based on the designed protocol and templates, create actual experimental records (instances). When the same protocol is executed multiple times, use <strong>Results tabs</strong> to manage each experimental dataset independently.
                         </p>
-                        <div class="flex flex-col md:flex-row gap-6">
-                            <div class="w-full md:w-1/3 space-y-4">
-                                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                                    <h3 class="font-bold text-sm text-slate-700 mb-3 border-b pb-2">
-                                        1. Instance Creation
-                                    </h3>
-                                    <p class="text-xs text-slate-600 mb-2">
-                                        Clicking "Source Templates" in the left sidebar adds a new
-                                        data instance based on that template to the timeline.
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="w-full md:w-2/3 space-y-4">
-                                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                                    <h3 class="font-bold text-sm text-slate-700 mb-3 border-b pb-2">
-                                        2. Timeline Editing (Execution Timeline)
-                                    </h3>
-                                    <div class="space-y-4">
-                                        <div>
-                                            <h4 class="font-bold text-xs text-indigo-600 mb-1">
-                                                Value Entry
-                                            </h4>
-                                            <p class="text-xs text-slate-600">
-                                                Initial values defined in the template are displayed.
-                                                Enter the actual experimental values. You can add
-                                                unique properties for this instance from "Additional
-                                                Properties" if needed.
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-bold text-xs text-orange-600 mb-1">
-                                                Event Logging
-                                            </h4>
-                                            <p class="text-xs text-slate-600">
-                                                For events generated by clicking a Transition, set the
-                                                <code>lifecycle</code> (state: start, complete, etc.)
-                                                and <code>timestamp</code> (ISO 8601 format).
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-bold text-xs text-slate-700 mb-1">
-                                                File Attachment & Hashing
-                                            </h4>
-                                            <p class="text-xs text-slate-600">
-                                                You can attach files via
-                                                <span
-                                                    class="inline-block px-1 bg-slate-100 border rounded text-[10px]"><i
-                                                        class="ph ph-paperclip"></i> INSERTION</span>. The
-                                                <strong>SHA-256 hash</strong> is
-                                                calculated
-                                                instantly within the browser and recorded as metadata
-                                                for tamper detection.
-                                            </p>
-                                        </div>
+
+                        <!-- Results Tab Management -->
+                        <div class="space-y-4 mb-6">
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-sm text-slate-700 mb-3 border-b pb-2 flex items-center gap-2">
+                                    <i class="ph ph-tabs text-indigo-500"></i> 1. Managing Results Tabs (Multiple Runs)
+                                </h3>
+                                <p class="text-xs text-slate-600 mb-3">
+                                    The <strong>Results tab bar</strong> at the top of the Data &amp; Events screen lets you manage multiple datasets. Each tab corresponds to one <code>&lt;results&gt;</code> element in the exported MaiML file.
+                                </p>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                                    <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+                                        <div class="font-bold text-xs text-indigo-700 mb-1">➕ Add a tab</div>
+                                        <p class="text-xs text-slate-600">Click the <strong>[+ Add Results]</strong> button at the right end of the tab bar. A naming dialog opens — enter a tab name and click OK to create a new Results group.</p>
+                                    </div>
+                                    <div class="bg-teal-50 p-3 rounded-lg border border-teal-100">
+                                        <div class="font-bold text-xs text-teal-700 mb-1">✏️ Rename a tab</div>
+                                        <p class="text-xs text-slate-600">Hover over the tab to reveal the <i class="ph ph-pencil-simple"></i> icon, then click it to open the rename dialog.</p>
+                                    </div>
+                                    <div class="bg-red-50 p-3 rounded-lg border border-red-100">
+                                        <div class="font-bold text-xs text-red-700 mb-1">🗑️ Delete a tab</div>
+                                        <p class="text-xs text-slate-600">Click the <i class="ph ph-x"></i> icon on the tab. All instances and events in that tab are also deleted. The last remaining tab cannot be deleted.</p>
                                     </div>
                                 </div>
+                                <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-800">
+                                    <strong>⚠️ Tab naming rules:</strong> The tab name is used as the <code>id</code> attribute of the <code>&lt;results&gt;</code> element on export. IDs must be unique within the file. The naming dialog validates your input in real time:
+                                    <ul class="list-disc list-inside mt-1 space-y-0.5">
+                                        <li>Allowed characters: letters, digits, <code>_</code>, <code>-</code>, <code>.</code></li>
+                                        <li>Must start with a letter or <code>_</code> (not a digit or symbol)</li>
+                                        <li>Must not duplicate another tab's name</li>
+                                        <li>Reserved words are not allowed: <code>document</code>, <code>protocol</code>, <code>data</code>, <code>eventLog</code></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Instance Creation -->
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-sm text-slate-700 mb-3 border-b pb-2 flex items-center gap-2">
+                                    <i class="ph ph-plus-circle text-green-500"></i> 2. Creating Instances
+                                </h3>
+                                <p class="text-xs text-slate-600 mb-2">
+                                    With the target Results tab active, click <strong>"Source Templates"</strong> in the left sidebar to add a new data instance based on that template to the current tab.
+                                </p>
+                                <div class="flex flex-wrap gap-2">
+                                    <div class="text-xs bg-green-50 text-green-700 px-2 py-1 rounded border-l-4 border-green-500">Material Template</div>
+                                    <div class="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded border-l-4 border-blue-500">Condition Template</div>
+                                    <div class="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded border-l-4 border-purple-500">Result Template</div>
+                                </div>
+                            </div>
+
+                            <!-- Timeline Editing -->
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <h3 class="font-bold text-sm text-slate-700 mb-3 border-b pb-2 flex items-center gap-2">
+                                    <i class="ph ph-pencil text-orange-500"></i> 3. Editing the Timeline
+                                </h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <h4 class="font-bold text-xs text-indigo-600 mb-1">Value Entry</h4>
+                                        <p class="text-xs text-slate-600">Initial values defined in the template are shown. Overwrite them with actual experimental values. You can also add instance-specific properties via "Additional Properties".</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-xs text-orange-600 mb-1">Event Logging</h4>
+                                        <p class="text-xs text-slate-600">
+                                            Events are automatically generated for each Transition. Set the <code>lifecycle</code> (start / complete, etc.) and <code>timestamp</code> (ISO 8601 format). Events belong to the currently active Results tab and are exported with a <code>&lt;resultsRef ref="tab-name"/&gt;</code> element linking them to the correct dataset.
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-xs text-slate-700 mb-1">File Attachment & Hashing</h4>
+                                        <p class="text-xs text-slate-600">
+                                            Attach files via <span class="inline-block px-1 bg-slate-100 border rounded text-[10px]"><i class="ph ph-paperclip"></i> INSERTION</span>. A <strong>SHA-256 hash</strong> is calculated instantly in the browser and recorded as tamper-detection metadata.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Viewer Integration -->
+                            <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-200">
+                                <h3 class="font-bold text-sm text-indigo-800 mb-2 flex items-center gap-2">
+                                    <i class="ph ph-eye text-indigo-500"></i> Integration with MaiML Viewer
+                                </h3>
+                                <p class="text-xs text-indigo-900">
+                                    When the exported MaiML is loaded in MaiML Viewer, clicking a transition (rectangle) on the graph shows its Event details in the bottom panel. Each event displays the Results tab name as a colored badge, so you can instantly tell which dataset an event belongs to — even when multiple Results groups are present.
+                                </p>
                             </div>
                         </div>
                     </section>
@@ -2139,18 +2188,16 @@
                     </div>
 
                     <div class="flex-1 bg-slate-50/50 dark:bg-slate-900 flex flex-col min-w-0 transition-colors">
-                        <div
-                            class="p-4 border-b border-white dark:border-slate-700 bg-white/50 dark:bg-slate-800/80 backdrop-blur flex justify-between items-center px-8 shadow-sm shrink-0">
-                            <div>
-                                <h2 class="font-bold text-lg text-slate-800 dark:text-white">
-                                    Execution Timeline
-                                </h2>
-                                <p class="text-xs text-slate-500 dark:text-slate-400">
-                                    Chronological instances and events
-                                </p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs font-semibold text-slate-400 uppercase">Total Items</span>
+                        <!-- Results Groups タブバー -->
+                        <div class="bg-white dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 flex items-center gap-0 px-4 shadow-sm shrink-0 overflow-x-auto">
+                            <div id="results-groups-tabs" class="flex items-center gap-0 flex-1 min-w-0"></div>
+                            <button onclick="addResultsGroup()"
+                                class="ml-2 flex items-center gap-1 px-3 py-2 text-xs font-bold text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors shrink-0 whitespace-nowrap"
+                                title="Add Results Group">
+                                <i class="ph ph-plus"></i> New Results
+                            </button>
+                            <div class="flex items-center gap-2 ml-3 pl-3 border-l border-slate-200 dark:border-slate-700 shrink-0">
+                                <span class="text-xs font-semibold text-slate-400 uppercase whitespace-nowrap">Total</span>
                                 <span id="instance-count"
                                     class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-full text-xs font-bold">0</span>
                             </div>
@@ -2276,6 +2323,8 @@
                     },
                     templates: [],
                     instances: [],
+                    resultGroups: [{ id: 'rg_default', name: 'Results 1', uuid: '' }],
+                    _activeResultsGroupId: 'rg_default',
                     events: [],
                     canvasTranslate: { x: 0, y: 0 },
                     canvasScale: 1,
@@ -2293,6 +2342,11 @@
                     this._methods[0]
                 );
             },
+            // resultGroups と _activeResultsGroupId は activeMethod に委譲
+            get resultGroups() { return this.activeMethod?.resultGroups || []; },
+            set resultGroups(v) { if (this.activeMethod) this.activeMethod.resultGroups = v; },
+            get _activeResultsGroupId() { return this.activeMethod?._activeResultsGroupId || 'rg_default'; },
+            set _activeResultsGroupId(v) { if (this.activeMethod) this.activeMethod._activeResultsGroupId = v; },
 
             get petriNet() {
                 return this.activeMethod.petriNet;
@@ -5680,6 +5734,268 @@ ${state.petriNet.transitions
             return items.map((item) => ({ ...item, value: item.value || "" }));
         }
 
+
+        // ============================================================
+        // Results Groups 管理
+        // ============================================================
+        function renderResultsGroupTabs() {
+            const container = document.getElementById('results-groups-tabs');
+            if (!container) return;
+            const groups = state.resultGroups || [];
+            const activeId = state._activeResultsGroupId || (groups[0]?.id);
+            container.innerHTML = groups.map((g, idx) => {
+                const isActive = g.id === activeId;
+                const countInGroup = (state.instances || []).filter(i => (i.resultsGroupId || 'rg_default') === g.id).length;
+                const activeClass = isActive
+                    ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500 font-bold'
+                    : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800';
+                return `<div onclick="switchResultsGroup('${g.id}')"
+                    class="cursor-pointer flex items-center gap-2 px-4 py-3 text-xs tracking-wide transition-all whitespace-nowrap border-b-2 ${isActive ? 'border-indigo-500' : 'border-transparent'} ${activeClass} group/tab">
+                    <span>${escHtml(g.name)}</span>
+                    <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold ${isActive ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300' : 'bg-slate-100 dark:bg-slate-700 text-slate-400'}">${countInGroup}</span>
+                    <button onclick="event.stopPropagation(); renameResultsGroup('${g.id}')"
+                        class="p-0.5 opacity-0 group-hover/tab:opacity-100 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-all text-slate-400 hover:text-indigo-500" title="Rename">
+                        <i class="ph ph-pencil-simple text-xs"></i>
+                    </button>
+                    ${groups.length > 1 ? `<button onclick="event.stopPropagation(); deleteResultsGroup('${g.id}')"
+                        class="p-0.5 opacity-0 group-hover/tab:opacity-100 hover:bg-red-100 dark:hover:bg-red-900/30 rounded transition-all text-slate-400 hover:text-red-500" title="Delete">
+                        <i class="ph ph-x text-xs"></i>
+                    </button>` : ''}
+                </div>`;
+            }).join('');
+        }
+
+        function escHtml(str) {
+            return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        // タブ名をXML ID (NCName) として使用できる形式にサニタイズする
+        function toXmlId(name) {
+            let id = String(name || 'Results').trim();
+            // XML NCName: 先頭は文字またはアンダースコア、以降は文字・数字・ハイフン・アンダースコア・ピリオド
+            id = id.replace(/[^A-Za-z0-9_.\-]/g, '_');
+            if (/^[^A-Za-z_]/.test(id)) id = '_' + id;
+            return id || 'Results';
+        }
+
+        function switchResultsGroup(groupId) {
+            state._activeResultsGroupId = groupId;
+            ensureGroupEvents(groupId);
+            renderResultsGroupTabs();
+            renderDataInstances();
+            renderDataTemplates();
+        }
+
+        // 指定グループのeventが未生成なら生成する
+        function ensureGroupEvents(groupId) {
+            if (!state.petriNet || !state.petriNet.transitions || state.petriNet.transitions.length === 0) return;
+            if (!state.events) state.events = [];
+            const existing = state.events.filter(e => (e.resultsGroupId || 'rg_default') === groupId);
+            if (existing.length > 0) return; // 既にある
+            const now = new Date();
+            const pad = (n) => String(n).padStart(2, "0");
+            const tz = -now.getTimezoneOffset();
+            const sign = tz >= 0 ? "+" : "-";
+            const ts = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}${sign}${pad(Math.floor(Math.abs(tz)/60))}:${pad(Math.abs(tz)%60)}`;
+            state.petriNet.transitions.forEach(t => {
+                state.events.push({
+                    id: "event_" + t.id + "_" + groupId + "_" + Date.now(),
+                    uuid: generateUUID(),
+                    transitionId: t.id,
+                    transitionLabel: t.label,
+                    lifecycle: "complete",
+                    timestamp: ts,
+                    resultsGroupId: groupId,
+                });
+            });
+        }
+
+        function addResultsGroup() {
+            if (!state.resultGroups) state.resultGroups = [];
+            const num = (state.resultGroups || []).length + 1;
+            const suggestedName = `Results${num}`;
+            showResultsGroupNameModal('Add Results Tab', suggestedName, null, (name) => {
+                const newGroup = {
+                    id: 'rg_' + Date.now(),
+                    name: name,
+                    uuid: generateUUID(),
+                };
+                state.resultGroups.push(newGroup);
+                state._activeResultsGroupId = newGroup.id;
+                if (!state.events) state.events = [];
+                ensureGroupEvents(newGroup.id);
+                renderResultsGroupTabs();
+                renderDataInstances();
+                renderDataTemplates();
+                showToast(`Added: ${newGroup.name}`);
+            });
+        }
+
+        function renameResultsGroup(groupId) {
+            const group = (state.resultGroups || []).find(g => g.id === groupId);
+            if (!group) return;
+            showResultsGroupNameModal('Rename Results Tab', group.name, groupId, (newName) => {
+                group.name = newName;
+                renderResultsGroupTabs();
+                showToast(`Renamed to: ${group.name}`);
+            });
+        }
+
+        // Results グループ名専用の入力モーダル（NCName バリデーション＋重複チェック付き）
+        function showResultsGroupNameModal(title, defaultValue, currentGroupId, onConfirm) {
+            const existing = document.getElementById('_resultsNameModal');
+            if (existing) existing.remove();
+
+            const modal = document.createElement('div');
+            modal.id = '_resultsNameModal';
+            modal.className = 'fixed inset-0 z-[200] flex items-center justify-center';
+            modal.innerHTML = `
+                <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="document.getElementById('_resultsNameModal')?.remove()"></div>
+                <div class="relative bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-6 w-96 z-10">
+                    <h3 class="font-bold text-slate-800 dark:text-white mb-1">${escHtml(title)}</h3>
+                    <p class="text-xs text-slate-400 dark:text-slate-500 mb-3">
+                        The tab name is used as a unique identifier in the exported file.<br>
+                        Allowed: letters, digits, <code>_</code>, <code>-</code>, <code>.</code> — must start with a letter or <code>_</code>.<br>
+                        Spaces and other characters are converted to <code>_</code> on export.
+                    </p>
+                    <input id="_resultsNameField" type="text" value="${escHtml(defaultValue)}"
+                        style="width:100%; padding:0.5rem 0.75rem; font-size:0.875rem; border:1.5px solid #cbd5e1; border-radius:0.5rem; background:#fff; color:#1e293b; outline:none; transition:border-color 0.15s, box-shadow 0.15s;"
+                        placeholder="e.g. Results1, Run_A, Batch_01">
+                    <div id="_resultsNameError" style="font-size:0.75rem; color:#ef4444; margin-top:0.25rem; min-height:1.1rem;"></div>
+                    <div class="flex gap-2 justify-end" style="margin-top:1rem;">
+                        <button onclick="document.getElementById('_resultsNameModal')?.remove()"
+                            class="px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">Cancel</button>
+                        <button id="_resultsNameOk"
+                            style="padding:0.5rem 1rem; font-size:0.875rem; font-weight:600; color:#fff; background:#4f46e5; border:none; border-radius:0.5rem; cursor:pointer; transition:background 0.15s;">OK</button>
+                    </div>
+                </div>`;
+            document.body.appendChild(modal);
+
+            const field  = document.getElementById('_resultsNameField');
+            const errDiv = document.getElementById('_resultsNameError');
+            const okBtn  = document.getElementById('_resultsNameOk');
+
+            function validate(raw) {
+                const trimmed = raw.trim();
+                if (!trimmed) return { ok: false, msg: 'Please enter a name.' };
+
+                // NCName ルール: 先頭は英字または _ 、以降は英数字・_・-・. のみ
+                if (/^[0-9]/.test(trimmed)) {
+                    return { ok: false, msg: 'Must start with a letter or underscore ( _ ), not a digit.' };
+                }
+                if (/^[^A-Za-z_]/.test(trimmed)) {
+                    return { ok: false, msg: 'Must start with a letter or underscore ( _ ).' };
+                }
+                if (/[^A-Za-z0-9_.\-]/.test(trimmed)) {
+                    const bad = [...new Set(trimmed.match(/[^A-Za-z0-9_.\-]/g))].map(c => `"${c}"`).join(' ');
+                    return { ok: false, msg: `Invalid character(s): ${bad} — use letters, digits, _ - . only.` };
+                }
+
+                // 予約済み id 名チェック
+                const RESERVED = ['document', 'protocol', 'data', 'eventLog'];
+                if (RESERVED.includes(trimmed)) {
+                    return { ok: false, msg: `"${trimmed}" is a reserved name and cannot be used as a tab name.` };
+                }
+
+                const xmlId = toXmlId(trimmed);
+                const others = (state.resultGroups || []).filter(g => g.id !== currentGroupId);
+                if (others.some(g => toXmlId(g.name) === xmlId)) {
+                    return { ok: false, msg: `"${xmlId}" conflicts with another tab. Please choose a different name.` };
+                }
+                return { ok: true, msg: '' };
+            }
+
+            function update() {
+                const { ok, msg } = validate(field.value);
+                errDiv.textContent = msg;
+                if (ok) {
+                    field.style.borderColor = '#cbd5e1';
+                    field.style.outline = 'none';
+                    field.style.boxShadow = '';
+                    okBtn.style.background = '#4f46e5';
+                    okBtn.style.cursor = 'pointer';
+                    okBtn.disabled = false;
+                } else {
+                    field.style.borderColor = '#ef4444';
+                    field.style.outline = '2px solid rgba(239,68,68,0.35)';
+                    field.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.15)';
+                    okBtn.style.background = '#94a3b8';
+                    okBtn.style.cursor = 'not-allowed';
+                    okBtn.disabled = true;
+                }
+            }
+
+            field.addEventListener('input', update);
+            okBtn.addEventListener('click', () => {
+                const { ok } = validate(field.value);
+                if (!ok) return;
+                modal.remove();
+                onConfirm(field.value.trim());
+            });
+            field.addEventListener('keydown', e => {
+                if (e.key === 'Enter') { const { ok } = validate(field.value); if (ok) { modal.remove(); onConfirm(field.value.trim()); } }
+                if (e.key === 'Escape') modal.remove();
+            });
+
+            update();
+            field.focus(); field.select();
+        }
+
+        function deleteResultsGroup(groupId) {
+            const groups = state.resultGroups || [];
+            if (groups.length <= 1) { showToast('At least one Results group is required.', 'error'); return; }
+            const group = groups.find(g => g.id === groupId);
+            if (!group) return;
+            const instCount = (state.instances || []).filter(i => (i.resultsGroupId || 'rg_default') === groupId).length;
+            const msg = instCount > 0
+                ? `Delete "${group.name}"? ${instCount} instance(s) in this group will also be deleted.`
+                : `Delete "${group.name}"?`;
+            showConfirmModal('Delete Results Group', msg, () => {
+                // グループ内のインスタンスとイベントを削除
+                state.instances = (state.instances || []).filter(i => (i.resultsGroupId || 'rg_default') !== groupId);
+                state.events = (state.events || []).filter(e => (e.resultsGroupId || 'rg_default') !== groupId);
+                state.resultGroups = groups.filter(g => g.id !== groupId);
+                // アクティブグループを更新
+                if (state._activeResultsGroupId === groupId) {
+                    state._activeResultsGroupId = state.resultGroups[0]?.id || 'rg_default';
+                }
+                renderResultsGroupTabs();
+                renderDataInstances();
+                renderDataTemplates();
+                showToast(`Deleted: ${group.name}`);
+            });
+        }
+
+        // テキスト入力モーダル（renameで使用）
+        function showInputModal(title, label, defaultValue, onConfirm) {
+            const existing = document.getElementById('_inputModal');
+            if (existing) existing.remove();
+            const modal = document.createElement('div');
+            modal.id = '_inputModal';
+            modal.className = 'fixed inset-0 z-[200] flex items-center justify-center';
+            modal.innerHTML = `
+                <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="document.getElementById('_inputModal')?.remove()"></div>
+                <div class="relative bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-6 w-80 z-10">
+                    <h3 class="font-bold text-slate-800 dark:text-white mb-2">${escHtml(title)}</h3>
+                    <p class="text-sm text-slate-500 mb-3">${escHtml(label)}</p>
+                    <input id="_inputModalField" type="text" value="${escHtml(defaultValue)}"
+                        class="w-full px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none mb-4">
+                    <div class="flex gap-2 justify-end">
+                        <button onclick="document.getElementById('_inputModal')?.remove()"
+                            class="px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">Cancel</button>
+                        <button onclick="(function(){ const v=document.getElementById('_inputModalField')?.value; document.getElementById('_inputModal')?.remove(); if(v!==undefined)(${onConfirm.toString()})(v); })()"
+                            class="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors font-medium">OK</button>
+                    </div>
+                </div>`;
+            document.body.appendChild(modal);
+            const field = document.getElementById('_inputModalField');
+            if (field) { field.focus(); field.select(); }
+            field?.addEventListener('keydown', e => {
+                if (e.key === 'Enter') { const v = field.value; modal.remove(); onConfirm(v); }
+                if (e.key === 'Escape') modal.remove();
+            });
+        }
+
         function createInstance(templateId) {
             const template = state.templates.find((t) => t.id === templateId);
             if (!template) return;
@@ -5696,11 +6012,14 @@ ${state.petriNet.transitions
                 instanceProperties: [],
                 instanceContents: [],
                 insertions: [],
+                // Results group assignment
+                resultsGroupId: state._activeResultsGroupId || 'rg_default',
             };
 
             state.instances.push(newInstance);
             renderDataInstances();
-            renderDataTemplates(); // サイドバーのインスタンス数バッジを即時更新
+            renderDataTemplates();
+            renderResultsGroupTabs();
             const place = state.petriNet.places.find(p => p.id === template.placeId);
             const placeLabel = place ? place.label : template.type;
             showToast(`${template.type} instance added: ${placeLabel}`);
@@ -6698,40 +7017,63 @@ ${state.petriNet.transitions
                     pad(Math.abs(timezoneOffset) % 60);
 
                 state.petriNet.transitions.forEach((t) => {
-                    state.events.push({
-                        id: "event_" + t.id + "_" + Date.now(),
-                        uuid: crypto.randomUUID
-                            ? crypto.randomUUID()
-                            : Math.random().toString(36).substring(2),
-                        transitionId: t.id,
-                        transitionLabel: t.label,
-                        lifecycle: "complete",
-                        timestamp: defaultTimestamp,
+                    // 各resultsGroupに対応するeventを生成
+                    const groups = state.resultGroups && state.resultGroups.length > 0
+                        ? state.resultGroups
+                        : [{ id: 'rg_default' }];
+                    groups.forEach(grp => {
+                        state.events.push({
+                            id: "event_" + t.id + "_" + grp.id + "_" + Date.now(),
+                            uuid: crypto.randomUUID
+                                ? crypto.randomUUID()
+                                : Math.random().toString(36).substring(2),
+                            transitionId: t.id,
+                            transitionLabel: t.label,
+                            lifecycle: "complete",
+                            timestamp: defaultTimestamp,
+                            resultsGroupId: grp.id,
+                        });
                     });
                 });
             }
 
-            const instances = state.instances || [];
-            const events = state.events;
-            const totalCount = instances.length + events.length;
+            const allInstances = state.instances || [];
+
+            // アクティブグループのeventsを保証（未生成なら生成）
+            const activeGroupId = state._activeResultsGroupId || 'rg_default';
+            ensureGroupEvents(activeGroupId);
+
+            const allEvents = state.events || [];
+
+            // アクティブなResults Groupのインスタンス・イベントのみ表示
+            const instances = allInstances.filter(i => (i.resultsGroupId || 'rg_default') === activeGroupId);
+            const events = allEvents.filter(e => (e.resultsGroupId || 'rg_default') === activeGroupId);
+            const totalCount = allInstances.length + allEvents.length;
+            const groupCount = instances.length + events.length;
 
             if (countEl) countEl.innerText = totalCount;
 
-            if (totalCount === 0) {
+            if (groupCount === 0) {
                 list.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-slate-400 pb-20">
             <i class="ph ph-chart-bar text-4xl mb-3 text-slate-300 dark:text-slate-600"></i>
-            <p class="font-medium">Timeline is empty</p>
+            <p class="font-medium">No instances in this Results group</p>
             <p class="text-sm">Click templates on the left to add records.</p>
         </div>`;
-                return;
+                // Transitionがある場合はEventLogカードを追記（インスタンスがなくても表示）
+                if (events.length > 0) {
+                    list.innerHTML = ''; // 空メッセージをクリアしてEventLogカードを表示
+                } else {
+                    return;
+                }
             }
 
             let html = "";
 
             // テンプレートID順にソートして同一テンプレートのインスタンスを連続表示
-            // instIdx は state.instances 上の実際のインデックス（削除・更新操作に使用）
-            const sortedInstances = [...instances]
-                .map((inst, realIdx) => ({ inst, realIdx }))
+            // instIdx は allInstances（state.instances）上の実際のインデックス
+            // グループフィルタ後のinstancesではなくallInstancesのインデックスを使う
+            const sortedInstances = instances
+                .map((inst) => ({ inst, realIdx: allInstances.indexOf(inst) }))
                 .sort((a, b) => {
                     if (a.inst.templateId < b.inst.templateId) return -1;
                     if (a.inst.templateId > b.inst.templateId) return 1;
@@ -7100,8 +7442,9 @@ ${state.petriNet.transitions
                 html += instanceHTML;
             });
 
-            // Events
-            events.forEach((evt, idx) => {
+            // Events（idxはallEvents上の実際のインデックス）
+            events.forEach((evt) => {
+                const idx = allEvents.indexOf(evt);
                 html += `
                 <div id="card-evt-${evt.transitionId}" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-orange-200 dark:border-orange-900 overflow-hidden mb-6 animate-fade-in relative transition-colors">
                 <div class="absolute inset-y-0 left-0 w-1 bg-orange-400 dark:bg-orange-600"></div>
@@ -7174,7 +7517,8 @@ ${state.petriNet.transitions
                 () => {
                     state.instances.splice(idx, 1);
                     renderDataInstances();
-                    renderDataTemplates(); // サイドバーのインスタンス数バッジを即時更新
+                    renderDataTemplates();
+                    renderResultsGroupTabs();
                     showToast("Instance deleted");
                 },
             );
@@ -7402,6 +7746,14 @@ ${state.petriNet.transitions
             if (tab === "templates") renderTemplates();
             if (tab === "overview") renderOverview();
             if (tab === "data") {
+                // ResultsGroupsが未初期化の場合は初期化
+                if (!state.resultGroups || state.resultGroups.length === 0) {
+                    state.resultGroups = [{ id: 'rg_default', name: 'Results1', uuid: generateUUID() }];
+                }
+                if (!state._activeResultsGroupId) {
+                    state._activeResultsGroupId = state.resultGroups[0].id;
+                }
+                renderResultsGroupTabs();
                 renderDataTemplates();
                 renderDataInstances();
             }
@@ -7804,7 +8156,7 @@ ${state.petriNet.transitions
                                 (t) => t.id === evt.transitionId,
                             );
                             const label = transObj ? transObj.label : evt.transitionId;
-                            xml += `        <instruction id="inst_${label}_${method.id}" xsi:type="lifecycleTaskType">\n`;
+                            xml += `        <instruction id="inst_${label}_${method.id}">\n`;
                             xml += `          <uuid>${crypto.randomUUID()}</uuid>\n`;
                             xml += `          <name>${evt.transitionLabel}</name>\n`;
                             xml += `          <transitionRef id="tr_ref_${label}_${method.id}" ref="${label}" />\n`;
@@ -7878,12 +8230,24 @@ ${state.petriNet.transitions
                 xml += `    <uuid>${crypto.randomUUID()}</uuid>\n`;
 
                 for (const method of state._methods) {
-                    const methodResultsId = "results_" + method.id;
+                    // Results Groups ごとに <results> 要素を出力
+                    const groups = (method.resultGroups && method.resultGroups.length > 0)
+                        ? method.resultGroups
+                        : [{ id: 'rg_default', name: 'Results1', uuid: '' }];
+
+                    for (const grp of groups) {
+                    const groupInstances = method.instances.filter(i =>
+                        (i.resultsGroupId || 'rg_default') === grp.id
+                    );
+                    if (groupInstances.length === 0) continue; // インスタンスなしのグループはスキップ
+
+                    const methodResultsId = toXmlId(grp.name || 'Results');
                     xml += `    <results id="${methodResultsId}">\n`;
-                    xml += `      <uuid>${crypto.randomUUID()}</uuid>\n`;
+                    xml += `      <uuid>${grp.uuid || crypto.randomUUID()}</uuid>\n`;
+                    xml += `      <name>${grp.name || ''}</name>\n`;
 
                     for (const type of ["material", "condition", "result"]) {
-                        const typeInstances = method.instances.filter(
+                        const typeInstances = groupInstances.filter(
                             (i) => i.type === type,
                         );
                         for (const inst of typeInstances) {
@@ -7968,6 +8332,7 @@ ${state.petriNet.transitions
                         }
                     }
                     xml += `    </results>\n`;
+                    } // end for grp
                 }
                 xml += `  </data>\n`;
 
@@ -7976,33 +8341,55 @@ ${state.petriNet.transitions
                 xml += `    <uuid>${crypto.randomUUID()}</uuid>\n`;
 
                 for (const method of state._methods) {
-                    const methodLogId = "log_" + method.id;
-                    xml += `    <log id="${methodLogId}" ref="${method.id}">\n`;
-                    xml += `      <uuid>${crypto.randomUUID()}</uuid>\n`;
-                    xml += `      <trace id="trace_${method.id}" ref="program_${method.id}">\n`;
-                    xml += `        <uuid>${crypto.randomUUID()}</uuid>\n`;
+                    // ResultsGroups ごとに <log> 要素を出力
+                    const groups = (method.resultGroups && method.resultGroups.length > 0)
+                        ? method.resultGroups
+                        : [{ id: 'rg_default', name: 'Results1' }];
 
-                    for (const evt of method.events) {
-                        const transObj = method.petriNet.transitions.find(
-                            (t) => t.id === evt.transitionId,
+                    for (const grp of groups) {
+                        // このグループのeventsのみ
+                        const grpEvents = (method.events || []).filter(e =>
+                            (e.resultsGroupId || 'rg_default') === grp.id
                         );
-                        const label = transObj ? transObj.label : evt.transitionId;
-                        xml += `        <event id="${evt.id}" ref="inst_${label}_${method.id}">\n`;
-                        xml += `          <uuid>${evt.uuid || crypto.randomUUID()}</uuid>\n`;
-                        xml += `          <property key="lifecycle:transition" xsi:type="stringType"><value>${evt.lifecycle}</value></property>\n`;
-                        const exportTimestamp = (() => {
-                            if (evt.timestamp) return evt.timestamp;
-                            const now = new Date();
-                            const pad = (n) => String(n).padStart(2, "0");
-                            const tz = -now.getTimezoneOffset();
-                            const sign = tz >= 0 ? "+" : "-";
-                            return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}${sign}${pad(Math.floor(Math.abs(tz) / 60))}:${pad(Math.abs(tz) % 60)}`;
-                        })();
-                        xml += `          <property key="time:timestamp" xsi:type="dateTimeType"><value>${exportTimestamp}</value></property>\n`;
-                        xml += `        </event>\n`;
-                    }
-                    xml += `      </trace>\n`;
-                    xml += `    </log>\n`;
+                        // このグループのインスタンスが0件かつevents も0件ならスキップ
+                        const grpInstances = (method.instances || []).filter(i =>
+                            (i.resultsGroupId || 'rg_default') === grp.id
+                        );
+                        if (grpInstances.length === 0 && grpEvents.length === 0) continue;
+
+                        const logId = grp.id === 'rg_default'
+                            ? 'log_' + method.id
+                            : 'log_' + grp.id;
+                        // resultsのIDと対応させる
+                        const resultsRef = toXmlId(grp.name || 'Results');
+                        xml += `    <log id="${logId}" ref="${method.id}">\n`;
+                        xml += `      <uuid>${crypto.randomUUID()}</uuid>\n`;
+                        xml += `      <trace id="trace_${grp.id}" ref="program_${method.id}">\n`;
+                        xml += `        <uuid>${crypto.randomUUID()}</uuid>\n`;
+
+                        for (const evt of grpEvents) {
+                            const transObj = method.petriNet.transitions.find(
+                                (t) => t.id === evt.transitionId,
+                            );
+                            const label = transObj ? transObj.label : evt.transitionId;
+                            xml += `        <event id="${evt.id}" ref="inst_${label}_${method.id}">\n`;
+                            xml += `          <uuid>${evt.uuid || crypto.randomUUID()}</uuid>\n`;
+                            xml += `          <property key="lifecycle:transition" xsi:type="stringType"><value>${evt.lifecycle}</value></property>\n`;
+                            const exportTimestamp = (() => {
+                                if (evt.timestamp) return evt.timestamp;
+                                const now = new Date();
+                                const pad = (n) => String(n).padStart(2, "0");
+                                const tz = -now.getTimezoneOffset();
+                                const sign = tz >= 0 ? "+" : "-";
+                                return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}${sign}${pad(Math.floor(Math.abs(tz) / 60))}:${pad(Math.abs(tz) % 60)}`;
+                            })();
+                            xml += `          <property key="time:timestamp" xsi:type="dateTimeType"><value>${exportTimestamp}</value></property>\n`;
+                            xml += `          <resultsRef id="rref_${generateUUID()}" ref="${resultsRef}"/>\n`;
+                            xml += `        </event>\n`;
+                        }
+                        xml += `      </trace>\n`;
+                        xml += `    </log>\n`;
+                    } // end for grp
                 }
                 xml += `  </eventLog>\n`;
                 xml += `</maiml>`;
@@ -8130,7 +8517,7 @@ ${state.petriNet.transitions
 
                 // <ds:Signature> 要素を構築
                 const sigElement =
-                    `    <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">\n` +
+                    `    <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:dsig11="http://www.w3.org/2009/xmldsig11#">\n` +
                     `      <ds:SignedInfo>\n` +
                     `        <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>\n` +
                     `        <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256"/>\n` +
@@ -8145,10 +8532,10 @@ ${state.petriNet.transitions
                     `      <ds:SignatureValue>\n        ${sigFmt}\n      </ds:SignatureValue>\n` +
                     `      <ds:KeyInfo>\n` +
                     `        <ds:KeyValue>\n` +
-                    `          <ds:ECKeyValue xmlns:dsig11="http://www.w3.org/2009/xmldsig11#">\n` +
+                    `          <dsig11:ECKeyValue>\n` +
                     `            <dsig11:NamedCurve URI="urn:oid:1.2.840.10045.3.1.7"/>\n` +
-                    `            <ds:PublicKey>\n              ${pubFmt}\n            </ds:PublicKey>\n` +
-                    `          </ds:ECKeyValue>\n` +
+                    `            <dsig11:PublicKey>\n              ${pubFmt}\n            </dsig11:PublicKey>\n` +
+                    `          </dsig11:ECKeyValue>\n` +
                     `        </ds:KeyValue>\n` +
                     `      </ds:KeyInfo>\n` +
                     `    </ds:Signature>\n`;
@@ -8275,8 +8662,18 @@ ${state.petriNet.transitions
                                 instanceRefs: [],
                             },
                             templates: loadedState.templates || [],
-                            instances: loadedState.instances || [],
-                            events: loadedState.events || [],
+                            instances: (loadedState.instances || []).map(i => ({
+                                ...i,
+                                resultsGroupId: i.resultsGroupId || 'rg_default',
+                            })),
+                            resultGroups: (loadedState.resultGroups && loadedState.resultGroups.length > 0)
+                                ? loadedState.resultGroups
+                                : [{ id: 'rg_default', name: 'Results1', uuid: '' }],
+                            _activeResultsGroupId: loadedState._activeResultsGroupId || 'rg_default',
+                            events: (loadedState.events || []).map(e => ({
+                                ...e,
+                                resultsGroupId: e.resultsGroupId || 'rg_default',
+                            })),
                         },
                     ];
                     state._activeMethodId = defaultMethodId;
