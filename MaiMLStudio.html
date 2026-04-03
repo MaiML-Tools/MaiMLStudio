@@ -1803,6 +1803,12 @@
                 </button>
             </div>
 
+            <!-- プロジェクトファイル名表示 -->
+            <div class="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500 min-w-0">
+                <i class="ph ph-file-json text-base shrink-0" id="project-filename-icon" style="display:none"></i>
+                <span id="project-filename" class="truncate max-w-[240px]" title=""></span>
+            </div>
+
             <div class="flex items-center gap-3">
                 <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
 
@@ -2323,7 +2329,7 @@
                     },
                     templates: [],
                     instances: [],
-                    resultGroups: [{ id: 'rg_default', name: 'Results 1', uuid: '' }],
+                    resultGroups: [{ id: 'rg_default', name: 'Results1_Main_Method', uuid: '' }],
                     _activeResultsGroupId: 'rg_default',
                     events: [],
                     canvasTranslate: { x: 0, y: 0 },
@@ -4290,11 +4296,15 @@ ${state.petriNet.transitions
                 return;
             }
 
-            // 重複チェック
-            if (checkDuplicateLabel(newLabel, state.selectedNode.id, nodeType)) {
+            // 重複チェック（戻り値: false=重複なし / "メソッド名"=重複メソッド名）
+            const dupMethod = checkDuplicateLabel(newLabel, state.selectedNode.id, nodeType);
+            if (dupMethod) {
                 const nodeTypeName = nodeType === "place" ? "Place" : "Transition";
+                const inMethod = dupMethod === state.activeMethod.name
+                    ? "this method"
+                    : `method "${dupMethod}"`;
                 showToast(
-                    `This ${nodeTypeName} name already exists. Please use a different name.`,
+                    `This ${nodeTypeName} name already exists in ${inMethod}. Please use a different name.`,
                     "error",
                 );
 
@@ -4956,16 +4966,21 @@ ${state.petriNet.transitions
 
 
         function checkDuplicateLabel(newLabel, excludeId, nodeType) {
-            if (nodeType === "place") {
-                return state.petriNet.places.some(
-                    (p) => p.id !== excludeId && p.label === newLabel,
-                );
-            } else if (nodeType === "transition") {
-                return state.petriNet.transitions.some(
-                    (t) => t.id !== excludeId && t.label === newLabel,
-                );
+            // 全メソッドを横断してラベルの重複を検出する
+            for (const method of state._methods) {
+                if (nodeType === "place") {
+                    const dup = method.petriNet.places.find(
+                        (p) => p.id !== excludeId && p.type !== "proxy" && p.label === newLabel,
+                    );
+                    if (dup) return method.name; // 重複メソッド名を返す
+                } else if (nodeType === "transition") {
+                    const dup = method.petriNet.transitions.find(
+                        (t) => t.id !== excludeId && t.label === newLabel,
+                    );
+                    if (dup) return method.name; // 重複メソッド名を返す
+                }
             }
-            return false;
+            return false; // 重複なし
         }
 
         // QName型の文字制限バリデーション関数
@@ -5806,6 +5821,8 @@ ${state.petriNet.transitions
                     lifecycle: "complete",
                     timestamp: ts,
                     resultsGroupId: groupId,
+                    creatorRef: "",
+                    ownerRef: "",
                 });
             });
         }
@@ -5813,7 +5830,8 @@ ${state.petriNet.transitions
         function addResultsGroup() {
             if (!state.resultGroups) state.resultGroups = [];
             const num = (state.resultGroups || []).length + 1;
-            const suggestedName = `Results${num}`;
+            const methodName = (state.activeMethod && state.activeMethod.name) ? state.activeMethod.name : 'Method';
+            const suggestedName = `Results${num}_${methodName}`;
             showResultsGroupNameModal('Add Results Tab', suggestedName, null, (name) => {
                 const newGroup = {
                     id: 'rg_' + Date.now(),
@@ -7497,6 +7515,28 @@ ${state.petriNet.transitions
                             <i class="ph ph-clock text-slate-400 absolute left-3 top-2.5"></i>
                         </div>
                     </div>
+
+                    <div class="mt-4 pt-3 border-t border-orange-100 dark:border-orange-900/30">
+                        <h6 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1"><i class="ph ph-link"></i> References (optional)</h6>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">creatorRef <span class="font-normal text-slate-400">(ref to creator id)</span></label>
+                                <select onchange="updateEventCreatorRef(${idx}, this.value)"
+                                    class="w-full px-2 py-1.5 text-xs border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white outline-none cursor-pointer focus:ring-1 focus:ring-orange-400/40 transition-colors">
+                                    <option value="" class="dark:bg-slate-800">(none)</option>
+                                    ${state.document.creators.map(c => `<option value="${c.id}" ${evt.creatorRef === c.id ? 'selected' : ''} class="dark:bg-slate-800">${c.id}${c.name ? ' — ' + escHtml(c.name) : ''}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">ownerRef <span class="font-normal text-slate-400">(ref to owner id)</span></label>
+                                <select onchange="updateEventOwnerRef(${idx}, this.value)"
+                                    class="w-full px-2 py-1.5 text-xs border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white outline-none cursor-pointer focus:ring-1 focus:ring-orange-400/40 transition-colors">
+                                    <option value="" class="dark:bg-slate-800">(none)</option>
+                                    ${state.document.owners.map(o => `<option value="${o.id}" ${evt.ownerRef === o.id ? 'selected' : ''} class="dark:bg-slate-800">${o.id}${o.name ? ' — ' + escHtml(o.name) : ''}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>`;
@@ -7540,6 +7580,14 @@ ${state.petriNet.transitions
             state.events[eventIdx].uuid = uuid;
             renderDataInstances();
             showToast("Event UUID regenerated");
+        }
+
+        function updateEventCreatorRef(eventIdx, value) {
+            state.events[eventIdx].creatorRef = value;
+        }
+
+        function updateEventOwnerRef(eventIdx, value) {
+            state.events[eventIdx].ownerRef = value;
         }
 
         function deleteEvent(idx) {
@@ -7748,7 +7796,8 @@ ${state.petriNet.transitions
             if (tab === "data") {
                 // ResultsGroupsが未初期化の場合は初期化
                 if (!state.resultGroups || state.resultGroups.length === 0) {
-                    state.resultGroups = [{ id: 'rg_default', name: 'Results1', uuid: generateUUID() }];
+                    const _mName = (state.activeMethod && state.activeMethod.name) ? state.activeMethod.name : 'Method';
+                    state.resultGroups = [{ id: 'rg_default', name: `Results1_${_mName}`, uuid: generateUUID() }];
                 }
                 if (!state._activeResultsGroupId) {
                     state._activeResultsGroupId = state.resultGroups[0].id;
@@ -8233,7 +8282,7 @@ ${state.petriNet.transitions
                     // Results Groups ごとに <results> 要素を出力
                     const groups = (method.resultGroups && method.resultGroups.length > 0)
                         ? method.resultGroups
-                        : [{ id: 'rg_default', name: 'Results1', uuid: '' }];
+                        : [{ id: 'rg_default', name: `Results1_${method.name || 'Method'}`, uuid: '' }];
 
                     for (const grp of groups) {
                     const groupInstances = method.instances.filter(i =>
@@ -8265,6 +8314,16 @@ ${state.petriNet.transitions
                             xml += `      <${inst.type} id="${inst.id}" ref="${inst.templateId}">\n`;
                             xml += `        <uuid>${inst.uuid || crypto.randomUUID()}</uuid>\n`;
 
+                            if (inst.insertions && inst.insertions.length > 0) {
+                                for (const ins of inst.insertions) {
+                                    xml += `        <insertion>\n`;
+                                    xml += `          <uri>${ins.name}</uri>\n`;
+                                    xml += `          <hash method="${ins.hashAlgorithm}">${ins.hash}</hash>\n`;
+                                    xml += `          <format>${ins.mimeType}</format>\n`;
+                                    xml += `        </insertion>\n`;
+                                }
+                            }
+
                             const allProps = [
                                 ...(inst.properties || []),
                                 ...(inst.instanceProperties || []),
@@ -8279,15 +8338,6 @@ ${state.petriNet.transitions
                             if (allConts.length > 0)
                                 xml += await outputContentsToXML(allConts, "        ", password);
 
-                            if (inst.insertions && inst.insertions.length > 0) {
-                                for (const ins of inst.insertions) {
-                                    xml += `        <insertion>\n`;
-                                    xml += `          <uri>${ins.name}</uri>\n`;
-                                    xml += `          <hash algorithm="${ins.hashAlgorithm}">${ins.hash}</hash>\n`;
-                                    xml += `          <format>${ins.mimeType}</format>\n`;
-                                    xml += `        </insertion>\n`;
-                                }
-                            }
 
                             // Instance Refs
                             if (instTemplate) {
@@ -8344,7 +8394,7 @@ ${state.petriNet.transitions
                     // ResultsGroups ごとに <log> 要素を出力
                     const groups = (method.resultGroups && method.resultGroups.length > 0)
                         ? method.resultGroups
-                        : [{ id: 'rg_default', name: 'Results1' }];
+                        : [{ id: 'rg_default', name: `Results1_${method.name || 'Method'}` }];
 
                     for (const grp of groups) {
                         // このグループのeventsのみ
@@ -8364,7 +8414,7 @@ ${state.petriNet.transitions
                         const resultsRef = toXmlId(grp.name || 'Results');
                         xml += `    <log id="${logId}" ref="${method.id}">\n`;
                         xml += `      <uuid>${crypto.randomUUID()}</uuid>\n`;
-                        xml += `      <trace id="trace_${grp.id}" ref="program_${method.id}">\n`;
+                        xml += `      <trace id="trace_${method.id}_${grp.id}" ref="program_${method.id}">\n`;
                         xml += `        <uuid>${crypto.randomUUID()}</uuid>\n`;
 
                         for (const evt of grpEvents) {
@@ -8385,6 +8435,8 @@ ${state.petriNet.transitions
                             })();
                             xml += `          <property key="time:timestamp" xsi:type="dateTimeType"><value>${exportTimestamp}</value></property>\n`;
                             xml += `          <resultsRef id="rref_${generateUUID()}" ref="${resultsRef}"/>\n`;
+                            if (evt.creatorRef) xml += `          <creatorRef id="cref_${generateUUID()}" ref="${evt.creatorRef}"/>\n`;
+                            if (evt.ownerRef)   xml += `          <ownerRef id="oref_${generateUUID()}" ref="${evt.ownerRef}"/>\n`;
                             xml += `        </event>\n`;
                         }
                         xml += `      </trace>\n`;
@@ -8606,6 +8658,14 @@ ${state.petriNet.transitions
                     const writable = await handle.createWritable();
                     await writable.write(data);
                     await writable.close();
+
+                    // 保存したファイル名を表示に反映
+                    const fnEl = document.getElementById('project-filename');
+                    const fnIcon = document.getElementById('project-filename-icon');
+                    fnEl.textContent = handle.name;
+                    fnEl.title = handle.name;
+                    fnIcon.style.display = '';
+
                     showToast("Project saved successfully");
                 } else {
                     // フォールバック: 従来の方法
@@ -8720,6 +8780,13 @@ ${state.petriNet.transitions
                 renderMethodTabs(); // Render tabs
                 switchMethod(state._activeMethodId); // This triggers sub-renders
 
+                // ファイル名を表示
+                const fnEl = document.getElementById('project-filename');
+                const fnIcon = document.getElementById('project-filename-icon');
+                fnEl.textContent = file.name;
+                fnEl.title = file.name;
+                fnIcon.style.display = '';
+
                 showToast("Project loaded successfully.");
             } catch (err) {
                 console.error(err);
@@ -8803,6 +8870,13 @@ ${state.petriNet.transitions
             if (state.activeTab === "petriNet") renderPetriNet();
             if (state.activeTab === "templates") renderTemplates();
             if (state.activeTab === "data") {
+                // メソッド切替時にResultsGroupsを初期化（未設定の場合）
+                if (!state.resultGroups || state.resultGroups.length === 0) {
+                    const _mName = (state.activeMethod && state.activeMethod.name) ? state.activeMethod.name : 'Method';
+                    state.resultGroups = [{ id: 'rg_default', name: `Results1_${_mName}`, uuid: generateUUID() }];
+                    state._activeResultsGroupId = state.resultGroups[0].id;
+                }
+                renderResultsGroupTabs();
                 renderDataTemplates();
                 renderDataInstances();
             }
@@ -9123,6 +9197,8 @@ ${state.petriNet.transitions
                 },
                 templates: [],
                 instances: [],
+                resultGroups: [{ id: 'rg_default', name: `Results1_${name}`, uuid: generateUUID() }],
+                _activeResultsGroupId: 'rg_default',
                 events: [],
                 canvasTranslate: { x: 0, y: 0 },
                 canvasScale: 1,
