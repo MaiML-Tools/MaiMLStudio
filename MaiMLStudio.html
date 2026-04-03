@@ -6603,25 +6603,7 @@ ${state.petriNet.transitions
                 state.instances[instIdx].instanceContents[itemIdx][field] = value;
             }
         }
-        // Update nested instance field
-        function updateInstanceFieldNested(instIdx, fieldType, path, field, value) {
-            const arrayName = fieldType === "properties" ? "properties" : "contents";
-            let target = state.instances[instIdx][arrayName];
-            for (let i = 0; i < path.length - 1; i++) {
-                const idx = path[i];
-                if (idx === "properties" || idx === "contents") {
-                    target = target[idx];
-                } else {
-                    if (target[idx].children && Array.isArray(target[idx].children)) {
-                        target[idx].children = { properties: target[idx].children, contents: [] };
-                    }
-                    target = target[idx].children;
-                }
-            }
-            const lastIdx = path[path.length - 1];
-            const item = target[lastIdx];
-            item[field] = value;
-        }
+
         // Update nested instance field
         function updateInstanceFieldNested(instIdx, fieldType, path, field, value) {
             const arrayName = fieldType === "properties" ? "properties" : "contents";
