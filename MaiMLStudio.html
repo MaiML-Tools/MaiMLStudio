@@ -2306,6 +2306,85 @@
             contentStringEnumType: { units: false, placeholder: "enum value" },
         };
 
+        // ============================================================
+        // CONSTANTS
+        // ============================================================
+
+        /** Lifecycle values for event log entries (JIS K0200) */
+        const LIFECYCLE_OPTIONS = [
+            { value: "complete",   label: "complete"   },
+            { value: "start",      label: "start"      },
+            { value: "schedule",   label: "schedule"   },
+            { value: "assign",     label: "assign"     },
+            { value: "reassign",   label: "reassign"   },
+            { value: "suspend",    label: "suspend"    },
+            { value: "resume",     label: "resume"     },
+            { value: "manualskip", label: "manualskip" },
+            { value: "autoskip",   label: "autoskip"   },
+            { value: "ate_abort",  label: "ate_abort"  },
+            { value: "pi_abort",   label: "pi_abort"   },
+            { value: "withdraw",   label: "withdraw"   },
+        ];
+
+        // ============================================================
+        // UTILITY FUNCTIONS
+        // ============================================================
+
+        /**
+         * Returns the current date/time as a local ISO 8601 string
+         * (e.g. "2025-06-01T10:00:00+09:00").
+         */
+        function getLocalISOTimestamp() {
+            const now = new Date();
+            const pad = (n) => String(n).padStart(2, "0");
+            const offset = -now.getTimezoneOffset();
+            const sign   = offset >= 0 ? "+" : "-";
+            const absOff = Math.abs(offset);
+            return (
+                now.getFullYear()       + "-" +
+                pad(now.getMonth() + 1) + "-" +
+                pad(now.getDate())      + "T" +
+                pad(now.getHours())     + ":" +
+                pad(now.getMinutes())   + ":" +
+                pad(now.getSeconds())   +
+                sign +
+                pad(Math.floor(absOff / 60)) + ":" +
+                pad(absOff % 60)
+            );
+        }
+
+        /**
+         * Generates a UUID, falling back to a random string if the
+         * Web Crypto API is unavailable.
+         */
+        function generateUID() {
+            return (typeof crypto !== "undefined" && crypto.randomUUID)
+                ? crypto.randomUUID()
+                : Math.random().toString(36).substring(2);
+        }
+
+        /**
+         * Triggers a file download in the browser.
+         * @param {string} content  - Text content to download
+         * @param {string} filename - Suggested file name
+         * @param {string} [mimeType="application/xml"] - MIME type
+         */
+        function downloadFile(content, filename, mimeType = "application/xml") {
+            const blob = new Blob([content], { type: mimeType });
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement("a");
+            a.href     = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // ============================================================
+        // TYPE METADATA HELPERS
+        // ============================================================
+
         function buildOptions(typeMeta, currentType) {
             return Object.keys(typeMeta)
                 .map(t => `<option value="${t}" ${currentType === t ? "selected" : ""}>${t}</option>`)
@@ -2421,7 +2500,9 @@
             lastMousePos: { x: 0, y: 0 },
         };
 
-        // --- Help Modal ---
+        // ============================================================
+        // HELP MODAL
+        // ============================================================
         function toggleHelpModal() {
             const modal = document.getElementById("help-modal");
             if (modal.classList.contains("hidden")) {
@@ -2440,7 +2521,9 @@
             }
         }
 
-        // --- Theme Toggle ---
+        // ============================================================
+        // THEME TOGGLE
+        // ============================================================
         function initTheme() {
             const savedTheme = localStorage.getItem("theme");
             const systemPrefersDark = window.matchMedia(
@@ -2482,7 +2565,9 @@
             }
         }
 
-        // --- Utils ---
+        // ============================================================
+        // UI UTILITIES  (toast, UUID input helper)
+        // ============================================================
         function showToast(message, type = "success", duration = 2000) {
             const container = document.getElementById("toast-container");
             const el = document.createElement("div");
@@ -2530,7 +2615,9 @@
             return uuid;
         }
 
-        // --- Custom Modal ---
+        // ============================================================
+        // CONFIRM MODAL
+        // ============================================================
         function showConfirmModal(title, message, onConfirm) {
             const modal = document.getElementById("confirm-modal");
             const box = document.getElementById("confirm-modal-box");
@@ -2563,7 +2650,9 @@
             box.classList.add("scale-95");
         }
 
-        // --- Document Properties ---
+        // ============================================================
+        // DOCUMENT PROPERTIES
+        // ============================================================
         function addDocumentProperty() {
             state.document.properties.push({
                 key: "",
@@ -2931,7 +3020,9 @@
             );
         }
 
-        // --- Namespaces ---
+        // ============================================================
+        // NAMESPACES
+        // ============================================================
         function addNamespace() {
             if (!state.document.namespaces) state.document.namespaces = [];
             state.document.namespaces.push({ prefix: "", uri: "" });
@@ -2999,7 +3090,9 @@
                 .join("");
         }
 
-        // --- Vendors ---
+        // ============================================================
+        // VENDORS
+        // ============================================================
         function addVendor() {
             state.document.vendors.push({
                 id: "vendor_" + Date.now(),
@@ -3056,8 +3149,9 @@
             );
         }
 
-        // --- Instruments ---
-        // --- Chained Files ---
+        // ============================================================
+        // CHAINED FILES  (instrument section header is below)
+        // ============================================================
         async function getMaiMLFileHash(arrayBuffer) {
             const text = new TextDecoder().decode(arrayBuffer);
             const dvMatch = text.match(/<ds:DigestValue>([^<]+)<\/ds:DigestValue>/) ||
@@ -3283,6 +3377,9 @@
             );
         }
 
+        // ============================================================
+        // INSTRUMENTS
+        // ============================================================
         function addInstrument() {
             state.document.instruments.push({
                 id: "instrument_" + Date.now(),
@@ -3339,7 +3436,9 @@
             );
         }
 
-        // --- Owners ---
+        // ============================================================
+        // OWNERS
+        // ============================================================
         function addOwner() {
             state.document.owners.push({
                 id: "owner_" + Date.now(),
@@ -3395,7 +3494,9 @@
             );
         }
 
-        // --- Creators ---
+        // ============================================================
+        // CREATORS
+        // ============================================================
         function addCreator() {
             state.document.creators.push({
                 id: "creator_" + Date.now(),
@@ -3538,7 +3639,9 @@
             renderCreators();
         }
 
-        // --- Petri Net ---
+        // ============================================================
+        // PETRI NET
+        // ============================================================
         function setMode(mode) {
             state.mode = mode;
             state.arcStart = null;
@@ -4405,7 +4508,9 @@ ${state.petriNet.transitions
             );
         }
 
-        // --- Templates ---
+        // ============================================================
+        // TEMPLATES
+        // ============================================================
         function renderTemplates() {
             const list = document.getElementById("templates-list");
             const places = state.petriNet.places.filter((p) => p.type !== "proxy");
@@ -5635,7 +5740,9 @@ ${state.petriNet.transitions
             scrollToCard("card-evt-" + transitionId);
         }
 
-        // --- Data / Instances Logic ---
+        // ============================================================
+        // DATA / INSTANCES
+        // ============================================================
         function renderDataTemplates() {
             const list = document.getElementById("data-templates-list");
             const hasTemplates = state.templates.length > 0;
@@ -5819,15 +5926,11 @@ ${state.petriNet.transitions
             if (!state.events) state.events = [];
             const existing = state.events.filter(e => (e.resultsGroupId || 'rg_default') === groupId);
             if (existing.length > 0) return; // 既にある
-            const now = new Date();
-            const pad = (n) => String(n).padStart(2, "0");
-            const tz = -now.getTimezoneOffset();
-            const sign = tz >= 0 ? "+" : "-";
-            const ts = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}${sign}${pad(Math.floor(Math.abs(tz)/60))}:${pad(Math.abs(tz)%60)}`;
+            const ts = getLocalISOTimestamp();
             state.petriNet.transitions.forEach(t => {
                 state.events.push({
                     id: "event_" + t.id + "_" + groupId + "_" + Date.now(),
-                    uuid: generateUUID(),
+                    uuid: generateUID(),
                     transitionId: t.id,
                     transitionLabel: t.label,
                     lifecycle: "complete",
@@ -6658,34 +6761,13 @@ ${state.petriNet.transitions
             );
             if (!transition) return;
 
-            const now = new Date();
-            const timezoneOffset = -now.getTimezoneOffset();
-            const diff = timezoneOffset >= 0 ? "+" : "-";
-            const pad = (num) => String(num).padStart(2, "0");
-            const defaultTimestamp =
-                now.getFullYear() +
-                "-" +
-                pad(now.getMonth() + 1) +
-                "-" +
-                pad(now.getDate()) +
-                "T" +
-                pad(now.getHours()) +
-                ":" +
-                pad(now.getMinutes()) +
-                ":" +
-                pad(now.getSeconds()) +
-                diff +
-                pad(Math.floor(Math.abs(timezoneOffset) / 60)) +
-                ":" +
-                pad(Math.abs(timezoneOffset) % 60);
-
             const newEvent = {
                 id: "event_" + Date.now(),
-                uuid: generateUUID(),
+                uuid: generateUID(),
                 transitionId: transitionId,
                 transitionLabel: transition.label,
                 lifecycle: "complete",
-                timestamp: defaultTimestamp,
+                timestamp: getLocalISOTimestamp(),
             };
 
             state.events.push(newEvent);
@@ -6984,21 +7066,7 @@ ${state.petriNet.transitions
 
             if (!list) return;
 
-            const lifecycleOptions = [
-                { value: "complete", label: "complete" },
-                { value: "start", label: "start" },
-                { value: "schedule", label: "schedule" },
-                { value: "assign", label: "assign" },
-                { value: "reassign", label: "reassign" },
-                { value: "suspend", label: "suspend" },
-                { value: "resume", label: "resume" },
-                { value: "manualskip", label: "manualskip" },
-                { value: "autoskip", label: "autoskip" },
-                { value: "ate_abort", label: "ate_abort" },
-                { value: "pi_abort", label: "pi_abort" },
-                { value: "withdraw", label: "withdraw" },
-            ];
-
+            // LIFECYCLE_OPTIONS はファイル先頭の定数を参照
             if (!state.events) state.events = [];
 
             if (
@@ -7007,38 +7075,16 @@ ${state.petriNet.transitions
                 state.petriNet.transitions &&
                 state.petriNet.transitions.length > 0
             ) {
-                const now = new Date();
-                const pad = (n) => String(n).padStart(2, "0");
-                const timezoneOffset = -now.getTimezoneOffset();
-                const diff = timezoneOffset >= 0 ? "+" : "-";
-                const defaultTimestamp =
-                    now.getFullYear() +
-                    "-" +
-                    pad(now.getMonth() + 1) +
-                    "-" +
-                    pad(now.getDate()) +
-                    "T" +
-                    pad(now.getHours()) +
-                    ":" +
-                    pad(now.getMinutes()) +
-                    ":" +
-                    pad(now.getSeconds()) +
-                    diff +
-                    pad(Math.floor(Math.abs(timezoneOffset) / 60)) +
-                    ":" +
-                    pad(Math.abs(timezoneOffset) % 60);
+                const defaultTimestamp = getLocalISOTimestamp();
+                const groups = state.resultGroups && state.resultGroups.length > 0
+                    ? state.resultGroups
+                    : [{ id: 'rg_default' }];
 
                 state.petriNet.transitions.forEach((t) => {
-                    // 各resultsGroupに対応するeventを生成
-                    const groups = state.resultGroups && state.resultGroups.length > 0
-                        ? state.resultGroups
-                        : [{ id: 'rg_default' }];
                     groups.forEach(grp => {
                         state.events.push({
                             id: "event_" + t.id + "_" + grp.id + "_" + Date.now(),
-                            uuid: crypto.randomUUID
-                                ? crypto.randomUUID()
-                                : Math.random().toString(36).substring(2),
+                            uuid: generateUID(),
                             transitionId: t.id,
                             transitionLabel: t.label,
                             lifecycle: "complete",
@@ -7457,14 +7503,37 @@ ${state.petriNet.transitions
             // Events（idxはallEvents上の実際のインデックス）
             events.forEach((evt) => {
                 const idx = allEvents.indexOf(evt);
-                html += `
+                html += renderEventCard(evt, idx);
+            });
+
+            list.innerHTML = html;
+        }
+
+        /**
+         * イベントカード1枚分のHTML文字列を生成して返す。
+         * renderDataInstances() から呼ばれる内部ヘルパー。
+         * @param {object} evt - イベントオブジェクト
+         * @param {number} idx - state.events 上のインデックス
+         */
+        function renderEventCard(evt, idx) {
+            const lifecycleOpts = LIFECYCLE_OPTIONS
+                .map(opt => `<option value="${opt.value}" ${evt.lifecycle === opt.value ? "selected" : ""} class="dark:bg-slate-800">${opt.label}</option>`)
+                .join("");
+            const creatorOpts = state.document.creators
+                .map(c => `<option value="${c.id}" ${evt.creatorRef === c.id ? "selected" : ""} class="dark:bg-slate-800">${c.id}${c.name ? " — " + escHtml(c.name) : ""}</option>`)
+                .join("");
+            const ownerOpts = state.document.owners
+                .map(o => `<option value="${o.id}" ${evt.ownerRef === o.id ? "selected" : ""} class="dark:bg-slate-800">${o.id}${o.name ? " — " + escHtml(o.name) : ""}</option>`)
+                .join("");
+
+            return `
                 <div id="card-evt-${evt.transitionId}" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-orange-200 dark:border-orange-900 overflow-hidden mb-6 animate-fade-in relative transition-colors">
                 <div class="absolute inset-y-0 left-0 w-1 bg-orange-400 dark:bg-orange-600"></div>
             <div class="px-4 py-3 bg-orange-50 dark:bg-orange-900/20 border-b border-orange-100 dark:border-orange-900/50 flex justify-between items-center">
                 <div class="flex items-center gap-2.5">
                     <div class="p-1.5 rounded-md bg-white dark:bg-slate-800 border border-orange-200 dark:border-orange-800 text-orange-600 dark:text-orange-400"><i class="ph ph-lightning text-lg"></i></div>
                     <div class="flex flex-col">
-                        <span class="font-bold text-slate-800 dark:text-slate-200">Event Log</span> 
+                        <span class="font-bold text-slate-800 dark:text-slate-200">Event Log</span>
                         <span class="text-xs text-orange-700 dark:text-orange-400 font-mono">${evt.transitionLabel}</span>
                     </div>
                 </div>
@@ -7474,42 +7543,35 @@ ${state.petriNet.transitions
                 <div class="mb-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-2 hover:border-orange-200 dark:hover:border-orange-800 transition-all">
                     <div class="flex gap-2 items-center">
                         <label class="w-16 text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">UUID</label>
-                        <input type="text" value="${evt.uuid || ""}" 
-                            onchange="updateEventUUID(${idx}, this.value)" 
-                            placeholder="Auto-generated UUID" 
+                        <input type="text" value="${evt.uuid || ""}"
+                            onchange="updateEventUUID(${idx}, this.value)"
+                            placeholder="Auto-generated UUID"
                             class="flex-1 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-orange-500/20 focus:border-orange-500 outline-none">
-                        <button onclick="generateEventUUID(${idx})" 
-                            class="p-1 text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/30 rounded transition-colors" 
+                        <button onclick="generateEventUUID(${idx})"
+                            class="p-1 text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/30 rounded transition-colors"
                             title="Regenerate UUID">
                             <i class="ph ph-arrows-clockwise text-sm"></i>
                         </button>
                     </div>
                 </div>
-                
                 <div class="grid grid-cols-1 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Lifecycle Transition</label>
                         <select onchange="updateEventLifecycle(${idx}, this.value)"
                             class="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none bg-slate-50 dark:bg-slate-700 dark:text-white focus:bg-white dark:focus:bg-slate-600 transition-colors cursor-pointer">
-                            ${lifecycleOptions
-                        .map(
-                            (opt) =>
-                                `<option value="${opt.value}" ${evt.lifecycle === opt.value ? "selected" : ""} class="dark:bg-slate-800">${opt.label}</option>`,
-                        )
-                        .join("")}
+                            ${lifecycleOpts}
                         </select>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Timestamp (ISO 8601:YYYY-MM-DDThh:mm:ss.sssTZD)</label>
                         <div class="relative">
-                            <input type="text" value="${evt.timestamp || ""}" 
+                            <input type="text" value="${evt.timestamp || ""}"
                                 onchange="updateEventTimestamp(${idx}, this.value)"
                                 placeholder="(blank) → current time on export"
                                 class="w-full pl-9 pr-3 py-2 text-sm font-mono border border-slate-200 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all bg-slate-50 dark:bg-slate-700 dark:text-white focus:bg-white dark:focus:bg-slate-600">
                             <i class="ph ph-clock text-slate-400 absolute left-3 top-2.5"></i>
                         </div>
                     </div>
-
                     <div class="mt-4 pt-3 border-t border-orange-100 dark:border-orange-900/30">
                         <h6 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1"><i class="ph ph-link"></i> References (optional)</h6>
                         <div class="grid grid-cols-2 gap-3">
@@ -7518,7 +7580,7 @@ ${state.petriNet.transitions
                                 <select onchange="updateEventCreatorRef(${idx}, this.value)"
                                     class="w-full px-2 py-1.5 text-xs border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white outline-none cursor-pointer focus:ring-1 focus:ring-orange-400/40 transition-colors">
                                     <option value="" class="dark:bg-slate-800">(none)</option>
-                                    ${state.document.creators.map(c => `<option value="${c.id}" ${evt.creatorRef === c.id ? 'selected' : ''} class="dark:bg-slate-800">${c.id}${c.name ? ' — ' + escHtml(c.name) : ''}</option>`).join('')}
+                                    ${creatorOpts}
                                 </select>
                             </div>
                             <div>
@@ -7526,7 +7588,7 @@ ${state.petriNet.transitions
                                 <select onchange="updateEventOwnerRef(${idx}, this.value)"
                                     class="w-full px-2 py-1.5 text-xs border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white outline-none cursor-pointer focus:ring-1 focus:ring-orange-400/40 transition-colors">
                                     <option value="" class="dark:bg-slate-800">(none)</option>
-                                    ${state.document.owners.map(o => `<option value="${o.id}" ${evt.ownerRef === o.id ? 'selected' : ''} class="dark:bg-slate-800">${o.id}${o.name ? ' — ' + escHtml(o.name) : ''}</option>`).join('')}
+                                    ${ownerOpts}
                                 </select>
                             </div>
                         </div>
@@ -7534,9 +7596,6 @@ ${state.petriNet.transitions
                 </div>
             </div>
         </div>`;
-            });
-
-            list.innerHTML = html;
         }
 
         function updateInstanceValue(instanceIdx, type, itemIdx, newValue) {
@@ -7730,7 +7789,9 @@ ${state.petriNet.transitions
             return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]} `;
         }
 
-        // --- Tab Management ---
+        // ============================================================
+        // TAB MANAGEMENT
+        // ============================================================
         function switchTab(tab) {
             state.activeTab = tab;
             ["document", "petriNet", "templates", "data"].forEach((t) => {
@@ -7803,7 +7864,9 @@ ${state.petriNet.transitions
         }
 
         // Helper function to recursively output properties to XML
-        // ===== XML Encryption Utilities (W3C XML Encryption / JIS K0200) =====
+        // ============================================================
+        // XML ENCRYPTION  (W3C XML Encryption 1.1 / JIS K0200)
+        // ============================================================
 
         // Prompt for password via modal — returns Promise<string|null>
         function promptEncryptPassword(mode = "encrypt") {
@@ -8129,12 +8192,7 @@ ${state.petriNet.transitions
                     }
                 }
 
-                const now = new Date();
-                const offset = -now.getTimezoneOffset();
-                const diff = offset >= 0 ? "+" : "-";
-                const pad = (num) => String(num).padStart(2, "0");
-                const dateStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}${diff}${pad(Math.floor(Math.abs(offset) / 60))}:${pad(Math.abs(offset) % 60)}`;
-                xml += `    <date>${dateStr}</date>\n`;
+                xml += `    <date>${getLocalISOTimestamp()}</date>\n`;
 
                 // <chain> elements（<date>の直後、JIS K0200仕様）
                 if (state.document.chains && state.document.chains.length > 0) {
@@ -8419,14 +8477,7 @@ ${state.petriNet.transitions
                             xml += `        <event id="${evt.id}" ref="inst_${label}_${method.id}">\n`;
                             xml += `          <uuid>${evt.uuid || crypto.randomUUID()}</uuid>\n`;
                             xml += `          <property key="lifecycle:transition" xsi:type="stringType"><value>${evt.lifecycle}</value></property>\n`;
-                            const exportTimestamp = (() => {
-                                if (evt.timestamp) return evt.timestamp;
-                                const now = new Date();
-                                const pad = (n) => String(n).padStart(2, "0");
-                                const tz = -now.getTimezoneOffset();
-                                const sign = tz >= 0 ? "+" : "-";
-                                return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}${sign}${pad(Math.floor(Math.abs(tz) / 60))}:${pad(Math.abs(tz) % 60)}`;
-                            })();
+                            const exportTimestamp = evt.timestamp || getLocalISOTimestamp();
                             xml += `          <property key="time:timestamp" xsi:type="dateTimeType"><value>${exportTimestamp}</value></property>\n`;
                             xml += `          <resultsRef id="rref_${generateUUID()}" ref="${resultsRef}"/>\n`;
                             if (evt.creatorRef) xml += `          <creatorRef id="cref_${generateUUID()}" ref="${evt.creatorRef}"/>\n`;
@@ -8466,15 +8517,7 @@ ${state.petriNet.transitions
                     showToast("MaiML exported successfully");
                 } else {
                     // フォールバック: 従来の方法
-                    const blob = new Blob([xml], { type: "application/xml" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = `${defaultFilename}.maiml`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
+                    downloadFile(xml, `${defaultFilename}.maiml`, "application/xml");
                     showToast("MaiML exported successfully");
                 }
             } catch (e) {
@@ -8487,17 +8530,19 @@ ${state.petriNet.transitions
             }
         }
 
-        // --- Save/Load Project ---
+        // ============================================================
+        // SAVE / LOAD PROJECT
+        // ============================================================
         function syncInputsToState() {
-            if (document.getElementById("doc-id"))
-                state.document.id = document.getElementById("doc-id").value;
-            if (document.getElementById("doc-uuid"))
-                state.document.uuid = document.getElementById("doc-uuid").value;
-            if (document.getElementById("doc-name"))
-                state.document.name = document.getElementById("doc-name").value;
-            if (document.getElementById("doc-description"))
-                state.document.description =
-                    document.getElementById("doc-description").value;
+            // ヘルパー: 要素が存在する場合のみ値を返す
+            const getVal = (id) => {
+                const el = document.getElementById(id);
+                return el ? el.value : null;
+            };
+            const id          = getVal("doc-id");          if (id          !== null) state.document.id          = id;
+            const uuid        = getVal("doc-uuid");        if (uuid        !== null) state.document.uuid        = uuid;
+            const name        = getVal("doc-name");        if (name        !== null) state.document.name        = name;
+            const description = getVal("doc-description"); if (description !== null) state.document.description = description;
         }
 
 
@@ -8613,12 +8658,7 @@ ${state.petriNet.transitions
                 } else {
                     const fname = (state.document.name || 'maiml_export').replace(/[^a-zA-Z0-9_\-]/g, '_');
                     // 署名済みMaiMLをダウンロード
-                    const blob = new Blob([signedXml], { type: 'application/xml' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url; a.download = `${fname}_signed.maiml`;
-                    document.body.appendChild(a); a.click();
-                    document.body.removeChild(a); URL.revokeObjectURL(url);
+                    downloadFile(signedXml, `${fname}_signed.maiml`, 'application/xml');
                 }
 
                 showToast('✅ Saved signed MaiML file');
@@ -8663,15 +8703,7 @@ ${state.petriNet.transitions
                     showToast("Project saved successfully");
                 } else {
                     // フォールバック: 従来の方法
-                    const blob = new Blob([data], { type: "application/json" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = `${defaultFilename}.json`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
+                    downloadFile(data, `${defaultFilename}.json`, "application/json");
                     showToast("Project saved successfully");
                 }
             } catch (err) {
@@ -8791,7 +8823,9 @@ ${state.petriNet.transitions
             }
         }
 
-        // --- Method Management ---
+        // ============================================================
+        // METHOD MANAGEMENT
+        // ============================================================
         function renderMethodTabs() {
             const container = document.getElementById("method-tabs-bar");
             if (!container) return;
@@ -9257,7 +9291,9 @@ ${state.petriNet.transitions
         renderMethodTabs();
         switchMethod(state._activeMethodId);
 
-        // --- Help Language Switcher ---
+        // ============================================================
+        // HELP LANGUAGE SWITCHER
+        // ============================================================
         function switchHelpLanguage(lang) {
             const jpBlock = document.getElementById("manual-jp");
             const enBlock = document.getElementById("manual-en");
@@ -9290,7 +9326,9 @@ ${state.petriNet.transitions
             }
         }
 
-        // --- Import Place Logic ---
+        // ============================================================
+        // IMPORT EXTERNAL PLACE
+        // ============================================================
         function openImportPlaceModal() {
             const modal = document.getElementById("import-place-modal");
             const methodSelect = document.getElementById("import-method-select");
@@ -9376,7 +9414,7 @@ ${state.petriNet.transitions
             }
 
             const proxyPlace = {
-                id: `proxy_${Date.now()} `,
+                id: `proxy_${Date.now()}`,
                 label: `${originalPlace.label} (${method.name})`,
                 x: 100 + Math.random() * 50,
                 y: 100 + Math.random() * 50,
