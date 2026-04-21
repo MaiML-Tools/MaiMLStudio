@@ -1906,7 +1906,7 @@
                                         Name</label>
                                     <input type="text" id="doc-name" oninput="updateKeyValidation(this, this.value)"
                                         class="flex-[2] px-2 py-1 text-xs font-semibold border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
-                                        placeholder="Project Alpha Experiment" />
+                                        placeholder="Project_Alpha_Experiment" />
                                     <label
                                         class="w-24 text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">Description</label>
                                     <input type="text" id="doc-description"
@@ -2394,7 +2394,8 @@
         let state = {
             document: {
                 id: "",
-                uuid: "",
+                // uuid: "",
+                uuid: crypto.randomUUID(),
                 name: "",
                 description: "",
                 properties: [],
@@ -2409,7 +2410,7 @@
             _methods: [
                 {
                     id: "method_" + Date.now(),
-                    uuid: crypto.randomUUID(),
+                    uuid: "",
                     name: "Main_Method",
                     petriNet: {
                         places: [],
@@ -2420,7 +2421,7 @@
                     },
                     templates: [],
                     instances: [],
-                    resultGroups: [{ id: 'rg_default', name: 'Results1_Main_Method', uuid: '' }],
+                    resultGroups: [{ id: 'rg_default', name: 'Results1_Main_Method', uuid: "" }],
                     _activeResultsGroupId: 'rg_default',
                     events: [],
                     canvasTranslate: { x: 0, y: 0 },
@@ -2566,6 +2567,32 @@
         }
 
         // ============================================================
+        // XSS SAFETY UTILITY
+        // ============================================================
+        function escHtml(str) {
+            return String(str == null ? '' : str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        /**
+         * Escape user data for XML text content and attribute values.
+         * Apply to every free-text field in xml+= export strings.
+         * & must be replaced first to avoid double-escaping.
+         */
+        function escXml(str) {
+            return String(str == null ? '' : str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&apos;');
+        }
+
+        // ============================================================
         // UI UTILITIES  (toast, UUID input helper)
         // ============================================================
         function showToast(message, type = "success", duration = 2000) {
@@ -2587,7 +2614,7 @@
             el.className = `toast bg-white dark:bg-slate-800 shadow-lg border border-slate-100 dark:border-slate-700 rounded-lg p-4 flex items-center gap-3 min-w-[300px] pointer-events-auto`;
             el.innerHTML = `
                 <i class="ph ${icon} ${color} text-xl"></i>
-                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">${message}</span>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">${escHtml(message)}</span>
             `;
 
             container.appendChild(el);
@@ -2822,7 +2849,7 @@
                             </button>`
                             : '<div class="w-6"></div>'
                         }
-                    <input type="text" value="${p.key || ""}"
+                    <input type="text" value="${escHtml(p.key || '')}"
                         oninput="updateKeyValidation(this, this.value)"
                         onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'key', this.value)"
                         placeholder="Key"
@@ -2833,18 +2860,18 @@
                         ${buildOptions(PROPERTY_TYPE_META, p.type)}
                     </select>
                     ${isNumeric
-                            ? `<input type="text" value="${p.units || ""}"
+                            ? `<input type="text" value="${escHtml(p.units || '')}"
                                 onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'units', this.value)"
                                 placeholder="Units"
                                 class="w-20 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">`
                             : '<div class="w-0"></div>'
                         }
-                    <input type="text" value="${p.description || ""}"
+                    <input type="text" value="${escHtml(p.description || '')}"
                         onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'description', this.value)"
                         placeholder="Description"
                         class="flex-[2] min-w-[140px] px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                     ${!isPropertyList
-                            ? `<input type="text" value="${p.value || ""}"
+                            ? `<input type="text" value="${escHtml(p.value || '')}"
                                 onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'value', this.value)"
                                 placeholder="${placeholder}"
                                 class="flex-1 px-2 py-1 text-xs font-medium border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">`
@@ -2864,14 +2891,14 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
-                            <input type="text" value="${p.formatString || ""}"
+                            <input type="text" value="${escHtml(p.formatString || '')}"
                                 onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'formatString', this.value)"
                                 placeholder="e.g. 0.00"
                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 outline-none">
                         </div>
                         ${isNumeric ? `<div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
-                            <input type="number" step="any" value="${p.scaleFactor || ""}"
+                            <input type="number" step="any" value="${escHtml(p.scaleFactor || '')}"
                                 onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'scaleFactor', this.value)"
                                 placeholder="e.g. 1.0"
                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 outline-none">
@@ -2935,7 +2962,7 @@
             <div class="bg-teal-50/30 dark:bg-teal-900/10 border border-teal-200 dark:border-teal-800 rounded-lg p-1 group/card hover:border-teal-300 transition-all">
                 <div class="flex gap-1 items-center">
                     <div class="w-6"></div>
-                    <input type="text" value="${p.key || ""}"
+                    <input type="text" value="${escHtml(p.key || '')}"
                         onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'key', this.value)"
                         placeholder="Key"
                         list="ns-prefix-list"
@@ -2945,17 +2972,17 @@
                         ${buildOptions(CONTENT_TYPE_META, p.type)}
                     </select>
                     ${isNumeric
-                            ? `<input type="text" value="${p.units || ""}"
+                            ? `<input type="text" value="${escHtml(p.units || '')}"
                                 onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'units', this.value)"
                                 placeholder="Units"
                                 class="w-20 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">`
                             : '<div class="w-0"></div>'
                         }
-                    <input type="text" value="${p.description || ""}"
+                    <input type="text" value="${escHtml(p.description || '')}"
                         onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'description', this.value)"
                         placeholder="Description"
                         class="flex-[2] min-w-[140px] px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
-                    <input type="text" value="${p.value || ""}"
+                    <input type="text" value="${escHtml(p.value || '')}"
                         onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'value', this.value)"
                         placeholder="${placeholder}"
                         class="flex-1 px-2 py-1 text-xs font-medium border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
@@ -2973,28 +3000,28 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
-                            <input type="text" value="${p.formatString || ""}"
+                            <input type="text" value="${escHtml(p.formatString || '')}"
                                 onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'formatString', this.value)"
                                 placeholder="e.g. 0.00"
                                 class="w-full px-2 py-1 border border-teal-200 dark:border-teal-700 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-teal-500/20 outline-none">
                         </div>
                         ${isNumeric ? `<div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
-                            <input type="number" step="any" value="${p.scaleFactor || ""}"
+                            <input type="number" step="any" value="${escHtml(p.scaleFactor || '')}"
                                 onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'scaleFactor', this.value)"
                                 placeholder="e.g. 1.0"
                                 class="w-full px-2 py-1 border border-teal-200 dark:border-teal-700 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-teal-500/20 outline-none">
                         </div>` : ""}
                         <div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">axis <span class="font-normal">(xs:string)</span></label>
-                            <input type="text" value="${p.axis || ""}"
+                            <input type="text" value="${escHtml(p.axis || '')}"
                                 onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'axis', this.value)"
                                 placeholder="e.g. x-axis"
                                 class="w-full px-2 py-1 border border-teal-200 dark:border-teal-700 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-teal-500/20 outline-none">
                         </div>
                         <div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">size <span class="font-normal">(xs:int)</span></label>
-                            <input type="number" step="1" value="${p.size || ""}"
+                            <input type="number" step="1" value="${escHtml(p.size || '')}"
                                 onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'size', this.value)"
                                 placeholder="e.g. 10"
                                 class="w-full px-2 py-1 border border-teal-200 dark:border-teal-700 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-teal-500/20 outline-none">
@@ -3041,13 +3068,13 @@
             <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-2 group/card hover:border-violet-200 dark:hover:border-violet-800 transition-all">
               <div class="flex gap-2 items-center">
                 <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider w-14 shrink-0">Prefix</label>
-                <input type="text" value="${ns.prefix}"
+                <input type="text" value="${escHtml(ns.prefix)}"
                   oninput="updateKeyValidation(this, this.value); updateNamespace(${idx}, 'prefix', this.value)"
                   placeholder="e.g. maiml"
                   class="w-36 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white focus:ring-1 focus:ring-violet-500/20 focus:border-violet-500 outline-none"
                   title="QName prefix (letters, digits, _ . - only; no colon)">
                 <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider w-8 shrink-0">URI</label>
-                <input type="text" value="${ns.uri}"
+                <input type="text" value="${escHtml(ns.uri)}"
                   oninput="updateNamespace(${idx}, 'uri', this.value)"
                   placeholder="e.g. http://maiml.example.org/ns/1.0"
                   class="flex-1 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-violet-500/20 focus:border-violet-500 outline-none">
@@ -3086,7 +3113,7 @@
             if (!dl) return;
             dl.innerHTML = (state.document.namespaces || [])
                 .filter(ns => ns.prefix && ns.prefix.trim() !== "")
-                .map(ns => `<option value="${ns.prefix.trim()}:">`)
+                .map(ns => `<option value="${escHtml(ns.prefix.trim())}:">`)
                 .join("");
         }
 
@@ -3114,11 +3141,11 @@
                     (v, idx) => `
                 <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-1 group/card hover:border-indigo-200 dark:hover:border-indigo-800 transition-all">
                     <div class="flex gap-1 items-center">
-                        <input type="text" value="${v.id}" onchange="updateVendor(${idx}, 'id', this.value)" placeholder="ID" 
+                        <input type="text" value="${escHtml(v.id)}" onchange="updateVendor(${idx}, 'id', this.value)" placeholder="ID" 
                             class="w-32 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" title="Vendor ID">
-                        <input type="text" value="${v.name}" oninput="updateKeyValidation(this, this.value)" onchange="updateVendor(${idx}, 'name', this.value)" placeholder="Vendor Name" list="ns-prefix-list"
+                        <input type="text" value="${escHtml(v.name)}" oninput="updateKeyValidation(this, this.value)" onchange="updateVendor(${idx}, 'name', this.value)" placeholder="Vendor Name" list="ns-prefix-list"
                             class="w-48 px-2 py-1 text-xs font-semibold border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
-                        <input type="text" value="${v.description}" onchange="updateVendor(${idx}, 'description', this.value)" placeholder="Description" 
+                        <input type="text" value="${escHtml(v.description)}" onchange="updateVendor(${idx}, 'description', this.value)" placeholder="Description" 
                             class="flex-1 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         <button onclick="removeVendor(${idx})" class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
                             <i class="ph ph-trash text-sm"></i>
@@ -3401,11 +3428,11 @@
                     (inst, idx) => `
                 <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-1 group/card hover:border-indigo-200 dark:hover:border-indigo-800 transition-all">
                     <div class="flex gap-1 items-center">
-                        <input type="text" value="${inst.id}" onchange="updateInstrument(${idx}, 'id', this.value)" placeholder="ID" 
+                        <input type="text" value="${escHtml(inst.id)}" onchange="updateInstrument(${idx}, 'id', this.value)" placeholder="ID" 
                             class="w-32 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" title="Instrument ID">
-                        <input type="text" value="${inst.name}" oninput="updateKeyValidation(this, this.value)" onchange="updateInstrument(${idx}, 'name', this.value)" placeholder="Instrument Name" list="ns-prefix-list"
+                        <input type="text" value="${escHtml(inst.name)}" oninput="updateKeyValidation(this, this.value)" onchange="updateInstrument(${idx}, 'name', this.value)" placeholder="Instrument Name" list="ns-prefix-list"
                             class="w-48 px-2 py-1 text-xs font-semibold border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
-                        <input type="text" value="${inst.description}" onchange="updateInstrument(${idx}, 'description', this.value)" placeholder="Description" 
+                        <input type="text" value="${escHtml(inst.description)}" onchange="updateInstrument(${idx}, 'description', this.value)" placeholder="Description" 
                             class="flex-1 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         <button onclick="removeInstrument(${idx})" class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
                             <i class="ph ph-trash text-sm"></i>
@@ -3460,11 +3487,11 @@
                     (o, idx) => `
                 <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-1 group/card hover:border-indigo-200 dark:hover:border-indigo-800 transition-all">
                     <div class="flex gap-1 items-center">
-                        <input type="text" value="${o.id}" onchange="updateOwner(${idx}, 'id', this.value)" placeholder="ID" 
+                        <input type="text" value="${escHtml(o.id)}" onchange="updateOwner(${idx}, 'id', this.value)" placeholder="ID" 
                             class="w-32 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" title="Owner ID">
-                        <input type="text" value="${o.name}" oninput="updateKeyValidation(this, this.value)" onchange="updateOwner(${idx}, 'name', this.value)" placeholder="Owner Name" list="ns-prefix-list"
+                        <input type="text" value="${escHtml(o.name)}" oninput="updateKeyValidation(this, this.value)" onchange="updateOwner(${idx}, 'name', this.value)" placeholder="Owner Name" list="ns-prefix-list"
                             class="w-48 px-2 py-1 text-xs font-semibold border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
-                        <input type="text" value="${o.description}" onchange="updateOwner(${idx}, 'description', this.value)" placeholder="Email / Description" 
+                        <input type="text" value="${escHtml(o.description)}" onchange="updateOwner(${idx}, 'description', this.value)" placeholder="Email / Description" 
                             class="flex-1 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         <button onclick="removeOwner(${idx})" class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
                             <i class="ph ph-trash text-sm"></i>
@@ -3520,11 +3547,11 @@
                     (c, idx) => `
                 <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-1 group/card hover:border-indigo-200 dark:hover:border-indigo-800 transition-all">
                     <div class="flex gap-1 items-center mb-2">
-                        <input type="text" value="${c.id}" onchange="updateCreator(${idx}, 'id', this.value)" placeholder="ID" 
+                        <input type="text" value="${escHtml(c.id)}" onchange="updateCreator(${idx}, 'id', this.value)" placeholder="ID" 
                             class="w-32 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" title="Creator ID">
-                        <input type="text" value="${c.name}" oninput="updateKeyValidation(this, this.value)" onchange="updateCreator(${idx}, 'name', this.value)" placeholder="Full Name" list="ns-prefix-list"
+                        <input type="text" value="${escHtml(c.name)}" oninput="updateKeyValidation(this, this.value)" onchange="updateCreator(${idx}, 'name', this.value)" placeholder="Full Name" list="ns-prefix-list"
                             class="w-48 px-2 py-1 text-xs font-semibold border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
-                        <input type="text" value="${c.description}" onchange="updateCreator(${idx}, 'description', this.value)" placeholder="Description / Role" 
+                        <input type="text" value="${escHtml(c.description)}" onchange="updateCreator(${idx}, 'description', this.value)" placeholder="Description / Role" 
                             class="flex-1 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         <button onclick="removeCreator(${idx})" class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
                             <i class="ph ph-trash text-sm"></i>
@@ -3542,7 +3569,7 @@
                                 );
                                 return `
                                         <div class="inline-flex items-center gap-1 px-1.5 py-0.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded text-[10px] text-slate-700 dark:text-slate-200 shadow-sm">
-                                            <span>${vendor ? vendor.name || ref : ref}</span>
+                                            <span>${escHtml(vendor ? vendor.name || ref : ref)}</span>
                                             <button onclick="removeVendorRef(${idx}, ${refIdx})" class="text-slate-400 hover:text-red-500"><i class="ph ph-x text-[8px]"></i></button>
                                         </div>
                                     `;
@@ -3550,7 +3577,7 @@
                             .join("")}
                                 <select onchange="addVendorRef(${idx}, this)" class="text-[10px] border-dashed border border-slate-300 dark:border-slate-500 rounded px-1.5 py-0.5 bg-transparent hover:bg-white dark:hover:bg-slate-700 dark:text-slate-300 hover:border-indigo-400 cursor-pointer outline-none transition-colors appearance-none">
                                     <option value="" class="dark:bg-slate-800">+ Add</option>
-                                    ${state.document.vendors.map((v) => `<option value="${v.id}" class="dark:bg-slate-800">${v.name || v.id}</option>`).join("")}
+                                    ${state.document.vendors.map((v) => `<option value="${escHtml(v.id)}" class="dark:bg-slate-800">${escHtml(v.name || v.id)}</option>`).join("")}
                                 </select>
                             </div>
                         </div>
@@ -3566,7 +3593,7 @@
                                     );
                                 return `
                                         <div class="inline-flex items-center gap-1 px-1.5 py-0.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded text-[10px] text-slate-700 dark:text-slate-200 shadow-sm">
-                                            <span>${instrument ? instrument.name || ref : ref}</span>
+                                            <span>${escHtml(instrument ? instrument.name || ref : ref)}</span>
                                             <button onclick="removeInstrumentRef(${idx}, ${refIdx})" class="text-slate-400 hover:text-red-500"><i class="ph ph-x text-[8px]"></i></button>
                                         </div>
                                     `;
@@ -3574,7 +3601,7 @@
                             .join("")}
                                 <select onchange="addInstrumentRef(${idx}, this)" class="text-[10px] border-dashed border border-slate-300 dark:border-slate-500 rounded px-1.5 py-0.5 bg-transparent hover:bg-white dark:hover:bg-slate-700 dark:text-slate-300 hover:border-indigo-400 cursor-pointer outline-none transition-colors appearance-none">
                                     <option value="" class="dark:bg-slate-800">+ Add</option>
-                                    ${state.document.instruments.map((inst) => `<option value="${inst.id}" class="dark:bg-slate-800">${inst.name || inst.id}</option>`).join("")}
+                                    ${state.document.instruments.map((inst) => `<option value="${escHtml(inst.id)}" class="dark:bg-slate-800">${escHtml(inst.name || inst.id)}</option>`).join("")}
                                 </select>
                             </div>
                         </div>
@@ -4235,8 +4262,26 @@ ${state.petriNet.transitions
                 y: y,
             };
             state.petriNet.transitions.push(newTrans);
+            
+            // 新しいTransitionに対するEventを、現在のすべてのResultsグループに生成して追加する
+            if (!state.events) state.events = [];
+            const groups = state.resultGroups || [{ id: 'rg_default' }];
+            groups.forEach(grp => {
+                state.events.push({
+                    id: "event_" + newTrans.id + "_" + grp.id + "_" + Date.now(),
+                    uuid: "",
+                    transitionId: newTrans.id,
+                    transitionLabel: newTrans.label,
+                    lifecycle: "complete",
+                    timestamp: "",
+                    resultsGroupId: grp.id,
+                    creatorRef: "",
+                    ownerRef: "",
+                });
+            });
+
             renderPetriNet();
-            saveState();
+            if (typeof saveState === 'function') saveState(); // 念のため存在チェックを追加
         }
 
         function handleNodeClick(id, type, e) {
@@ -4493,6 +4538,11 @@ ${state.petriNet.transitions
                         state.petriNet.transitions = state.petriNet.transitions.filter(
                             (t) => t.id !== id,
                         );
+
+                        // 追加: Transitionが削除された場合、紐づくEventオブジェクトもすべて削除する
+                        if (state.events) {
+                            state.events = state.events.filter(e => e.transitionId !== id);
+                        }
                     }
                     state.petriNet.arcs = state.petriNet.arcs.filter(
                         (a) => a.source !== id && a.target !== id,
@@ -4537,7 +4587,7 @@ ${state.petriNet.transitions
                 <div class="flex items-center justify-between mb-4 pb-4 border-b border-slate-100 dark:border-slate-700">
                     <h3 class="font-semibold text-lg text-slate-800 dark:text-slate-100 flex items-center gap-2">
                         <div class="w-2 h-8 bg-indigo-500 rounded-full"></div>
-                        Place: ${place.label}
+                        Place: ${escHtml(place.label)}
                         ${isProxy ? '<span class="text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded ml-2">EXT</span>' : ""}
                     </h3>
                     <div class="flex gap-2">
@@ -4570,7 +4620,7 @@ ${state.petriNet.transitions
                                     
                                     <div class="flex items-center gap-1 flex-1">
                                         <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">UUID</label>
-                                        <input type="text" id="template-uuid-${globalTIdx}" value="${t.uuid || ""}" 
+                                        <input type="text" id="template-uuid-${globalTIdx}" value="${escHtml(t.uuid || '')}" 
                                             onchange="updateTemplateUUID(${globalTIdx}, this.value)" 
                                             placeholder="Auto-generated UUID" 
                                             class="flex-1 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" ${isProxy ? "disabled" : ""}>
@@ -4589,22 +4639,22 @@ ${state.petriNet.transitions
                                 <div class="flex items-center gap-3">
                                     ${!isProxy
                                         ? `
-                                    <label class="flex items-center gap-2.5 px-3 py-2 bg-white dark:bg-slate-800 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg cursor-pointer transition-all shadow-sm hover:shadow active:scale-95 group/btn" title="Reads data from sheet '${place.label}'">
+                                    <label class="flex items-center gap-2.5 px-3 py-2 bg-white dark:bg-slate-800 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg cursor-pointer transition-all shadow-sm hover:shadow active:scale-95 group/btn" title="Reads data from sheet '${escHtml(place.label)}'">
                                         <i class="ph ph-microsoft-excel-logo text-2xl"></i>
                                         <div class="flex flex-col items-start leading-tight">
                                             <span class="text-xs font-bold tracking-wide">Import Excel</span>
                                             <span class="text-[10px] font-normal opacity-80 normal-case text-slate-500 dark:text-slate-400 group-hover/btn:text-indigo-600 dark:group-hover/btn:text-indigo-300">
-                                                Sheet: <span class="font-mono font-bold">${place.label}</span>
+                                                Sheet: <span class="font-mono font-bold">${escHtml(place.label)}</span>
                                             </span>
                                         </div>
                                         <input type="file" accept=".xlsx,.xls" onchange="handleExcelImport(event, '${t.id}')" class="hidden">
                                     </label>
-                                    <button onclick="handleExcelExport('${t.id}')" class="flex items-center gap-2.5 px-3 py-2 bg-white dark:bg-slate-800 border border-sky-200 dark:border-sky-800 text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/30 rounded-lg transition-all shadow-sm hover:shadow active:scale-95 group/btn" title="Exports template to Excel (sheet: '${place.label}')">
+                                    <button onclick="handleExcelExport('${t.id}')" class="flex items-center gap-2.5 px-3 py-2 bg-white dark:bg-slate-800 border border-sky-200 dark:border-sky-800 text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/30 rounded-lg transition-all shadow-sm hover:shadow active:scale-95 group/btn" title="Exports template to Excel (sheet: '${escHtml(place.label)}')">
                                         <i class="ph ph-export text-2xl"></i>
                                         <div class="flex flex-col items-start leading-tight">
                                             <span class="text-xs font-bold tracking-wide">Export Excel</span>
                                             <span class="text-[10px] font-normal opacity-80 normal-case text-slate-500 dark:text-slate-400 group-hover/btn:text-sky-600 dark:group-hover/btn:text-sky-300">
-                                                Sheet: <span class="font-mono font-bold">${place.label}</span>
+                                                Sheet: <span class="font-mono font-bold">${escHtml(place.label)}</span>
                                             </span>
                                         </div>
                                     </button>
@@ -4698,7 +4748,7 @@ ${state.petriNet.transitions
                     return `<div onclick="scrollToTemplateCard('${place.id}')"
                         class="cursor-pointer group flex flex-col px-3 py-2 rounded-lg border-l-4 border-l-slate-200 dark:border-l-slate-600
                                bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all mb-1 shadow-sm">
-                        <span class="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate" title="${place.label}">${place.label}</span>
+                        <span class="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate" title="${escHtml(place.label)}">${escHtml(place.label)}</span>
                         <span class="text-[10px] mt-0.5 flex items-center gap-1 text-slate-400 dark:text-slate-500">
                             <i class="ph ph-warning text-amber-400"></i> No type assigned
                         </span>
@@ -4708,12 +4758,12 @@ ${state.petriNet.transitions
                 return tmpls.map(t => {
                     const s = typeStyle(t.type);
                     const typeLabel = t.type || 'unassigned';
-                    const tooltip = `${place.label} · ${typeLabel}`;
+                    const tooltip = `${escHtml(place.label)} · ${typeLabel}`;
                     return `<div onclick="scrollToTemplateCard('${place.id}')"
                         class="cursor-pointer group flex flex-col px-3 py-2 rounded-lg border-l-4 ${s.border}
                                bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all mb-1 shadow-sm"
-                        title="${tooltip}">
-                        <span class="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate">${place.label}</span>
+                        title="${escHtml(tooltip)}">
+                        <span class="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate">${escHtml(place.label)}</span>
                         <span class="text-[10px] font-bold mt-0.5 ${s.text} capitalize">${typeLabel}</span>
                     </div>`;
                 }).join('');
@@ -4752,7 +4802,8 @@ ${state.petriNet.transitions
         function addTemplate(placeId, type) {
             state.templates.push({
                 id: "template_" + Date.now(),
-                uuid: generateUUID(),
+                // uuid: generateUUID(),
+                uuid: "",
                 placeId,
                 type,
                 properties: [],
@@ -4890,7 +4941,7 @@ ${state.petriNet.transitions
                         : '<div class="w-6"></div>'
                     }
 
-                                      <input type="text" value="${item.key || ""}"
+                                      <input type="text" value="${escHtml(item.key || '')}"
                                         id="prop-key-${templateIdx}-${pathStr}"
                                         oninput="updateKeyValidation(this, this.value)"
                                         onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'key', this.value)"
@@ -4906,7 +4957,7 @@ ${state.petriNet.transitions
 
                                         ${isNumeric
                         ? `
-                        <input type="text" value="${item.units || ""}" 
+                        <input type="text" value="${escHtml(item.units || '')}" 
                             onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'units', this.value)" 
                             placeholder="Units" 
                             ${isReadOnly ? "disabled" : ""}
@@ -4915,7 +4966,7 @@ ${state.petriNet.transitions
                         : '<div class="w-20"></div>'
                     }
 
-                                        <input type="text" value="${item.description || ""}"
+                                        <input type="text" value="${escHtml(item.description || '')}"
                                         onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'description', this.value)"
                                         placeholder="Description" 
                                         ${isReadOnly ? "disabled" : ""}
@@ -4924,7 +4975,7 @@ ${state.petriNet.transitions
                                         ${!isPropertyList
                         ? `
                                         <div class="relative flex-1 min-w-[100px]">
-                                            <input type="text" value="${item.value || ""}"
+                                            <input type="text" value="${escHtml(item.value || '')}"
                                             onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'value', this.value)"
                                             placeholder="${placeholder}" 
                                             ${isReadOnly ? "disabled" : ""}
@@ -4968,7 +5019,7 @@ ${state.petriNet.transitions
                                         <div class="grid grid-cols-2 gap-3">
                                             <div>
                                                 <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
-                                                <input type="text" value="${item.formatString || ""}"
+                                                <input type="text" value="${escHtml(item.formatString || '')}"
                                                     onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'formatString', this.value)"
                                                     placeholder="e.g. 0.00" 
                                                     ${isReadOnly ? "disabled" : ""}
@@ -4976,7 +5027,7 @@ ${state.petriNet.transitions
                                             </div>
                                             ${isNumeric ? `<div>
                                                 <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
-                                                <input type="number" step="any" value="${item.scaleFactor || ""}"
+                                                <input type="number" step="any" value="${escHtml(item.scaleFactor || '')}"
                                                     onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'scaleFactor', this.value)"
                                                     placeholder="e.g. 1.00" 
                                                     ${isReadOnly ? "disabled" : ""}
@@ -5284,7 +5335,7 @@ ${state.petriNet.transitions
                                     <div class="flex gap-1 items-center">
                                         <div class="w-6"></div>
 
-                                        <input type="text" value="${item.key || ""}"
+                                        <input type="text" value="${escHtml(item.key || '')}"
                                         oninput="updateKeyValidation(this, this.value)"
                                         onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'key', this.value)"
                                         placeholder="Key" 
@@ -5300,7 +5351,7 @@ ${state.petriNet.transitions
 
                                         ${isNumeric
                         ? `
-                                        <input type="text" value="${item.units || ""}" 
+                                        <input type="text" value="${escHtml(item.units || '')}" 
                                             onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'units', this.value)" 
                                             placeholder="Units" 
                                             ${isReadOnly ? "disabled" : ""}
@@ -5309,14 +5360,14 @@ ${state.petriNet.transitions
                         : '<div class="w-20"></div>'
                     }
 
-                                        <input type="text" value="${item.description || ""}"
+                                        <input type="text" value="${escHtml(item.description || '')}"
                                         onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'description', this.value)"
                                         placeholder="Description" 
                                         ${isReadOnly ? "disabled" : ""}
                                         class="flex-[2] min-w-[140px] px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 focus:border-purple-500 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
 
                                         <div class="relative flex-1 min-w-[100px]">
-                                            <input type="text" value="${item.value || ""}"
+                                            <input type="text" value="${escHtml(item.value || '')}"
                                             onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'value', this.value)"
                                             placeholder="${placeholder}" 
                                             ${isReadOnly ? "disabled" : ""}
@@ -5352,7 +5403,7 @@ ${state.petriNet.transitions
                                     <div class="grid grid-cols-2 gap-3">
                                         ${(isNumeric || isDateTime) ? `<div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
-                                            <input type="text" value="${item.formatString || ""}"
+                                            <input type="text" value="${escHtml(item.formatString || '')}"
                                                 onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'formatString', this.value)"
                                                 placeholder="e.g. 0.00" 
                                                 ${isReadOnly ? "disabled" : ""}
@@ -5360,7 +5411,7 @@ ${state.petriNet.transitions
                                         </div>` : ""}
                                         ${isNumeric ? `<div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
-                                            <input type="number" step="any" value="${item.scaleFactor || ""}"
+                                            <input type="number" step="any" value="${escHtml(item.scaleFactor || '')}"
                                                 onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'scaleFactor', this.value)"
                                                 placeholder="e.g. 1.00" 
                                                 ${isReadOnly ? "disabled" : ""}
@@ -5368,28 +5419,28 @@ ${state.petriNet.transitions
                                         </div>` : ""}
                                         <div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">axis <span class="font-normal">(xs:string)</span></label>
-                                            <input type="text" value="${item.axis || ""}"
+                                            <input type="text" value="${escHtml(item.axis || '')}"
                                                 onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'axis', this.value)"
                                                 placeholder="e.g. x-axis" 
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none">
                                         </div>
                                         <div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">size <span class="font-normal">(xs:int)</span></label>
-                                            <input type="number" step="1" value="${item.size || ""}"
+                                            <input type="number" step="1" value="${escHtml(item.size || '')}"
                                                 onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'size', this.value)"
                                                 placeholder="e.g. 16" 
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none">
                                         </div>
                                         <div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">id <span class="font-normal">(xs:ID)</span></label>
-                                            <input type="text" value="${item.id || ""}"
+                                            <input type="text" value="${escHtml(item.id || '')}"
                                                 onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'id', this.value)"
                                                 placeholder="e.g. cont_1" 
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none">
                                         </div>
                                         <div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">ref <span class="font-normal">(xs:IDREF)</span></label>
-                                            <input type="text" value="${item.ref || ""}"
+                                            <input type="text" value="${escHtml(item.ref || '')}"
                                                 onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'ref', this.value)"
                                                 placeholder="e.g. cont_1_ref" 
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none">
@@ -5795,7 +5846,7 @@ ${state.petriNet.transitions
                 <div class="flex justify-between items-start">
                     <div class="flex-1 min-w-0">
                         <div class="font-bold text-sm capitalize ${typeConfig.text}">${tpl.type}</div>
-                        <div class="text-xs text-slate-700 dark:text-slate-200 mt-1 flex items-start gap-1" title="${placeLabel}"><i class="ph ph-map-pin shrink-0 mt-0.5"></i><span class="break-all">${placeLabel}</span></div>
+                        <div class="text-xs text-slate-700 dark:text-slate-200 mt-1 flex items-start gap-1" title="${escHtml(placeLabel)}"><i class="ph ph-map-pin shrink-0 mt-0.5"></i><span class="break-all">${escHtml(placeLabel)}</span></div>
                     </div>
                 </div>
                 <div class="text-xs mt-2 flex gap-3 items-center">
@@ -5826,7 +5877,7 @@ ${state.petriNet.transitions
                         return `<div onclick="scrollToEvent('${trans.id}')" class="cursor-pointer bg-white dark:bg-slate-800 border-l-4 border-orange-500 p-4 shadow-sm hover:shadow-md transition-all rounded-r border-y border-r border-slate-200 dark:border-slate-700 mb-3 hover:bg-orange-50 dark:hover:bg-orange-900/20 group">
                                     <div class="flex justify-between items-start">
                                         <div>
-                                            <div class="font-bold text-sm text-orange-700 dark:text-orange-400">${trans.label}</div>
+                                            <div class="font-bold text-sm text-orange-700 dark:text-orange-400">${escHtml(trans.label)}</div>
                                             <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Transition Event</div>
                                         </div>
                                     </div>
@@ -5899,9 +5950,6 @@ ${state.petriNet.transitions
             }).join('');
         }
 
-        function escHtml(str) {
-            return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-        }
 
         // タブ名をXML ID (NCName) として使用できる形式にサニタイズする
         function toXmlId(name) {
@@ -5930,11 +5978,12 @@ ${state.petriNet.transitions
             state.petriNet.transitions.forEach(t => {
                 state.events.push({
                     id: "event_" + t.id + "_" + groupId + "_" + Date.now(),
-                    uuid: generateUID(),
+                    uuid: "",
                     transitionId: t.id,
                     transitionLabel: t.label,
                     lifecycle: "complete",
-                    timestamp: ts,
+                    // timestamp: ts,
+                    timestamp: "",
                     resultsGroupId: groupId,
                     creatorRef: "",
                     ownerRef: "",
@@ -5951,7 +6000,7 @@ ${state.petriNet.transitions
                 const newGroup = {
                     id: 'rg_' + Date.now(),
                     name: name,
-                    uuid: generateUUID(),
+                    uuid: "",
                 };
                 state.resultGroups.push(newGroup);
                 state._activeResultsGroupId = newGroup.id;
@@ -6135,7 +6184,8 @@ ${state.petriNet.transitions
 
             const newInstance = {
                 id: "instance_" + Date.now(),
-                uuid: generateUUID(),
+                // uuid: generateUUID(),
+                uuid: "",
                 templateId: templateId,
                 type: template.type,
                 // Deep copy properties/contents using template values as defaults
@@ -6176,13 +6226,6 @@ ${state.petriNet.transitions
             if (!state.instances[instIdx].instanceContents) {
                 state.instances[instIdx].instanceContents = [];
             }
-            // state.instances[instIdx].instanceContents.push({
-            //     key: "",
-            //     type: "stringType",
-            //     units: "",
-            //     description: "",
-            //     value: "",
-            // });
             state.instances[instIdx].instanceContents.push({
                 key: "",
                 type: "contentStringListType",
@@ -6311,7 +6354,7 @@ ${state.petriNet.transitions
                             </button>`
                             : '<div class="w-6"></div>'
                         }
-                    <input type="text" value="${item.key || ""}"
+                    <input type="text" value="${escHtml(item.key || '')}"
                         oninput="updateKeyValidation(this, this.value)"
                         onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'key', this.value)"
                         placeholder="Key"
@@ -6324,21 +6367,21 @@ ${state.petriNet.transitions
                         ${buildOptions(PROPERTY_TYPE_META, item.type)}
                     </select>
                     ${isNumeric
-                            ? `<input type="text" value="${item.units || ""}"
+                            ? `<input type="text" value="${escHtml(item.units || '')}"
                                 onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'units', this.value)"
                                 placeholder="Units"
                                 ${isReadOnly ? "disabled" : ""}
                                 class="w-20 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">`
                             : '<div class="w-20"></div>'
                         }
-                    <input type="text" value="${item.description || ""}"
+                    <input type="text" value="${escHtml(item.description || '')}"
                         onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'description', this.value)"
                         placeholder="Description"
                         ${isReadOnly ? "disabled" : ""}
                         class="flex-[2] min-w-[140px] px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                     ${!isPropertyList
                             ? `<div class="relative flex-1 min-w-[100px]">
-                                <input type="text" value="${item.value || ""}"
+                                <input type="text" value="${escHtml(item.value || '')}"
                                     onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'value', this.value)"
                                     placeholder="${placeholder}"
                                     ${isReadOnly ? "disabled" : ""}
@@ -6381,7 +6424,7 @@ ${state.petriNet.transitions
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
-                            <input type="text" value="${item.formatString || ""}"
+                            <input type="text" value="${escHtml(item.formatString || '')}"
                                 onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'formatString', this.value)"
                                 placeholder="e.g. 0.00" 
                                 ${isReadOnly ? "disabled" : ""}
@@ -6389,7 +6432,7 @@ ${state.petriNet.transitions
                         </div>
                         ${isNumeric ? `<div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
-                            <input type="number" step="any" value="${item.scaleFactor || ""}"
+                            <input type="number" step="any" value="${escHtml(item.scaleFactor || '')}"
                                 onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'scaleFactor', this.value)"
                                 placeholder="e.g. 1.00" 
                                 ${isReadOnly ? "disabled" : ""}
@@ -6470,7 +6513,7 @@ ${state.petriNet.transitions
             <div class="bg-purple-50/30 dark:bg-purple-900/10 border border-purple-200 dark:border-purple-800 rounded-lg p-1 group/card hover:border-purple-300 transition-all">
                 <div class="flex gap-1 items-center">
                     <div class="w-6"></div>
-                    <input type="text" value="${item.key || ""}"
+                    <input type="text" value="${escHtml(item.key || '')}"
                         oninput="updateKeyValidation(this, this.value)"
                         onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'key', this.value)"
                         placeholder="Key"
@@ -6483,20 +6526,20 @@ ${state.petriNet.transitions
                         ${buildOptions(CONTENT_TYPE_META, item.type)}
                     </select>
                     ${isNumeric
-                            ? `<input type="text" value="${item.units || ""}"
+                            ? `<input type="text" value="${escHtml(item.units || '')}"
                                 onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'units', this.value)"
                                 placeholder="Units"
                                 ${isReadOnly ? "disabled" : ""}
                                 class="w-20 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">`
                             : '<div class="w-20"></div>'
                         }
-                    <input type="text" value="${item.description || ""}"
+                    <input type="text" value="${escHtml(item.description || '')}"
                         onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'description', this.value)"
                         placeholder="Description"
                         ${isReadOnly ? "disabled" : ""}
                         class="flex-[2] min-w-[140px] px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                     <div class="relative flex-1 min-w-[100px]">
-                        <input type="text" value="${item.value || ""}"
+                        <input type="text" value="${escHtml(item.value || '')}"
                             onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'value', this.value)"
                             placeholder="${placeholder}"
                             ${isReadOnly ? "disabled" : ""}
@@ -6533,7 +6576,7 @@ ${state.petriNet.transitions
                     <div class="grid grid-cols-2 gap-3">
                         ${(isNumeric || isDateTime) ? `<div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
-                            <input type="text" value="${item.formatString || ""}"
+                            <input type="text" value="${escHtml(item.formatString || '')}"
                                 onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'formatString', this.value)"
                                 placeholder="e.g. 0.00" 
                                 ${isReadOnly ? "disabled" : ""}
@@ -6541,7 +6584,7 @@ ${state.petriNet.transitions
                         </div>` : ""}
                         ${isNumeric ? `<div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
-                            <input type="number" step="any" value="${item.scaleFactor || ""}"
+                            <input type="number" step="any" value="${escHtml(item.scaleFactor || '')}"
                                 onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'scaleFactor', this.value)"
                                 placeholder="e.g. 1.00" 
                                 ${isReadOnly ? "disabled" : ""}
@@ -6550,7 +6593,7 @@ ${state.petriNet.transitions
                         <div class="col-span-2 grid grid-cols-4 gap-3">
                             <div>
                                 <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">axis <span class="font-normal">(xs:string)</span></label>
-                                <input type="text" value="${item.axis || ""}"
+                                <input type="text" value="${escHtml(item.axis || '')}"
                                     onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'axis', this.value)"
                                     placeholder="e.g. x-axis" 
                                     ${isReadOnly ? "disabled" : ""}
@@ -6558,7 +6601,7 @@ ${state.petriNet.transitions
                             </div>
                             <div>
                                 <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">size <span class="font-normal">(xs:int)</span></label>
-                                <input type="number" value="${item.size || ""}"
+                                <input type="number" value="${escHtml(item.size || '')}"
                                     onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'size', this.value)"
                                     placeholder="Size" 
                                     ${isReadOnly ? "disabled" : ""}
@@ -6566,7 +6609,7 @@ ${state.petriNet.transitions
                             </div>
                             <div>
                                 <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">id <span class="font-normal">(xs:ID)</span></label>
-                                <input type="text" value="${item.id || ""}"
+                                <input type="text" value="${escHtml(item.id || '')}"
                                     onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'id', this.value)"
                                     placeholder="e.g. cont_1" 
                                     ${isReadOnly ? "disabled" : ""}
@@ -6574,7 +6617,7 @@ ${state.petriNet.transitions
                             </div>
                             <div>
                                 <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">ref <span class="font-normal">(xs:IDREF)</span></label>
-                                <input type="text" value="${item.ref || ""}"
+                                <input type="text" value="${escHtml(item.ref || '')}"
                                     onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'ref', this.value)"
                                     placeholder="e.g. cont_1_ref" 
                                     ${isReadOnly ? "disabled" : ""}
@@ -6763,11 +6806,12 @@ ${state.petriNet.transitions
 
             const newEvent = {
                 id: "event_" + Date.now(),
-                uuid: generateUID(),
+                uuid: "",
                 transitionId: transitionId,
                 transitionLabel: transition.label,
                 lifecycle: "complete",
-                timestamp: getLocalISOTimestamp(),
+                // timestamp: getLocalISOTimestamp(),
+                timestamp: "",
             };
 
             state.events.push(newEvent);
@@ -6805,7 +6849,7 @@ ${state.petriNet.transitions
                                     <div class="flex gap-1 items-center">
                                         ${isPropertyList ? '<div class="w-6"></div>' : ""}
                                         <div class="flex-1 min-w-[100px] px-2 py-1">
-                                            <span class="text-xs ${isPropertyList ? " " : ""} text-slate-700 dark:text-slate-200 truncate block" title="${item.key || ""}">${item.key || ""}</span>
+                                            <span class="text-xs ${isPropertyList ? " " : ""} text-slate-700 dark:text-slate-200 truncate block" title="${escHtml(item.key || '')}">${escHtml(item.key || '')}</span>
                                     </div>
                                     <div class="w-48 px-2 py-1">
                                       <span class="text-xs px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 rounded font-normal" title="${typeDisplay}">${typeDisplay}</span>
@@ -6813,18 +6857,18 @@ ${state.petriNet.transitions
                                     ${isNumeric && item.units
                             ? `
                                     <div class="w-20 px-2 py-1">
-                                      <span class="text-xs px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 rounded font-normal" title="${item.units || ""}"}">${item.units}</span>
+                                      <span class="text-xs px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 rounded font-normal" title="${escHtml(item.units || '')}">${escHtml(item.units || '')}</span>
                                     </div>
                                      `
                             : '<div class="w-20"></div>'
                         }
                                     <div class="flex-[2] min-w-[100px] px-2 py-1">
-                                      <span class="text-xs text-slate-500 dark:text-slate-400 truncate block" title="${item.description || ""}">${item.description || ""}</span>
+                                      <span class="text-xs text-slate-500 dark:text-slate-400 truncate block" title="${escHtml(item.description )}">${escHtml(item.description )}</span>
                                 </div>
                     ${!isPropertyList
                             ? `
                     <div class="relative flex-1 min-w-[140px]">
-                        <input type="text" value="${item.value || ""}" 
+                        <input type="text" value="${escHtml(item.value || '')}" 
                             onchange="updateInstanceValueNested(${instIdx}, 'properties', [${serializePath(currentPath)}], this.value)"
                             ${isReadOnly ? "disabled" : ""}
                             placeholder="Value"
@@ -6857,7 +6901,7 @@ ${state.petriNet.transitions
                                         
                                         <div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
-                                            <input type="text" value="${item.formatString || ""}"
+                                            <input type="text" value="${escHtml(item.formatString || '')}"
                                                 onchange="updateInstanceFieldNested(${instIdx}, 'properties', [${serializePath(currentPath)}], 'formatString', this.value)"
                                                 placeholder="e.g. 0.00" 
                                                 ${isReadOnly ? "disabled" : ""}
@@ -6865,7 +6909,7 @@ ${state.petriNet.transitions
                                         </div>
                                         ${isNumeric ? `<div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
-                                            <input type="number" step="any" value="${item.scaleFactor || ""}"
+                                            <input type="number" step="any" value="${escHtml(item.scaleFactor || '')}"
                                                 onchange="updateInstanceFieldNested(${instIdx}, 'properties', [${serializePath(currentPath)}], 'scaleFactor', this.value)"
                                                 placeholder="e.g. 1.00" 
                                                 ${isReadOnly ? "disabled" : ""}
@@ -6958,7 +7002,7 @@ ${state.petriNet.transitions
                                 <div class="flex gap-1 items-center">
                                   <div class="w-0"></div>
                                   <div class="flex-1 min-w-[100px] px-2 py-1">
-                                      <span class="text-xs text-slate-700 dark:text-slate-200 truncate block" title="${item.key || ""}">${item.key || ""}</span>
+                                      <span class="text-xs text-slate-700 dark:text-slate-200 truncate block" title="${escHtml(item.key || '')}">${escHtml(item.key || '')}</span>
                                   </div>
                                   <div class="w-48 px-2 py-1">
                                       <span class="text-xs px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 rounded font-normal" title="${typeDisplay || ''}">${typeDisplay || "contentStringListType"}</span>
@@ -6966,16 +7010,16 @@ ${state.petriNet.transitions
                                   ${isNumeric && item.units
                             ? `
                                   <div class="w-20 px-2 py-1">
-                                      <span class="text-xs px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 rounded font-normal" title="${item.units || ''}">${item.units}</span>
+                                      <span class="text-xs px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 rounded font-normal" title="${escHtml(item.units || '')}">${escHtml(item.units )}</span>
                                   </div>
                                   `
                             : '<div class="w-20"></div>'
                         }
                                   <div class="flex-[2] min-w-[100px] px-2 py-1">
-                                      <span class="text-xs text-slate-500 dark:text-slate-400 truncate block" title="${item.description || ""}">${item.description || ""}</span>
+                                      <span class="text-xs text-slate-500 dark:text-slate-400 truncate block" title="${escHtml(item.description || '')}">${escHtml(item.description )}</span>
                                   </div>
                                   <div class="relative flex-1 min-w-[140px]">
-                                      <input type="text" value="${item.value || ""}" 
+                                      <input type="text" value="${escHtml(item.value || '')}" 
                                           onchange="updateInstanceValueNested(${instIdx}, 'contents', [${serializePath(currentPath)}], this.value)"
                                           ${isReadOnly ? "disabled" : ""}
                                           placeholder="Value"
@@ -7004,7 +7048,7 @@ ${state.petriNet.transitions
                                         
                                         <div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
-                                            <input type="text" value="${item.formatString || ""}"
+                                            <input type="text" value="${escHtml(item.formatString || '')}"
                                                 onchange="updateInstanceFieldNested(${instIdx}, 'contents', [${serializePath(currentPath)}], 'formatString', this.value)"
                                                 placeholder="e.g. 0.00" 
                                                 ${isReadOnly ? "disabled" : ""}
@@ -7012,7 +7056,7 @@ ${state.petriNet.transitions
                                         </div>
                                         <div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
-                                            <input type="number" step="any" value="${item.scaleFactor || ""}"
+                                            <input type="number" step="any" value="${escHtml(item.scaleFactor || '')}"
                                                 onchange="updateInstanceFieldNested(${instIdx}, 'contents', [${serializePath(currentPath)}], 'scaleFactor', this.value)"
                                                 placeholder="e.g. 1.00" 
                                                 ${isReadOnly ? "disabled" : ""}
@@ -7020,7 +7064,7 @@ ${state.petriNet.transitions
                                         </div>
                                         <div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">axis <span class="font-normal">(xs:string)</span></label>
-                                            <input type="text" value="${item.axis || ""}"
+                                            <input type="text" value="${escHtml(item.axis || '')}"
                                                 onchange="updateInstanceFieldNested(${instIdx}, 'contents', [${serializePath(currentPath)}], 'axis', this.value)"
                                                 placeholder="e.g. x-axis" 
                                                 ${isReadOnly ? "disabled" : ""}
@@ -7028,7 +7072,7 @@ ${state.petriNet.transitions
                                         </div>
                                         <div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">size <span class="font-normal">(xs:int)</span></label>
-                                            <input type="number" step="1" value="${item.size || ""}"
+                                            <input type="number" step="1" value="${escHtml(item.size || '')}"
                                                 onchange="updateInstanceFieldNested(${instIdx}, 'contents', [${serializePath(currentPath)}], 'size', this.value)"
                                                 placeholder="e.g. 16" 
                                                 ${isReadOnly ? "disabled" : ""}
@@ -7036,7 +7080,7 @@ ${state.petriNet.transitions
                                         </div>
                                         <div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">id <span class="font-normal">(xs:ID)</span></label>
-                                            <input type="text" value="${item.id || ""}"
+                                            <input type="text" value="${escHtml(item.id || '')}"
                                                 onchange="updateInstanceFieldNested(${instIdx}, 'contents', [${serializePath(currentPath)}], 'id', this.value)"
                                                 placeholder="e.g. cont_1" 
                                                 ${isReadOnly ? "disabled" : ""}
@@ -7044,7 +7088,7 @@ ${state.petriNet.transitions
                                         </div>
                                         <div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">ref <span class="font-normal">(xs:IDREF)</span></label>
-                                            <input type="text" value="${item.ref || ""}"
+                                            <input type="text" value="${escHtml(item.ref || '')}"
                                                 onchange="updateInstanceFieldNested(${instIdx}, 'contents', [${serializePath(currentPath)}], 'ref', this.value)"
                                                 placeholder="e.g. cont_1_ref" 
                                                 ${isReadOnly ? "disabled" : ""}
@@ -7084,11 +7128,12 @@ ${state.petriNet.transitions
                     groups.forEach(grp => {
                         state.events.push({
                             id: "event_" + t.id + "_" + grp.id + "_" + Date.now(),
-                            uuid: generateUID(),
+                            uuid: "",
                             transitionId: t.id,
                             transitionLabel: t.label,
                             lifecycle: "complete",
-                            timestamp: defaultTimestamp,
+                            // timestamp: defaultTimestamp,
+                            timestamp: "",
                             resultsGroupId: grp.id,
                         });
                     });
@@ -7176,19 +7221,19 @@ ${state.petriNet.transitions
                     <div class="p-1.5 rounded-md bg-white/60 dark:bg-black/20 text-${styleConfig.text.split("-")[1]}-600"><i class="ph ${styleConfig.icon} text-lg"></i></div>
                     <div>
                         <span class="font-bold text-slate-800 dark:text-slate-200 capitalize">${inst.type}</span> 
-                        <span class="font-medium text-slate-800 dark:text-slate-200 ml-1 px-1.5 py-0.5 rounded-full bg-white/50 dark:bg-black/20 border border-slate-200/50 dark:border-slate-700/50">Place: ${placeLabel}</span>
+                        <span class="font-medium text-slate-800 dark:text-slate-200 ml-1 px-1.5 py-0.5 rounded-full bg-white/50 dark:bg-black/20 border border-slate-200/50 dark:border-slate-700/50">Place: ${escHtml(placeLabel)}</span>
                         ${isProxy ? '<span class="ml-2 text-xs font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded border border-purple-200"><i class="ph ph-lock-key mr-1"></i>Read Only</span>' : ""}
                     </div>
                 </div>
                 <button onclick="deleteInstance(${instIdx})" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"><i class="ph ph-trash text-lg"></i></button>
             </div>
                                     <div class="p-5">
-                                        <div class="text-[10px] text-slate-400 mb-4 font-mono select-all bg-slate-50 dark:bg-slate-700 inline-block px-1 rounded">ID: ${inst.id}</div>
+                                        <div class="text-[10px] text-slate-400 mb-4 font-mono select-all bg-slate-50 dark:bg-slate-700 inline-block px-1 rounded">ID: ${escHtml(inst.id)}</div>
 
                                         <div class="mb-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-2 hover:border-indigo-200 dark:hover:border-indigo-800 transition-all">
                                             <div class="flex gap-2 items-center">
                                                 <label class="w-16 text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">UUID</label>
-                                                <input type="text" value="${inst.uuid || ""}"
+                                                <input type="text" value="${escHtml(inst.uuid || '')}"
                                                 onchange="updateInstanceUUID(${instIdx}, this.value)"
                                                 placeholder="Auto-generated UUID" 
                                                 ${isProxy ? "disabled" : ""}
@@ -7335,7 +7380,7 @@ ${state.petriNet.transitions
                         instanceHTML += `
                                     <div class="bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg p-1 group/card hover:border-indigo-200 dark:hover:border-indigo-800 transition-all">
                                         <div class="flex gap-1 items-center">
-                                            <input type="text" value="${item.key || ""}"
+                                            <input type="text" value="${escHtml(item.key || '')}"
                                             oninput="updateKeyValidation(this, this.value)"
                                             onchange="updateInstanceDynamicField(${instIdx}, 'content', ${itemIdx}, 'key', this.value)"
                                             placeholder="Key" 
@@ -7349,7 +7394,7 @@ ${state.petriNet.transitions
                                             </select>
                                             ${isNumeric
                                 ? `
-        <input type="text" value="${item.units || ""}" 
+        <input type="text" value="${escHtml(item.units || '')}" 
             onchange="updateInstanceDynamicField(${instIdx}, 'content', ${itemIdx}, 'units', this.value)" 
             placeholder="Units" 
             ${isProxy ? "disabled" : ""}
@@ -7357,13 +7402,13 @@ ${state.petriNet.transitions
         `
                                 : '<div class="w-20"></div>'
                             }
-                                            <input type="text" value="${item.description || ""}"
+                                            <input type="text" value="${escHtml(item.description || '')}"
                                             onchange="updateInstanceDynamicField(${instIdx}, 'content', ${itemIdx}, 'description', this.value)"
                                             placeholder="Description" 
                                             ${isProxy ? "disabled" : ""}
                                             class="flex-[2] min-w-[180px] px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none ${isProxy ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                                             <div class="relative flex-1 min-w-[140px]">
-                                                <input type="text" value="${item.value || ""}"
+                                                <input type="text" value="${escHtml(item.value || '')}"
                                                 onchange="updateInstanceDynamicField(${instIdx}, 'content', ${itemIdx}, 'value', this.value)"
                                                 placeholder="${placeholder}" 
                                                 ${isProxy ? "disabled" : ""}
@@ -7386,7 +7431,7 @@ ${state.petriNet.transitions
                                             <div class="grid grid-cols-2 gap-3">
                                                 ${(isNumeric || isDateTime) ? `<div>
                                                     <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
-                                                    <input type="text" value="${item.formatString || ""}"
+                                                    <input type="text" value="${escHtml(item.formatString || '')}"
                                                         onchange="updateInstanceDynamicField(${instIdx}, 'content', ${itemIdx}, 'formatString', this.value)"
                                                         placeholder="e.g. 0.00" 
                                                         ${isProxy ? "disabled" : ""}
@@ -7394,7 +7439,7 @@ ${state.petriNet.transitions
                                                 </div>` : ""}
                                                 ${isNumeric ? `<div>
                                                     <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
-                                                    <input type="number" step="any" value="${item.scaleFactor || ""}"
+                                                    <input type="number" step="any" value="${escHtml(item.scaleFactor || '')}"
                                                         onchange="updateInstanceDynamicField(${instIdx}, 'content', ${itemIdx}, 'scaleFactor', this.value)"
                                                         placeholder="e.g. 1.00" 
                                                         ${isProxy ? "disabled" : ""}
@@ -7403,7 +7448,7 @@ ${state.petriNet.transitions
                                                 <div class="col-span-2 grid grid-cols-4 gap-3">
                                                     <div>
                                                         <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">axis <span class="font-normal">(xs:string)</span></label>
-                                                        <input type="text" value="${item.axis || ""}"
+                                                        <input type="text" value="${escHtml(item.axis || '')}"
                                                             onchange="updateInstanceDynamicField(${instIdx}, 'content', ${itemIdx}, 'axis', this.value)"
                                                             placeholder="e.g. x-axis" 
                                                             ${isProxy ? "disabled" : ""}
@@ -7411,7 +7456,7 @@ ${state.petriNet.transitions
                                                     </div>
                                                     <div>
                                                         <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">size <span class="font-normal">(xs:int)</span></label>
-                                                        <input type="number" value="${item.size || ""}"
+                                                        <input type="number" value="${escHtml(item.size || '')}"
                                                             onchange="updateInstanceDynamicField(${instIdx}, 'content', ${itemIdx}, 'size', this.value)"
                                                             placeholder="Size" 
                                                             ${isProxy ? "disabled" : ""}
@@ -7419,7 +7464,7 @@ ${state.petriNet.transitions
                                                     </div>
                                                     <div>
                                                         <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">id <span class="font-normal">(xs:ID)</span></label>
-                                                        <input type="text" value="${item.id || ""}"
+                                                        <input type="text" value="${escHtml(item.id || '')}"
                                                             onchange="updateInstanceDynamicField(${instIdx}, 'content', ${itemIdx}, 'id', this.value)"
                                                             placeholder="e.g. cont_1" 
                                                             ${isProxy ? "disabled" : ""}
@@ -7427,7 +7472,7 @@ ${state.petriNet.transitions
                                                     </div>
                                                     <div>
                                                         <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">ref <span class="font-normal">(xs:IDREF)</span></label>
-                                                        <input type="text" value="${item.ref || ""}"
+                                                        <input type="text" value="${escHtml(item.ref || '')}"
                                                             onchange="updateInstanceDynamicField(${instIdx}, 'content', ${itemIdx}, 'ref', this.value)"
                                                             placeholder="e.g. cont_1_ref" 
                                                             ${isProxy ? "disabled" : ""}
@@ -7520,10 +7565,10 @@ ${state.petriNet.transitions
                 .map(opt => `<option value="${opt.value}" ${evt.lifecycle === opt.value ? "selected" : ""} class="dark:bg-slate-800">${opt.label}</option>`)
                 .join("");
             const creatorOpts = state.document.creators
-                .map(c => `<option value="${c.id}" ${evt.creatorRef === c.id ? "selected" : ""} class="dark:bg-slate-800">${c.id}${c.name ? " — " + escHtml(c.name) : ""}</option>`)
+                .map(c => `<option value="${escHtml(c.id)}" ${evt.creatorRef === c.id ? "selected" : ""} class="dark:bg-slate-800">${escHtml(c.id)}${c.name ? " — " + escHtml(c.name) : ""}</option>`)
                 .join("");
             const ownerOpts = state.document.owners
-                .map(o => `<option value="${o.id}" ${evt.ownerRef === o.id ? "selected" : ""} class="dark:bg-slate-800">${o.id}${o.name ? " — " + escHtml(o.name) : ""}</option>`)
+                .map(o => `<option value="${escHtml(o.id)}" ${evt.ownerRef === o.id ? "selected" : ""} class="dark:bg-slate-800">${escHtml(o.id)}${o.name ? " — " + escHtml(o.name) : ""}</option>`)
                 .join("");
 
             return `
@@ -7540,20 +7585,6 @@ ${state.petriNet.transitions
                 <span class="px-2 py-1 text-[10px] text-slate-400 italic">Auto-generated from Petri Net</span>
             </div>
             <div class="p-5">
-                <div class="mb-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-2 hover:border-orange-200 dark:hover:border-orange-800 transition-all">
-                    <div class="flex gap-2 items-center">
-                        <label class="w-16 text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">UUID</label>
-                        <input type="text" value="${evt.uuid || ""}"
-                            onchange="updateEventUUID(${idx}, this.value)"
-                            placeholder="Auto-generated UUID"
-                            class="flex-1 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-orange-500/20 focus:border-orange-500 outline-none">
-                        <button onclick="generateEventUUID(${idx})"
-                            class="p-1 text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/30 rounded transition-colors"
-                            title="Regenerate UUID">
-                            <i class="ph ph-arrows-clockwise text-sm"></i>
-                        </button>
-                    </div>
-                </div>
                 <div class="grid grid-cols-1 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Lifecycle Transition</label>
@@ -7622,17 +7653,6 @@ ${state.petriNet.transitions
 
         function updateEventTimestamp(eventIdx, newValue) {
             state.events[eventIdx].timestamp = newValue;
-        }
-
-        function updateEventUUID(eventIdx, uuid) {
-            state.events[eventIdx].uuid = uuid;
-        }
-
-        function generateEventUUID(eventIdx) {
-            const uuid = generateUUID();
-            state.events[eventIdx].uuid = uuid;
-            renderDataInstances();
-            showToast("Event UUID regenerated");
         }
 
         function updateEventCreatorRef(eventIdx, value) {
@@ -7852,7 +7872,7 @@ ${state.petriNet.transitions
                 // ResultsGroupsが未初期化の場合は初期化
                 if (!state.resultGroups || state.resultGroups.length === 0) {
                     const _mName = (state.activeMethod && state.activeMethod.name) ? state.activeMethod.name : 'Method';
-                    state.resultGroups = [{ id: 'rg_default', name: `Results1_${_mName}`, uuid: generateUUID() }];
+                    state.resultGroups = [{ id: 'rg_default', name: `Results1_${_mName}`, uuid: "" }];
                 }
                 if (!state._activeResultsGroupId) {
                     state._activeResultsGroupId = state.resultGroups[0].id;
@@ -8010,8 +8030,8 @@ ${state.petriNet.transitions
                 // 親が暗号化される場合、子への password を null にして二重暗号化を防ぐ
                 const childPw = (p.encrypt && password) ? null : password;
                 let inner = "";
-                if (p.description) inner += `${indent}  <description>${p.description}</description>\n`;
-                if (!isPropertyList && p.value) inner += `${indent}  <value>${p.value}</value>\n`;
+                if (p.description) inner += `${indent}  <description>${escXml(p.description)}</description>\n`;
+                if (!isPropertyList && p.value) inner += `${indent}  <value>${escXml(p.value)}</value>\n`;
                 if (isPropertyList && p.children) {
                     if (Array.isArray(p.children)) p.children = { properties: p.children, contents: [] };
                     if (p.children.properties && p.children.properties.length > 0)
@@ -8019,10 +8039,10 @@ ${state.petriNet.transitions
                     if (p.children.contents && p.children.contents.length > 0)
                         inner += await outputContentsToXML(p.children.contents, indent + "  ", childPw);
                 }
-                const attrs = `key="${p.key}" xsi:type="${p.type}"` +
-                    (p.units ? ` units="${p.units}"` : "") +
-                    (p.formatString ? ` formatString="${p.formatString}"` : "") +
-                    (p.scaleFactor !== "" && p.scaleFactor !== undefined && p.scaleFactor !== null ? ` scaleFactor="${p.scaleFactor}"` : "");
+                const attrs = `key="${escXml(p.key)}" xsi:type="${p.type}"` +
+                    (p.units ? ` units="${escXml(p.units)}"` : "") +
+                    (p.formatString ? ` formatString="${escXml(p.formatString)}"` : "") +
+                    (p.scaleFactor !== "" && p.scaleFactor !== undefined && p.scaleFactor !== null ? ` scaleFactor="${escXml(p.scaleFactor)}"` : "");
                 if (p.encrypt && password) {
                     // 親要素を暗号化（子は平文のままinnerに含まれる）
                     const cv = await encryptXmlString(inner, password);
@@ -8044,17 +8064,17 @@ ${state.petriNet.transitions
             if (!contents || contents.length === 0) return "";
             let xml = "";
             for (const c of contents) {
-                const attrs = `key="${c.key}" xsi:type="${c.type}"` +
-                    (c.units ? ` units="${c.units}"` : "") +
-                    (c.formatString ? ` formatString="${c.formatString}"` : "") +
-                    (c.scaleFactor !== "" && c.scaleFactor !== undefined && c.scaleFactor !== null ? ` scaleFactor="${c.scaleFactor}"` : "") +
-                    (c.axis ? ` axis="${c.axis}"` : "") +
+                const attrs = `key="${escXml(c.key)}" xsi:type="${c.type}"` +
+                    (c.units ? ` units="${escXml(c.units)}"` : "") +
+                    (c.formatString ? ` formatString="${escXml(c.formatString)}"` : "") +
+                    (c.scaleFactor !== "" && c.scaleFactor !== undefined && c.scaleFactor !== null ? ` scaleFactor="${escXml(c.scaleFactor)}"` : "") +
+                    (c.axis ? ` axis="${escXml(c.axis)}"` : "") +
                     (c.size !== "" && c.size !== undefined && c.size !== null ? ` size="${c.size}"` : "") +
                     (c.id ? ` id="${c.id}"` : "") +
                     (c.ref ? ` ref="${c.ref}"` : "");
                 let inner = "";
-                if (c.description) inner += `${indent}  <description>${c.description}</description>\n`;
-                if (c.value) inner += `${indent}  <value>${c.value}</value>\n`;
+                if (c.description) inner += `${indent}  <description>${escXml(c.description)}</description>\n`;
+                if (c.value) inner += `${indent}  <value>${escXml(c.value)}</value>\n`;
                 if (c.encrypt && password) {
                     // Content暗号化: <content attrs>タグは残し、子要素だけを暗号化する
                     const cv = await encryptXmlString(inner, password);
@@ -8070,6 +8090,11 @@ ${state.petriNet.transitions
 
 
         async function saveXML() {
+            // xxxRefのid用インデックス
+            let _refId = 0;
+            const nextId = () => ++_refId;
+            // // UUIDを一時的に補完したインデックスを記憶するオブジェクト
+            // const tempGenerated = { doc: false, templates: [], instances: [] };
             try {
                 // インスタンスにテンプレートのdescriptionを同期
                 for (const inst of state.instances) {
@@ -8119,8 +8144,8 @@ ${state.petriNet.transitions
                 // 1. <document>
                 xml += `  <document id="${state.document.id || "document"}">\n`;
                 xml += `    <uuid>${state.document.uuid || crypto.randomUUID()}</uuid>\n`;
-                xml += `    <name>${state.document.name || ""}</name>\n`;
-                xml += `    <description>${state.document.description || ""}</description>\n`;
+                xml += `    <name>${escXml(state.document.name || '')}</name>\n`;
+                xml += `    <description>${escXml(state.document.description || '')}</description>\n`;
 
                 if (state.document.properties) {
                     xml += await outputPropertiesToXML(state.document.properties, "    ", password);
@@ -8132,18 +8157,18 @@ ${state.petriNet.transitions
                         if (item.id) {
                             xml += `    <creator id="${item.id}">\n`;
                             xml += `      <uuid>${item.uuid || crypto.randomUUID()}</uuid>\n`;
-                            if (item.name) xml += `      <name>${item.name}</name>\n`;
+                            if (item.name) xml += `      <name>${escXml(item.name)}</name>\n`;
                             if (item.description)
-                                xml += `      <description>${item.description}</description>\n`;
+                                xml += `      <description>${escXml(item.description)}</description>\n`;
                             if (item.vendorRefs)
                                 item.vendorRefs.forEach(
                                     (v) =>
-                                        (xml += `      <vendorRef id="vref_${generateUUID()}" ref="${v}" />\n`),
+                                        (xml += `      <vendorRef id="vendorRef_${nextId()}" ref="${v}" />\n`),
                                 );
                             if (item.instrumentRefs)
                                 item.instrumentRefs.forEach(
                                     (i) =>
-                                        (xml += `      <instrumentRef id="iref_${generateUUID()}" ref="${i}" />\n`),
+                                        (xml += `      <instrumentRef id="instrumentRef_${nextId()}" ref="${i}" />\n`),
                                 );
                             xml += `    </creator>\n`;
                         }
@@ -8156,9 +8181,9 @@ ${state.petriNet.transitions
                         if (item.id) {
                             xml += `    <vendor id="${item.id}">\n`;
                             xml += `      <uuid>${item.uuid || crypto.randomUUID()}</uuid>\n`;
-                            if (item.name) xml += `      <name>${item.name}</name>\n`;
+                            if (item.name) xml += `      <name>${escXml(item.name)}</name>\n`;
                             if (item.description)
-                                xml += `      <description>${item.description}</description>\n`;
+                                xml += `      <description>${escXml(item.description)}</description>\n`;
                             xml += `    </vendor>\n`;
                         }
                     }
@@ -8170,9 +8195,9 @@ ${state.petriNet.transitions
                         if (item.id) {
                             xml += `    <owner id="${item.id}">\n`;
                             xml += `      <uuid>${item.uuid || crypto.randomUUID()}</uuid>\n`;
-                            if (item.name) xml += `      <name>${item.name}</name>\n`;
+                            if (item.name) xml += `      <name>${escXml(item.name)}</name>\n`;
                             if (item.description)
-                                xml += `      <description>${item.description}</description>\n`;
+                                xml += `      <description>${escXml(item.description)}</description>\n`;
                             xml += `    </owner>\n`;
                         }
                     }
@@ -8184,9 +8209,9 @@ ${state.petriNet.transitions
                         if (item.id) {
                             xml += `    <instrument id="${item.id}">\n`;
                             xml += `      <uuid>${item.uuid || crypto.randomUUID()}</uuid>\n`;
-                            if (item.name) xml += `      <name>${item.name}</name>\n`;
+                            if (item.name) xml += `      <name>${escXml(item.name)}</name>\n`;
                             if (item.description)
-                                xml += `      <description>${item.description}</description>\n`;
+                                xml += `      <description>${escXml(item.description)}</description>\n`;
                             xml += `    </instrument>\n`;
                         }
                     }
@@ -8221,8 +8246,8 @@ ${state.petriNet.transitions
 
                 for (const method of state._methods) {
                     xml += `    <method id="${method.id}">\n`;
-                    xml += `      <uuid>${method.uuid || crypto.randomUUID()}</uuid>\n`;
-                    xml += `      <name>${method.name}</name>\n`;
+                    xml += `      <uuid>${crypto.randomUUID()}</uuid>\n`;
+                    xml += `      <name>${escXml(method.name)}</name>\n`;
 
                     // Petri Net (pnml)
                     xml += `      <pnml id="pnml_${method.id}">\n`;
@@ -8259,8 +8284,9 @@ ${state.petriNet.transitions
                             const label = transObj ? transObj.label : evt.transitionId;
                             xml += `        <instruction id="inst_${label}_${method.id}">\n`;
                             xml += `          <uuid>${crypto.randomUUID()}</uuid>\n`;
-                            xml += `          <name>${evt.transitionLabel}</name>\n`;
-                            xml += `          <transitionRef id="tr_ref_${label}_${method.id}" ref="${label}" />\n`;
+                            xml += `          <name>${escXml(evt.transitionLabel)}</name>\n`;
+                            // xml += `          <transitionRef id="tr_ref_${label}_${method.id}" ref="${label}" />\n`;
+                            xml += `          <transitionRef id="transitionRef_${nextId()}" ref="${label}" />\n`;
                             xml += `        </instruction>\n`;
                             usedTrans.add(evt.transitionId);
                         }
@@ -8282,12 +8308,13 @@ ${state.petriNet.transitions
 
                             xml += `        <${tagName} id="${tpl.id}">\n`;
                             xml += `          <uuid>${tpl.uuid || crypto.randomUUID()}</uuid>\n`;
-                            xml += `          <name>${autoName}</name>\n`;
+                            xml += `          <name>${escXml(autoName)}</name>\n`;
                             if (tpl.properties && tpl.properties.length > 0)
                                 xml += await outputPropertiesToXML(tpl.properties, "          ", password);
                             if (tpl.contents && tpl.contents.length > 0)
                                 xml += await outputContentsToXML(tpl.contents, "          ", password);
-                            xml += `          <placeRef id="pref_${tpl.id}" ref="${placeLabel}" />\n`;
+                            // xml += `          <placeRef id="pref_${tpl.id}" ref="${placeLabel}" />\n`;
+                            xml += `          <placeRef id="placeRef_${nextId()}" ref="${placeLabel}" />\n`;
 
                             // Template Refs
                             const refs = method.petriNet.templateRefs.filter(
@@ -8306,7 +8333,7 @@ ${state.petriNet.transitions
                                             (t) => t.placeId === targetPlace.originalPlaceId,
                                         );
                                         for (const tt of extTemplates) {
-                                            xml += `          <templateRef id="tref_${generateUUID()}" ref="${tt.id}" />\n`;
+                                            xml += `          <templateRef id="templateRef_${nextId()}" ref="${tt.id}" />\n`;
                                         }
                                     }
                                 } else {
@@ -8314,7 +8341,7 @@ ${state.petriNet.transitions
                                         (t) => t.placeId === r.target,
                                     );
                                     for (const tt of targetTemplates) {
-                                        xml += `          <templateRef id="tref_${generateUUID()}" ref="${tt.id}" />\n`;
+                                        xml += `          <templateRef id="templateRef_${nextId()}" ref="${tt.id}" />\n`;
                                     }
                                 }
                             }
@@ -8344,8 +8371,8 @@ ${state.petriNet.transitions
 
                     const methodResultsId = toXmlId(grp.name || 'Results');
                     xml += `    <results id="${methodResultsId}">\n`;
-                    xml += `      <uuid>${grp.uuid || crypto.randomUUID()}</uuid>\n`;
-                    xml += `      <name>${grp.name || ''}</name>\n`;
+                    xml += `      <uuid>${crypto.randomUUID()}</uuid>\n`;
+                    xml += `      <name>${escXml(grp.name || '')}</name>\n`;
 
                     for (const type of ["material", "condition", "result"]) {
                         const typeInstances = groupInstances.filter(
@@ -8413,7 +8440,7 @@ ${state.petriNet.transitions
                                                     (i) => i.templateId === et.id,
                                                 );
                                                 for (const ei of extInstances) {
-                                                    xml += `        <instanceRef id="iref_${generateUUID()}" ref="${ei.id}" />\n`;
+                                                    xml += `        <instanceRef id="instanceRef_${nextId()}" ref="${ei.id}" />\n`;
                                                 }
                                             }
                                         }
@@ -8425,7 +8452,7 @@ ${state.petriNet.transitions
                                             return t && t.placeId === r.target;
                                         });
                                         for (const ti of targetInstances) {
-                                            xml += `        <instanceRef id="iref_${generateUUID()}" ref="${ti.id}" />\n`;
+                                            xml += `        <instanceRef id="instanceRef_${nextId()}" ref="${ti.id}" />\n`;
                                         }
                                     }
                                 }
@@ -8475,13 +8502,13 @@ ${state.petriNet.transitions
                             );
                             const label = transObj ? transObj.label : evt.transitionId;
                             xml += `        <event id="${evt.id}" ref="inst_${label}_${method.id}">\n`;
-                            xml += `          <uuid>${evt.uuid || crypto.randomUUID()}</uuid>\n`;
+                            xml += `          <uuid>${crypto.randomUUID()}</uuid>\n`;
                             xml += `          <property key="lifecycle:transition" xsi:type="stringType"><value>${evt.lifecycle}</value></property>\n`;
                             const exportTimestamp = evt.timestamp || getLocalISOTimestamp();
                             xml += `          <property key="time:timestamp" xsi:type="dateTimeType"><value>${exportTimestamp}</value></property>\n`;
-                            xml += `          <resultsRef id="rref_${generateUUID()}" ref="${resultsRef}"/>\n`;
-                            if (evt.creatorRef) xml += `          <creatorRef id="cref_${generateUUID()}" ref="${evt.creatorRef}"/>\n`;
-                            if (evt.ownerRef)   xml += `          <ownerRef id="oref_${generateUUID()}" ref="${evt.ownerRef}"/>\n`;
+                            xml += `          <resultsRef id="resultsRef_${nextId()}" ref="${resultsRef}"/>\n`;
+                            if (evt.creatorRef) xml += `          <creatorRef id="creatorRef_${nextId()}" ref="${evt.creatorRef}"/>\n`;
+                            if (evt.ownerRef)   xml += `          <ownerRef id="ownerRef_${nextId()}" ref="${evt.ownerRef}"/>\n`;
                             xml += `        </event>\n`;
                         }
                         xml += `      </trace>\n`;
@@ -8738,7 +8765,7 @@ ${state.petriNet.transitions
                     state._methods = [
                         {
                             id: defaultMethodId,
-                            uuid: crypto.randomUUID(),
+                            uuid: "",
                             name: "Main_Method",
                             petriNet: loadedState.petriNet || {
                                 places: [],
@@ -8785,7 +8812,11 @@ ${state.petriNet.transitions
 
                 // Update UI inputs
                 document.getElementById("doc-id").value = state.document.id || "";
-                document.getElementById("doc-uuid").value = state.document.uuid || "";
+                // document.getElementById("doc-uuid").value = state.document.uuid || "";
+                if (!state.document.uuid) {
+                    state.document.uuid = crypto.randomUUID();
+                }
+                document.getElementById("doc-uuid").value = state.document.uuid;
                 document.getElementById("doc-name").value = state.document.name || "";
                 document.getElementById("doc-description").value =
                     state.document.description || "";
@@ -8901,7 +8932,7 @@ ${state.petriNet.transitions
                 // メソッド切替時にResultsGroupsを初期化（未設定の場合）
                 if (!state.resultGroups || state.resultGroups.length === 0) {
                     const _mName = (state.activeMethod && state.activeMethod.name) ? state.activeMethod.name : 'Method';
-                    state.resultGroups = [{ id: 'rg_default', name: `Results1_${_mName}`, uuid: generateUUID() }];
+                    state.resultGroups = [{ id: 'rg_default', name: `Results1_${_mName}`, uuid: "" }];
                     state._activeResultsGroupId = state.resultGroups[0].id;
                 }
                 renderResultsGroupTabs();
@@ -9122,14 +9153,14 @@ ${state.petriNet.transitions
                     const isProxy = place.type === "proxy";
                     html += `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${NODE_R}" fill="${isProxy ? (isDark ? "#3b0764" : "#faf5ff") : colorNodeFill}" stroke="${isProxy ? colorProxy : colorPlace}" stroke-width="2" stroke-dasharray="${isProxy ? "3,2" : "none"}"/>`;
                     if (isProxy) html += `<text x="${px.toFixed(1)}" y="${(py + 3).toFixed(1)}" text-anchor="middle" font-size="6.5" fill="${colorProxy}" pointer-events="none" font-weight="600">EXT</text>`;
-                    html += `<text x="${px.toFixed(1)}" y="${(py + NODE_R + LABEL_OFF).toFixed(1)}" text-anchor="middle" font-size="9" fill="${colorText}" pointer-events="none">${place.label}</text>`;
+                    html += `<text x="${px.toFixed(1)}" y="${(py + NODE_R + LABEL_OFF).toFixed(1)}" text-anchor="middle" font-size="9" fill="${colorText}" pointer-events="none">${escHtml(place.label)}</text>`;
                 });
 
                 method.petriNet.transitions.forEach((trans) => {
                     const tx = svgX + (trans.x - l.minX) * SCALE;
                     const ty = svgY + (trans.y - l.minY) * SCALE;
                     html += `<rect x="${(tx - TW / 2).toFixed(1)}" y="${(ty - TH / 2).toFixed(1)}" width="${TW}" height="${TH}" fill="${colorNodeFill}" stroke="${colorTrans}" stroke-width="2" rx="3"/>`;
-                    html += `<text x="${tx.toFixed(1)}" y="${(ty + TH / 2 + LABEL_OFF).toFixed(1)}" text-anchor="middle" font-size="9" fill="${colorText}" pointer-events="none">${trans.label}</text>`;
+                    html += `<text x="${tx.toFixed(1)}" y="${(ty + TH / 2 + LABEL_OFF).toFixed(1)}" text-anchor="middle" font-size="9" fill="${colorText}" pointer-events="none">${escHtml(trans.label)}</text>`;
                 });
             });
 
@@ -9214,7 +9245,7 @@ ${state.petriNet.transitions
 
             state._methods.push({
                 id,
-                uuid: crypto.randomUUID(),
+                uuid: "",
                 name: name,
                 petriNet: {
                     places: [],
@@ -9225,7 +9256,7 @@ ${state.petriNet.transitions
                 },
                 templates: [],
                 instances: [],
-                resultGroups: [{ id: 'rg_default', name: `Results1_${name}`, uuid: generateUUID() }],
+                resultGroups: [{ id: 'rg_default', name: `Results1_${name}`, uuid: "" }],
                 _activeResultsGroupId: 'rg_default',
                 events: [],
                 canvasTranslate: { x: 0, y: 0 },
@@ -9380,7 +9411,7 @@ ${state.petriNet.transitions
                 return;
             }
             placeSelect.innerHTML = filteredPlaces
-                .map((p) => `<option value="${p.id}">${p.label}</option>`)
+                .map((p) => `<option value="${escHtml(p.id)}">${escHtml(p.label)}</option>`)
                 .join("");
         }
 
