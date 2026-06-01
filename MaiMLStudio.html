@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MaiML Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dagre/0.8.5/dagre.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap"
@@ -127,6 +128,16 @@
         .manual-content h3 {
             color: #0f172a;
             /* slate-900 */
+        }
+
+        /* Required field marker */
+        .required-mark {
+            color: #e53e3e;
+            font-weight: bold;
+            margin-left: 2px;
+            font-size: 0.82em;
+            cursor: default;
+            line-height: 1;
         }
     </style>
 </head>
@@ -504,6 +515,69 @@
                                     <li>Overviewは閲覧専用です。編集はメソッドタブをクリックしてキャンバスに戻って行います</li>
                                 </ul>
                             </div>
+                            <div class="mt-4 bg-amber-50 p-4 rounded-xl border border-amber-200">
+                            <h4 class="font-bold text-amber-800 text-sm mb-3">
+                                <i class="ph ph-sparkle"></i> AI Generate（AIによるペトリネット自動生成）
+                            </h4>
+                            <p class="text-sm text-amber-700 mb-3">
+                                ツールバーの <strong>✨ ボタン</strong> をクリックすると「AI Petri Net Generator」モーダルが開きます。実験手順テキストを入力するだけで、Place・Transition・Arc・Template を自動生成してキャンバスに追加します。
+                            </p>
+                            <div class="space-y-3 text-xs text-amber-800">
+                                <div class="bg-white rounded-lg p-3 border border-amber-100 space-y-2">
+                                    <p class="font-bold text-amber-700">① LLM プロバイダーの選択</p>
+                                    <p><strong>☁️ Cloud (Gemini)：</strong> Google AI Studio で取得した Gemini API キーを入力し、使用モデルを選択します。APIキーはブラウザのローカルストレージに保存され、Google Gemini API 以外には送信されません。高精度・高速（数秒）ですが、データが Google のサーバーに送信されます。</p>
+                                    <p><strong>🖥️ Local (Ollama)：</strong> データが外部に送信されないため、機密性の高い実験データに適しています。ネットワーク環境がなくても利用できます。処理時間は PC のスペック（特に GPU）に依存し、GPU 非搭載 PC では数分〜十数分かかる場合があります。</p>
+                                </div>
+                                <div class="bg-white rounded-lg p-3 border border-amber-100 space-y-2">
+                                    <p class="font-bold text-amber-700">② 実験手順テキストの入力</p>
+                                    <p>自由形式のテキストでも入力できますが、以下の<strong>推奨構造形式</strong>を使うと精度が向上します。</p>
+                                    <div class="bg-slate-50 rounded p-2 font-mono text-[10px] leading-relaxed text-slate-600 whitespace-pre">[STEP] ステップ名（動作を示す動詞句）
+[IN:material]  原材料・試薬・装置名（数量なし）
+[IN:condition] 条件名 | param:値 単位, param:値 単位
+[IN:result]    前のSTEPの出力（ラベルを再利用）
+[OUT:condition] 中間状態名 | param:値 単位
+[OUT:result]   最終生成物・測定結果名</div>
+                                    <p class="text-[10px] text-slate-500">同じラベルを複数の STEP で使うと、自動的に共有 Place（アークで接続）として扱われます。</p>
+                                </div>
+                                <div class="bg-white rounded-lg p-3 border border-amber-100 space-y-2">
+                                    <p class="font-bold text-amber-700">③ オプションと実行</p>
+                                    <p><strong>Generate Templates：</strong> チェックON（デフォルト）で、各 Place に対応するテンプレートのプロパティ（型・単位付き）も同時生成します。</p>
+                                    <p><strong>Generate ボタン：</strong> AIによる生成を実行します。処理中は経過時間タイマーが表示されます。</p>
+                                    <p><strong>プレビュー確認：</strong> 生成された Place / Transition / Arc / Template の一覧を確認します。内容が不正確な場合は、推奨構造形式で入力し直すと精度が改善します。</p>
+                                    <p><strong>Apply to Canvas ボタン：</strong> 確認後にクリックすると生成結果がキャンバスに追加され、Dagre Auto Layout が自動適用されます。</p>
+                                </div>
+                                <div class="bg-white rounded-lg p-3 border border-amber-100 space-y-2">
+                                    <p class="font-bold text-amber-700">🛠️ Ollama セットアップ手順（ローカルモードを使用する場合）</p>
+                                    <ol class="list-decimal list-inside space-y-1 text-xs text-slate-700">
+                                        <li><strong>Ollamaをインストール：</strong> <a href="https://ollama.com" target="_blank" class="text-indigo-500 hover:underline">https://ollama.com</a> からインストーラーをダウンロードして実行します。</li>
+                                        <li><strong>AIモデルをダウンロード：</strong> PowerShell またはコマンドプロンプトで以下を実行します。
+                                            <div class="bg-slate-900 text-green-400 rounded p-2 font-mono text-[11px] mt-1">ollama pull gemma4:e4b</div>
+                                            推奨モデル例：<code class="bg-slate-100 px-1 rounded">gemma4:e4b</code>（高品質）、<code class="bg-slate-100 px-1 rounded">qwen3:1.7b</code>（軽量・高速）
+                                        </li>
+                                        <li><strong>Ollamaを起動：</strong> スタートメニューからOllamaを起動します。タスクバーの通知領域にアイコンが表示されれば準備完了です。</li>
+                                        <li><strong>MaiML Studio でローカルモードを使用：</strong> AI Generate モーダルの LLM Provider で「🖥️ Local (Ollama)」を選択し、「Fetch Models」ボタンをクリックしてモデル一覧を取得します。</li>
+                                        <li><strong>接続できない場合のCORS設定：</strong> 手順4で「Connection failed」と表示された場合、Ollamaを一度終了し、PowerShellで以下を実行してから再起動してください。
+                                            <div class="bg-slate-900 text-green-400 rounded p-2 font-mono text-[11px] mt-1">[System.Environment]::SetEnvironmentVariable("OLLAMA_ORIGINS", "*", "User")</div>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 bg-teal-50 p-4 rounded-xl border border-teal-200">
+                            <h4 class="font-bold text-teal-800 text-sm mb-3">
+                                <i class="ph ph-magic-wand"></i> Dagre Layout（ノード自動整列）
+                            </h4>
+                            <p class="text-sm text-teal-700 mb-2">
+                                ツールバーの <strong>自動レイアウトボタン</strong> をクリックすると、キャンバス上の全 Place・Transition を<strong>左→右方向</strong>に自動整列します。手動でノードを配置した後や AI Generate 後に乱れたレイアウトを整えるときに便利です。
+                            </p>
+                            <ul class="list-disc list-inside text-xs text-teal-700 space-y-1">
+                                <li>Arc の接続関係（有向グラフ）を解析し、ランク順に左から右へ配置します</li>
+                                <li>キャンバスのズームと表示位置を自動リセットして全ノードを見渡しやすく調整します</li>
+                                <li>ノードが 0 個の場合はレイアウトを実行しません（トースト通知で案内）</li>
+                                <li>AI Generate 完了時は Dagre Layout が自動的に適用されます</li>
+                            </ul>
+                        </div>
                     </section>
 
 
@@ -1283,6 +1357,69 @@
                                 <li>Overview is read-only. Click any method tab to return to the canvas for editing</li>
                             </ul>
                         </div>
+                        <div class="mt-4 bg-amber-50 p-4 rounded-xl border border-amber-200">
+                            <h4 class="font-bold text-amber-800 text-sm mb-3">
+                                <i class="ph ph-sparkle"></i> AI Generate (Automatic Petri Net Generation)
+                            </h4>
+                            <p class="text-sm text-amber-700 mb-3">
+                                Click the <strong>✨ button</strong> in the toolbar to open the "AI Petri Net Generator" modal. Simply enter an experimental procedure text and the AI will automatically generate Places, Transitions, Arcs, and Templates, then add them to the canvas.
+                            </p>
+                            <div class="space-y-3 text-xs text-amber-800">
+                                <div class="bg-white rounded-lg p-3 border border-amber-100 space-y-2">
+                                    <p class="font-bold text-amber-700">① Select LLM Provider</p>
+                                    <p><strong>☁️ Cloud (Gemini):</strong> Enter a Gemini API key from Google AI Studio and select the model to use. The key is saved in your browser's local storage and is sent only to the Google Gemini API. High accuracy and fast (seconds), but data is sent to Google's servers.</p>
+                                    <p><strong>🖥️ Local (Ollama):</strong> Data never leaves your PC — suitable for confidential experimental data. Works offline. Processing time depends on your hardware (especially GPU); expect several minutes on CPU-only machines.</p>
+                                </div>
+                                <div class="bg-white rounded-lg p-3 border border-amber-100 space-y-2">
+                                    <p class="font-bold text-amber-700">② Enter Experimental Procedure</p>
+                                    <p>Free-form text is accepted, but using the <strong>recommended structured format</strong> below significantly improves accuracy.</p>
+                                    <div class="bg-slate-50 rounded p-2 font-mono text-[10px] leading-relaxed text-slate-600 whitespace-pre">[STEP] Step name (action verb phrase)
+[IN:material]  Raw substance, reagent, or equipment (no quantities)
+[IN:condition] Condition name | param:value unit, param:value unit
+[IN:result]    Output label reused from a previous STEP
+[OUT:condition] Intermediate state | param:value unit
+[OUT:result]   Final product, observation, or measurement</div>
+                                    <p class="text-[10px] text-slate-500">Using the same label across multiple STEPs automatically creates a shared Place connected by arcs.</p>
+                                </div>
+                                <div class="bg-white rounded-lg p-3 border border-amber-100 space-y-2">
+                                    <p class="font-bold text-amber-700">③ Options and Execution</p>
+                                    <p><strong>Generate Templates:</strong> When checked (default), typed properties with units are automatically generated for each Place's template.</p>
+                                    <p><strong>Generate button:</strong> Starts AI generation. An elapsed-time timer is shown during processing.</p>
+                                    <p><strong>Preview:</strong> Review the generated Places / Transitions / Arcs / Templates. If the result looks incorrect, try the recommended structured format for better accuracy.</p>
+                                    <p><strong>Apply to Canvas button:</strong> Adds the generated elements to the canvas and automatically applies Dagre Auto Layout.</p>
+                                </div>
+                                <div class="bg-white rounded-lg p-3 border border-amber-100 space-y-2">
+                                    <p class="font-bold text-amber-700">🛠️ Ollama Setup Guide (for Local mode)</p>
+                                    <ol class="list-decimal list-inside space-y-1 text-xs text-slate-700">
+                                        <li><strong>Install Ollama:</strong> Download and run the installer from <a href="https://ollama.com" target="_blank" class="text-indigo-500 hover:underline">https://ollama.com</a>.</li>
+                                        <li><strong>Download an AI model:</strong> Run the following in PowerShell or Command Prompt:
+                                            <div class="bg-slate-900 text-green-400 rounded p-2 font-mono text-[11px] mt-1">ollama pull gemma4:e4b</div>
+                                            Recommended models: <code class="bg-slate-100 px-1 rounded">gemma4:e4b</code> (high quality), <code class="bg-slate-100 px-1 rounded">qwen3:1.7b</code> (lightweight, fast)
+                                        </li>
+                                        <li><strong>Start Ollama:</strong> Launch Ollama from the Start menu. When the icon appears in the system tray, Ollama is ready.</li>
+                                        <li><strong>Use Local mode in MaiML Studio:</strong> In the AI Generate modal, select "🖥️ Local (Ollama)" as the LLM Provider, then click "Fetch Models" to retrieve the list of installed models.</li>
+                                        <li><strong>If connection fails — Configure CORS:</strong> If "Connection failed" appears in step 4, quit Ollama, run the following in PowerShell, then restart Ollama:
+                                            <div class="bg-slate-900 text-green-400 rounded p-2 font-mono text-[11px] mt-1">[System.Environment]::SetEnvironmentVariable("OLLAMA_ORIGINS", "*", "User")</div>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 bg-teal-50 p-4 rounded-xl border border-teal-200">
+                            <h4 class="font-bold text-teal-800 text-sm mb-3">
+                                <i class="ph ph-magic-wand"></i> Dagre Layout (Auto Arrange Nodes)
+                            </h4>
+                            <p class="text-sm text-teal-700 mb-2">
+                                Click the <strong>Auto Layout button</strong> in the toolbar to automatically arrange all Places and Transitions in a <strong>left-to-right</strong> direction. Useful for tidying up after manual placement or after running AI Generate.
+                            </p>
+                            <ul class="list-disc list-inside text-xs text-teal-700 space-y-1">
+                                <li>Analyzes arc connections (directed graph) and arranges nodes rank by rank from left to right</li>
+                                <li>Automatically resets canvas zoom and position so all nodes are visible</li>
+                                <li>Does nothing when there are no nodes (a toast notification is shown)</li>
+                                <li>Dagre Layout is applied automatically when AI Generate completes</li>
+                            </ul>
+                        </div>
                     </section>
 
                     <section>
@@ -1816,7 +1953,7 @@
             </div>
 
             <!-- プロジェクトファイル名表示 -->
-            <div class="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500 min-w-0">
+            <div class="flex items-center gap-1.5 text-xs font-medium text-slate-400 dark:text-slate-400 min-w-0">
                 <i class="ph ph-file-json text-base shrink-0" id="project-filename-icon" style="display:none"></i>
                 <span id="project-filename" class="truncate max-w-[240px]" title=""></span>
             </div>
@@ -1875,15 +2012,12 @@
                         </div>
 
                         <div class="space-y-2">
-                            <div
+                            <div style="display:none"
                                 class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-2 hover:border-indigo-200 dark:hover:border-indigo-800 transition-all">
                                 <div class="flex gap-2 items-center">
-                                    <label
-                                        class="w-32 text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">Document
-                                        ID</label>
-                                    <input type="text" id="doc-id"
-                                        class="flex-1 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
-                                        placeholder="MaiML_DataFile_001" />
+                                    <!-- <label
+                                        class="w-32 text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">Document ID</label>
+                                    <span class="flex-1 px-2 py-1 text-xs font-mono text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded select-none" title="Fixed value (JIS K0200)">document</span> -->
                                     <label
                                         class="w-24 text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">UUID</label>
                                     <div class="flex-1 flex gap-1">
@@ -1892,7 +2026,7 @@
                                             placeholder="Auto-generated" readonly />
                                         <button onclick="generateUUID('doc-uuid')"
                                             class="p-1 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded transition-colors"
-                                            title="Regenerate UUID">
+                                            title="Generate UUID">
                                             <i class="ph ph-arrows-clockwise text-sm"></i>
                                         </button>
                                     </div>
@@ -1902,11 +2036,10 @@
                                 class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-2 hover:border-indigo-200 dark:hover:border-indigo-800 transition-all">
                                 <div class="flex gap-2 items-center">
                                     <label
-                                        class="w-32 text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">Document
-                                        Name</label>
+                                        class="w-32 text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">Document Name</label>
                                     <input type="text" id="doc-name" oninput="updateKeyValidation(this, this.value)"
-                                        class="flex-[2] px-2 py-1 text-xs font-semibold border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
-                                        placeholder="Project_Alpha_Experiment" />
+                                        class="flex-[2] px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
+                                        placeholder="Name_of_the_dataset" />
                                     <label
                                         class="w-24 text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">Description</label>
                                     <input type="text" id="doc-description"
@@ -1974,7 +2107,7 @@
                                 <div class="flex items-center gap-2">
                                     <i class="ph ph-buildings text-lg text-slate-400"></i>
                                     <h3 class="font-semibold text-slate-800 dark:text-slate-100">
-                                        Vendors
+                                        Vendors<span class="required-mark" title="Required (1 or more)">*</span>
                                     </h3>
                                 </div>
                                 <button onclick="addVendor()"
@@ -2010,7 +2143,7 @@
                                 <div class="flex items-center gap-2">
                                     <i class="ph ph-user-circle text-lg text-slate-400"></i>
                                     <h3 class="font-semibold text-slate-800 dark:text-slate-100">
-                                        Owners
+                                        Owners<span class="required-mark" title="Required (1 or more)">*</span>
                                     </h3>
                                 </div>
                                 <button onclick="addOwner()"
@@ -2028,7 +2161,7 @@
                                 <div class="flex items-center gap-2">
                                     <i class="ph ph-users text-lg text-slate-400"></i>
                                     <h3 class="font-semibold text-slate-800 dark:text-slate-100">
-                                        Creators
+                                        Creators<span class="required-mark" title="Required (1 or more)">*</span>
                                     </h3>
                                 </div>
                                 <button onclick="addCreator()"
@@ -2083,43 +2216,59 @@
                         class="absolute left-6 top-6 z-10 flex flex-col gap-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur shadow-lg border border-slate-200 dark:border-slate-700 p-2 rounded-xl">
                         <button onclick="setMode('select')" id="btn-select"
                             class="p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors tooltip-right group relative"
-                            title="Select (V)">
+                            title="Select">
                             <i class="ph ph-cursor text-xl"></i>
                         </button>
                         <div class="h-px bg-slate-200 dark:bg-slate-600 w-full my-1"></div>
                         <button onclick="setMode('addPlace')" id="btn-addPlace"
                             class="p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors relative"
-                            title="Add Place (P)">
+                            title="Place">
                             <div class="w-5 h-5 rounded-full border-2 border-slate-600 dark:border-slate-300 mx-auto">
                             </div>
                         </button>
                         <button onclick="setMode('addTransition')" id="btn-addTransition"
                             class="p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
-                            title="Add Transition (T)">
+                            title="Transition">
                             <div class="w-5 h-5 border-2 border-slate-600 dark:border-slate-300 mx-auto rounded-sm">
                             </div>
                         </button>
                         <button onclick="setMode('addArc')" id="btn-addArc"
                             class="p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
-                            title="Add Arc (A)">
+                            title="Arc">
                             <i class="ph ph-arrow-right text-xl"></i>
+                        </button>
+                        <button onclick="setMode('deleteArc')" id="btn-deleteArc"
+                            class="p-3 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 text-red-400 dark:text-red-400 transition-colors"
+                            title="Delete Arc (click an arc to remove it)">
+                            <i class="ph ph-scissors text-xl"></i>
                         </button>
                         <div class="h-px bg-slate-200 dark:bg-slate-600 w-full my-1"></div>
                         <button onclick="setMode('addTemplateRef')" id="btn-addTemplateRef"
                             class="p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
-                            title="Add Template Ref">
+                            title="TemplateRef">
                             <i class="ph ph-arrows-out-line-horizontal text-xl text-blue-500"></i>
                         </button>
                         <button onclick="setMode('addInstanceRef')" id="btn-addInstanceRef"
                             class="p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
-                            title="Add Instance Ref">
+                            title="InstanceRef">
                             <i class="ph ph-arrows-in-line-horizontal text-xl text-green-500"></i>
                         </button>
                         <div class="h-px bg-slate-200 dark:bg-slate-600 w-full my-1"></div>
                         <button onclick="openImportPlaceModal()" id="btn-importPlace"
                             class="p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
-                            title="Import External Place">
+                            title="Import external place">
                             <i class="ph ph-arrow-square-in text-xl text-purple-500"></i>
+                        </button>
+                        <div class="h-px bg-slate-200 dark:bg-slate-600 w-full my-1"></div>
+                        <button onclick="openAiGenerateModal()" id="btn-aiGenerate"
+                            class="p-3 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-900/30 text-amber-500 dark:text-amber-400 transition-colors"
+                            title="AI Generate from procedure text (Gemini)">
+                            <i class="ph ph-sparkle text-xl"></i>
+                        </button>
+                        <button onclick="applyDagreLayout()" id="btn-autoLayout"
+                            class="p-3 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-900/30 text-teal-500 dark:text-teal-400 transition-colors"
+                            title="Auto Layout (Dagre)">
+                            <i class="ph ph-graph text-xl"></i>
                         </button>
                     </div>
 
@@ -2146,7 +2295,7 @@
 
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-xs font-medium text-slate-500 uppercase mb-1">Label</label>
+                                <label class="block text-xs font-medium text-slate-500 uppercase mb-1">Label<span class="required-mark" title="Required">*</span></label>
                                 <input type="text" id="node-label"
                                     class="w-full px-3 py-2 border dark:border-slate-600 rounded-lg text-sm bg-slate-50 dark:bg-slate-700 dark:text-white focus:bg-white dark:focus:bg-slate-600 transition-colors outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" />
                             </div>
@@ -2693,7 +2842,8 @@
         function renderDocumentProperties() {
             const list = document.getElementById("doc-properties-list");
             if (state.document.properties.length === 0) {
-                list.innerHTML = `<div class="text-sm text-slate-400 italic text-center py-2">No properties defined</div>`;
+                // list.innerHTML = `<div class="text-sm text-slate-400 italic text-center py-2">No properties defined</div>`;
+                list.innerHTML = `<div class="text-sm text-slate-400 italic text-center py-6 border-2 border-dashed border-slate-100 dark:border-slate-700 rounded-lg">No properties defined</div>`;
                 return;
             }
             list.innerHTML = `<div class="space-y-2">${renderDocPropertiesHierarchy(state.document.properties, 0, [])}</div>`;
@@ -2849,6 +2999,7 @@
                             </button>`
                             : '<div class="w-6"></div>'
                         }
+                    <span class="required-mark shrink-0" title="Required">*</span>
                     <input type="text" value="${escHtml(p.key || '')}"
                         oninput="updateKeyValidation(this, this.value)"
                         onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'key', this.value)"
@@ -2962,6 +3113,7 @@
             <div class="bg-teal-50/30 dark:bg-teal-900/10 border border-teal-200 dark:border-teal-800 rounded-lg p-1 group/card hover:border-teal-300 transition-all">
                 <div class="flex gap-1 items-center">
                     <div class="w-6"></div>
+                    <span class="required-mark shrink-0" title="Required">*</span>
                     <input type="text" value="${escHtml(p.key || '')}"
                         onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'key', this.value)"
                         placeholder="Key"
@@ -3067,13 +3219,13 @@
                 .map((ns, idx) => `
             <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-2 group/card hover:border-violet-200 dark:hover:border-violet-800 transition-all">
               <div class="flex gap-2 items-center">
-                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider w-14 shrink-0">Prefix</label>
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider w-14 shrink-0">Prefix<span class="required-mark" title="Required">*</span></label>
                 <input type="text" value="${escHtml(ns.prefix)}"
                   oninput="updateKeyValidation(this, this.value); updateNamespace(${idx}, 'prefix', this.value)"
                   placeholder="e.g. maiml"
                   class="w-36 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white focus:ring-1 focus:ring-violet-500/20 focus:border-violet-500 outline-none"
                   title="QName prefix (letters, digits, _ . - only; no colon)">
-                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider w-8 shrink-0">URI</label>
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider w-8 shrink-0">URI<span class="required-mark" title="Required">*</span></label>
                 <input type="text" value="${escHtml(ns.uri)}"
                   oninput="updateNamespace(${idx}, 'uri', this.value)"
                   placeholder="e.g. http://maiml.example.org/ns/1.0"
@@ -3143,6 +3295,7 @@
                     <div class="flex gap-1 items-center">
                         <input type="text" value="${escHtml(v.id)}" onchange="updateVendor(${idx}, 'id', this.value)" placeholder="ID" 
                             class="w-32 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" title="Vendor ID">
+                        <span class="required-mark shrink-0" title="Required">*</span>
                         <input type="text" value="${escHtml(v.name)}" oninput="updateKeyValidation(this, this.value)" onchange="updateVendor(${idx}, 'name', this.value)" placeholder="Vendor Name" list="ns-prefix-list"
                             class="w-48 px-2 py-1 text-xs font-semibold border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         <input type="text" value="${escHtml(v.description)}" onchange="updateVendor(${idx}, 'description', this.value)" placeholder="Description" 
@@ -3430,6 +3583,7 @@
                     <div class="flex gap-1 items-center">
                         <input type="text" value="${escHtml(inst.id)}" onchange="updateInstrument(${idx}, 'id', this.value)" placeholder="ID" 
                             class="w-32 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" title="Instrument ID">
+                        <span class="required-mark shrink-0" title="Required">*</span>
                         <input type="text" value="${escHtml(inst.name)}" oninput="updateKeyValidation(this, this.value)" onchange="updateInstrument(${idx}, 'name', this.value)" placeholder="Instrument Name" list="ns-prefix-list"
                             class="w-48 px-2 py-1 text-xs font-semibold border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         <input type="text" value="${escHtml(inst.description)}" onchange="updateInstrument(${idx}, 'description', this.value)" placeholder="Description" 
@@ -3489,6 +3643,7 @@
                     <div class="flex gap-1 items-center">
                         <input type="text" value="${escHtml(o.id)}" onchange="updateOwner(${idx}, 'id', this.value)" placeholder="ID" 
                             class="w-32 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" title="Owner ID">
+                        <span class="required-mark shrink-0" title="Required">*</span>
                         <input type="text" value="${escHtml(o.name)}" oninput="updateKeyValidation(this, this.value)" onchange="updateOwner(${idx}, 'name', this.value)" placeholder="Owner Name" list="ns-prefix-list"
                             class="w-48 px-2 py-1 text-xs font-semibold border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         <input type="text" value="${escHtml(o.description)}" onchange="updateOwner(${idx}, 'description', this.value)" placeholder="Email / Description" 
@@ -3549,6 +3704,7 @@
                     <div class="flex gap-1 items-center mb-2">
                         <input type="text" value="${escHtml(c.id)}" onchange="updateCreator(${idx}, 'id', this.value)" placeholder="ID" 
                             class="w-32 px-2 py-1 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" title="Creator ID">
+                        <span class="required-mark shrink-0" title="Required">*</span>
                         <input type="text" value="${escHtml(c.name)}" oninput="updateKeyValidation(this, this.value)" onchange="updateCreator(${idx}, 'name', this.value)" placeholder="Full Name" list="ns-prefix-list"
                             class="w-48 px-2 py-1 text-xs font-semibold border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         <input type="text" value="${escHtml(c.description)}" onchange="updateCreator(${idx}, 'description', this.value)" placeholder="Description / Role" 
@@ -3677,6 +3833,7 @@
                 "addPlace",
                 "addTransition",
                 "addArc",
+                "deleteArc",
                 "addTemplateRef",
                 "addInstanceRef",
             ].forEach((m) => {
@@ -3707,6 +3864,7 @@
                     );
                 }
             });
+            renderPetriNet();
         }
 
         function renderPetriNet() {
@@ -3731,6 +3889,9 @@
                     </marker>
                     <marker id="arrowhead-instance" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
                         <polygon points="0 0, 10 3, 0 6" fill="${instanceRefColor}" />
+                    </marker>
+                    <marker id="arrowhead-delete" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <polygon points="0 0, 10 3, 0 6" fill="#f87171" />
                     </marker>
                 </defs>
                 <g transform="translate(${state.canvasTranslate.x}, ${state.canvasTranslate.y}) scale(${state.canvasScale})">
@@ -3773,7 +3934,20 @@
                             y2 = target.y - (dy * (targetRadius + 8)) / dist;
                         }
 
-                        return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${strokeColor}" stroke-width="2" marker-end="url(#arrowhead)" />`;
+                        const isDeleteMode = state.mode === "deleteArc";
+                        const arcColor = isDeleteMode ? "#f87171" : strokeColor;
+                        const markerId = isDeleteMode ? "url(#arrowhead-delete)" : "url(#arrowhead)";
+
+                        return `<g class="arc-group${isDeleteMode ? " arc-deletable" : ""}" data-arc-id="${arc.id}"
+                            style="cursor:${isDeleteMode ? "pointer" : "default"}"
+                            ${isDeleteMode ? `onclick="confirmDeleteArc('${arc.id}')"
+                            onmouseenter="this.querySelector('.arc-hit').setAttribute('stroke','#ef4444'); this.querySelector('.arc-vis').setAttribute('stroke','#ef4444');"
+                            onmouseleave="this.querySelector('.arc-hit').setAttribute('stroke','transparent'); this.querySelector('.arc-vis').setAttribute('stroke','${arcColor}');"` : ""}>
+                          <line class="arc-hit" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
+                            stroke="transparent" stroke-width="14" />
+                          <line class="arc-vis" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
+                            stroke="${arcColor}" stroke-width="2" marker-end="${markerId}" />
+                        </g>`;
                     })
                     .join("")}
 
@@ -3837,7 +4011,7 @@ ${state.petriNet.places
                                     : "2";
                         const strokeDasharray = isProxy ? "4 2" : "none";
                         const fill = isProxy ? (isDark ? "#3b0764" : "#f3e8ff") : fillColor;
-                        const cursor = state.mode === "addArc" ? "crosshair" : "move";
+                        const cursor = state.mode === "addArc" ? "crosshair" : state.mode === "deleteArc" ? "not-allowed" : "move";
 
                         return `
     <g onmousedown="startDrag(event, '${p.id}', 'place')" onclick="handleNodeClick('${p.id}', 'place', event)" style="cursor:${cursor}" class="transition-all duration-200">
@@ -3872,7 +4046,7 @@ ${state.petriNet.transitions
                                 : state.selectedNode?.id === t.id
                                     ? "3"
                                     : "2";
-                        const cursor = state.mode === "addArc" ? "crosshair" : "move";
+                        const cursor = state.mode === "addArc" ? "crosshair" : state.mode === "deleteArc" ? "not-allowed" : "move";
 
                         return `
     <g onmousedown="startDrag(event, '${t.id}', 'transition')" onclick="handleNodeClick('${t.id}', 'transition', event)" style="cursor:${cursor}" class="transition-all duration-200">
@@ -4559,6 +4733,30 @@ ${state.petriNet.transitions
         }
 
         // ============================================================
+        // ARC DELETION
+        // ============================================================
+        function confirmDeleteArc(arcId) {
+            if (state.mode !== "deleteArc") return;
+            const arc = state.petriNet.arcs.find(a => a.id === arcId);
+            if (!arc) return;
+
+            // Find source/target labels for the confirmation message
+            const allNodes = [...state.petriNet.places, ...state.petriNet.transitions];
+            const srcLabel = allNodes.find(n => n.id === arc.source)?.label || arc.source;
+            const tgtLabel = allNodes.find(n => n.id === arc.target)?.label || arc.target;
+
+            showConfirmModal(
+                "Delete Arc",
+                `Remove arc: "${srcLabel} → ${tgtLabel}"?`,
+                () => {
+                    state.petriNet.arcs = state.petriNet.arcs.filter(a => a.id !== arcId);
+                    renderPetriNet();
+                    showToast("Arc deleted", "info");
+                }
+            );
+        }
+
+        // ============================================================
         // TEMPLATES
         // ============================================================
         function renderTemplates() {
@@ -4941,6 +5139,7 @@ ${state.petriNet.transitions
                         : '<div class="w-6"></div>'
                     }
 
+                                      <span class="required-mark shrink-0" title="Required">*</span>
                                       <input type="text" value="${escHtml(item.key || '')}"
                                         id="prop-key-${templateIdx}-${pathStr}"
                                         oninput="updateKeyValidation(this, this.value)"
@@ -5335,6 +5534,7 @@ ${state.petriNet.transitions
                                     <div class="flex gap-1 items-center">
                                         <div class="w-6"></div>
 
+                                        <span class="required-mark shrink-0" title="Required">*</span>
                                         <input type="text" value="${escHtml(item.key || '')}"
                                         oninput="updateKeyValidation(this, this.value)"
                                         onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'key', this.value)"
@@ -6354,6 +6554,7 @@ ${state.petriNet.transitions
                             </button>`
                             : '<div class="w-6"></div>'
                         }
+                    <span class="required-mark shrink-0" title="Required">*</span>
                     <input type="text" value="${escHtml(item.key || '')}"
                         oninput="updateKeyValidation(this, this.value)"
                         onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'key', this.value)"
@@ -6513,6 +6714,7 @@ ${state.petriNet.transitions
             <div class="bg-purple-50/30 dark:bg-purple-900/10 border border-purple-200 dark:border-purple-800 rounded-lg p-1 group/card hover:border-purple-300 transition-all">
                 <div class="flex gap-1 items-center">
                     <div class="w-6"></div>
+                    <span class="required-mark shrink-0" title="Required">*</span>
                     <input type="text" value="${escHtml(item.key || '')}"
                         oninput="updateKeyValidation(this, this.value)"
                         onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'key', this.value)"
@@ -7380,6 +7582,7 @@ ${state.petriNet.transitions
                         instanceHTML += `
                                     <div class="bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg p-1 group/card hover:border-indigo-200 dark:hover:border-indigo-800 transition-all">
                                         <div class="flex gap-1 items-center">
+                                            <span class="required-mark shrink-0" title="Required">*</span>
                                             <input type="text" value="${escHtml(item.key || '')}"
                                             oninput="updateKeyValidation(this, this.value)"
                                             onchange="updateInstanceDynamicField(${instIdx}, 'content', ${itemIdx}, 'key', this.value)"
@@ -8113,8 +8316,6 @@ ${state.petriNet.transitions
                     });
                 }
 
-                if (document.getElementById("doc-id"))
-                    state.document.id = document.getElementById("doc-id").value;
                 if (document.getElementById("doc-uuid"))
                     state.document.uuid = document.getElementById("doc-uuid").value;
                 if (document.getElementById("doc-name"))
@@ -8142,8 +8343,8 @@ ${state.petriNet.transitions
                 xml += `<maiml xmlns="http://www.maiml.org/schemas" xmlns:concept="http://www.xes-standard.org/concept.xesext#" xmlns:lifecycle="http://www.xes-standard.org/lifecycle.xesext#" xmlns:time="http://www.xes-standard.org/time.xesext#" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"${userNamespaces ? " " + userNamespaces : ""} features="nested-attributes" version="1.0" xsi:type="maimlRootType">\n`;
 
                 // 1. <document>
-                xml += `  <document id="${state.document.id || "document"}">\n`;
-                xml += `    <uuid>${state.document.uuid || crypto.randomUUID()}</uuid>\n`;
+                xml += `  <document id="document">\n`;
+                xml += `    <uuid>${crypto.randomUUID()}</uuid>\n`;
                 xml += `    <name>${escXml(state.document.name || '')}</name>\n`;
                 xml += `    <description>${escXml(state.document.description || '')}</description>\n`;
 
@@ -8354,7 +8555,7 @@ ${state.petriNet.transitions
                 xml += `  </protocol>\n`;
 
                 // 3. <data>
-                xml += `  <data id="data1">\n`;
+                xml += `  <data id="data">\n`;
                 xml += `    <uuid>${crypto.randomUUID()}</uuid>\n`;
 
                 for (const method of state._methods) {
@@ -8466,7 +8667,7 @@ ${state.petriNet.transitions
                 xml += `  </data>\n`;
 
                 // 4. <eventLog>
-                xml += `  <eventLog id="log1">\n`;
+                xml += `  <eventLog id="eventLog">\n`;
                 xml += `    <uuid>${crypto.randomUUID()}</uuid>\n`;
 
                 for (const method of state._methods) {
@@ -8519,7 +8720,7 @@ ${state.petriNet.transitions
                 xml += `</maiml>`;
 
                 // デフォルトのファイル名を設定
-                const defaultFilename = state.document.id || "MaiMLStudio_Export";
+                const defaultFilename = state.document.name || "MaiMLStudio_Export";
 
                 // 署名モードのときはxmlをキャプチャしてファイル保存処理は呼ばない
                 if (window._xmlSignMode) {
@@ -8566,8 +8767,7 @@ ${state.petriNet.transitions
                 const el = document.getElementById(id);
                 return el ? el.value : null;
             };
-            const id          = getVal("doc-id");          if (id          !== null) state.document.id          = id;
-            const uuid        = getVal("doc-uuid");        if (uuid        !== null) state.document.uuid        = uuid;
+            // const uuid        = getVal("doc-uuid");        if (uuid        !== null) state.document.uuid        = uuid;
             const name        = getVal("doc-name");        if (name        !== null) state.document.name        = name;
             const description = getVal("doc-description"); if (description !== null) state.document.description = description;
         }
@@ -8666,7 +8866,7 @@ ${state.petriNet.transitions
                 const signedXml = unsignedXml.replace(docTagMatch[0], docTagMatch[0] + sigElement);
 
                 // デフォルトのファイル名を設定
-                const defaultFilename = (state.document.id || "MaiMLStudio_Export").replace(/[^a-zA-Z0-9_\-]/g, '_') + "_signed";
+                const defaultFilename = (state.document.name || "MaiMLStudio_Export").replace(/[^a-zA-Z0-9_\-]/g, '_') + "_signed";
 
                 // File System Access API を使用（Chrome, Edge等）
                 if ("showSaveFilePicker" in window) {
@@ -8701,7 +8901,7 @@ ${state.petriNet.transitions
             const data = JSON.stringify(state, null, 2);
 
             // デフォルトのファイル名を設定
-            const defaultFilename = state.document.id || "MaiMLStudio_Project";
+            const defaultFilename = state.document.name || "MaiMLStudio_Project";
 
             try {
                 // File System Access API を使用（Chrome, Edge等）
@@ -8811,7 +9011,6 @@ ${state.petriNet.transitions
                 });
 
                 // Update UI inputs
-                document.getElementById("doc-id").value = state.document.id || "";
                 // document.getElementById("doc-uuid").value = state.document.uuid || "";
                 if (!state.document.uuid) {
                     state.document.uuid = crypto.randomUUID();
@@ -9360,6 +9559,509 @@ ${state.petriNet.transitions
         // ============================================================
         // IMPORT EXTERNAL PLACE
         // ============================================================
+        // ============================================================
+        // DAGRE AUTO LAYOUT
+        // ============================================================
+        function applyDagreLayout() {
+            const places = state.petriNet.places;
+            const transitions = state.petriNet.transitions;
+            const arcs = state.petriNet.arcs;
+
+            if (places.length === 0 && transitions.length === 0) {
+                showToast("No nodes to layout.", "info");
+                return;
+            }
+
+            if (typeof dagre === "undefined") {
+                showToast("Dagre library not loaded. Check network connection.", "error");
+                return;
+            }
+
+            // --- Build dagre graph ---
+            const g = new dagre.graphlib.Graph();
+            g.setGraph({
+                rankdir: "LR",      // Left → Right
+                nodesep: 60,        // vertical gap between nodes
+                ranksep: 100,       // horizontal gap between ranks
+                marginx: 80,
+                marginy: 80,
+            });
+            g.setDefaultEdgeLabel(() => ({}));
+
+            // Add nodes (places: circle r=20 → 40x40, transitions: rect 30x50)
+            places.forEach(p => {
+                g.setNode(p.id, { width: 48, height: 48 });
+            });
+            transitions.forEach(t => {
+                g.setNode(t.id, { width: 40, height: 56 });
+            });
+
+            // Add edges from arcs
+            arcs.forEach(a => {
+                const srcExists = g.hasNode(a.source);
+                const tgtExists = g.hasNode(a.target);
+                if (srcExists && tgtExists) {
+                    g.setEdge(a.source, a.target);
+                }
+            });
+
+            // Run layout
+            dagre.layout(g);
+
+            // Apply computed positions back to state
+            places.forEach(p => {
+                const n = g.node(p.id);
+                if (n) { p.x = Math.round(n.x); p.y = Math.round(n.y); }
+            });
+            transitions.forEach(t => {
+                const n = g.node(t.id);
+                if (n) { t.x = Math.round(n.x); t.y = Math.round(n.y); }
+            });
+
+            // Reset canvas transform to fit everything
+            const allNodes = [...places, ...transitions];
+            if (allNodes.length > 0) {
+                const xs = allNodes.map(n => n.x);
+                const ys = allNodes.map(n => n.y);
+                const minX = Math.min(...xs) - 80;
+                const minY = Math.min(...ys) - 80;
+                state.canvasTranslate = { x: -minX, y: -minY };
+                state.canvasScale = 1;
+            }
+
+            renderPetriNet();
+            showToast("Auto layout applied.", "success");
+        }
+
+        // ============================================================
+        // AI PETRI NET GENERATOR (Gemini API)
+        // ============================================================
+
+        let _aiParsedResult = null; // Holds parsed JSON from Gemini
+        let _aiTimerInterval = null;
+
+        function toggleAiFormatHint() {
+            const hint = document.getElementById('ai-format-hint');
+            const label = document.getElementById('ai-format-hint-label');
+            const hidden = hint.classList.toggle('hidden');
+            label.textContent = hidden
+                ? 'Show recommended format'
+                : 'Hide recommended format';
+        }
+
+        function insertAiFormatTemplate() {
+            const template =
+`[STEP] Step name 1 (action verb)
+[IN:material] Raw substance or reagent name
+[IN:condition] Condition name | param:value unit, param:value unit
+[OUT:condition] Intermediate state name | param:value unit
+
+[STEP] Step name 2
+[IN:condition] Intermediate state name
+[IN:condition] Another condition | param:value unit
+[OUT:result] Final product or measurement name | param:value unit`;
+            document.getElementById('ai-procedure-input').value = template;
+            document.getElementById('ai-procedure-input').focus();
+        }
+
+        function openAiGenerateModal() {
+            _aiParsedResult = null;
+            document.getElementById('ai-result-area').classList.add('hidden');
+            document.getElementById('ai-apply-btn').disabled = true;
+            document.getElementById('ai-error-msg').textContent = '';
+            document.getElementById('ai-procedure-input').value = '';
+            // Restore saved API key
+            const saved = localStorage.getItem('gemini_api_key');
+            if (saved) document.getElementById('ai-apikey-input').value = saved;
+            const savedProvider = localStorage.getItem('ai_provider') || 'cloud';
+            document.getElementById(savedProvider === 'local' ? 'ai-provider-local' : 'ai-provider-cloud').checked = true;
+            toggleAiProvider();
+            if (savedProvider === 'local') fetchOllamaModels();
+            document.getElementById('ai-generate-modal').classList.remove('hidden');
+        }
+
+        function closeAiGenerateModal() {
+            document.getElementById('ai-generate-modal').classList.add('hidden');
+        }
+
+        function toggleAiProvider() {
+            const isLocal = document.getElementById('ai-provider-local').checked;
+            document.getElementById('ai-cloud-apikey').classList.toggle('hidden', isLocal);
+            document.getElementById('ai-cloud-model').classList.toggle('hidden', isLocal);
+            document.getElementById('ai-local-section').classList.toggle('hidden', !isLocal);
+            localStorage.setItem('ai_provider', isLocal ? 'local' : 'cloud');
+        }
+
+        async function fetchOllamaModels() {
+            const sel = document.getElementById('ai-ollama-model-select');
+            const errEl = document.getElementById('ai-error-msg');
+            sel.innerHTML = '<option value="">Fetching...</option>';
+            try {
+                const resp = await fetch('http://localhost:11434/api/tags');
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const data = await resp.json();
+                const models = data.models || [];
+                if (models.length === 0) {
+                    sel.innerHTML = '<option value="">No models found</option>';
+                    return;
+                }
+                const saved = localStorage.getItem('ollama_model') || '';
+                sel.innerHTML = models.map(m =>
+                    `<option value="${m.name}" ${m.name === saved ? 'selected' : ''}>${m.name}</option>`
+                ).join('');
+                errEl.textContent = '';
+            } catch (e) {
+                sel.innerHTML = '<option value="">Connection failed</option>';
+                errEl.textContent = 'Cannot connect to Ollama. Make sure Ollama is running on localhost:11434.';
+            }
+        }
+
+        async function runAiGenerate() {
+            const apiKey = document.getElementById('ai-apikey-input').value.trim();
+            const procedure = document.getElementById('ai-procedure-input').value.trim();
+            const genTemplates = document.getElementById('ai-gen-templates').checked;
+            const model = document.getElementById('ai-model-select').value;
+            const errEl = document.getElementById('ai-error-msg');
+            const btn = document.getElementById('ai-generate-btn');
+
+            errEl.textContent = '';
+            _aiParsedResult = null;
+            document.getElementById('ai-apply-btn').disabled = true;
+            document.getElementById('ai-result-area').classList.add('hidden');
+
+            const isLocal = document.getElementById('ai-provider-local').checked;
+            if (!isLocal && !apiKey) { errEl.textContent = 'Please enter your Gemini API key.'; return; }
+            if (isLocal) {
+                const ollamaModel = document.getElementById('ai-ollama-model-select').value;
+                if (!ollamaModel || ollamaModel === '') { errEl.textContent = 'Please fetch and select an Ollama model.'; return; }
+                localStorage.setItem('ollama_model', ollamaModel);
+            }
+            if (!procedure) { errEl.textContent = 'Please enter the experimental procedure.'; return; }
+
+            if (!isLocal) localStorage.setItem('gemini_api_key', apiKey);
+
+
+            btn.disabled = true;
+            let _aiElapsed = 0;
+            const fmtTime = s => `${String(Math.floor(s/3600)).padStart(2,'0')}:${String(Math.floor(s%3600/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+            _aiTimerInterval = setInterval(() => {
+                _aiElapsed++;
+                btn.innerHTML = `<i class="ph ph-spinner animate-spin"></i> Generating... [${fmtTime(_aiElapsed)}]`;
+            }, 1000);
+
+            const templateInstruction = genTemplates ? `"templates": [
+    {
+      "place": "label (must match a Place label exactly)",
+      "type": "material|condition|result (must match the Place type)",
+      "properties": [
+        {"key": "camelCaseNCName", "type": "floatType|intType|stringType|decimalType|dateTimeType", "units": "unit string or empty string", "description": "...", "value": "pre-fill if stated in procedure, else empty string"}
+      ]
+    }
+  ]
+  Rules for templates:
+  - Generate exactly ONE template per Place — no omissions.
+  - Extract numeric parameters directly from the procedure text as properties.
+  - Do NOT invent values not present in the procedure.
+  - Type selection rules (STRICTLY follow — do NOT default to stringType):
+      * Numeric value with decimal (e.g. 1.0, 38.8, 100.0) → floatType
+      * Numeric value integer only (e.g. 5, 50) → intType
+      * Text/label/name/state → stringType
+      * Date or time → dateTimeType
+  - Units rules (MANDATORY):
+      * If the property has a physical unit (°C, mM, mL, min, nm, rpm, %, etc.) → set "units" to that unit string.
+      * If the property is dimensionless or text → set "units" to "".
+      * NEVER omit the "units" field. NEVER set units to "" for numeric properties that have a unit in the procedure.`
+: `"templates": []`;
+
+            const contentsPrompt = `You are a specialist in MaiML (JIS K0200), a scientific data format using Petri nets.
+Convert the experimental procedure below into a Petri net JSON.
+
+The input may be free-form text OR structured using the recommended format:
+  [STEP] transition name
+  [IN:material]  input material (pure substance, reagent, equipment)
+  [IN:condition] input condition | param:value unit, param:value unit
+  [IN:result]    input from a previous step's output
+  [OUT:condition] output state | param:value unit
+  [OUT:result]   output product or measurement
+
+If the input is free-form text, infer the structure using these type definitions:
+  material  — pure substance, raw reagent, physical object (no quantities)
+  condition — quantified/prepared state or process parameter (with numeric values and units)
+  result    — output product, observation, or measurement produced by a step
+
+Petri net rules:
+1. One Transition per STEP (or per inferred process step).
+2. Named inputs/outputs become Places. Same name across STEPs = shared Place connected by arcs.
+3. Every arc must connect Place→Transition or Transition→Place only.
+4. Labels must be valid XML NCNames (letters/digits/underscore/hyphen/period, no spaces).
+5. Generate one template per Place with all numeric parameters as typed properties.
+
+--- PROCEDURE ---
+${procedure}
+
+Output ONLY valid JSON, no markdown fences, no explanation:
+{
+  "places": [{"label": "NCName", "description": "...", "type": "material|condition|result"}],
+  "transitions": [{"label": "NCName", "description": "..."}],
+  "arcs": [{"source": "label", "target": "label"}],
+  ${templateInstruction}
+}`;
+
+            try {
+                let raw = '';
+                if (isLocal) {
+                    const ollamaModel = document.getElementById('ai-ollama-model-select').value;
+                    const resp = await fetch('http://localhost:11434/v1/chat/completions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            model: ollamaModel,
+                            messages: [{ role: 'user', content: contentsPrompt }],
+                            temperature: 0.2,
+                            max_tokens: -1,
+                            stream: false,
+                            response_format: { type: "json_object" }
+                        })
+                    });
+                    if (!resp.ok) {
+                        const errBody = await resp.json().catch(() => ({}));
+                        throw new Error(errBody?.error?.message || `HTTP ${resp.status}`);
+                    }
+                    const data = await resp.json();
+                    raw = data?.choices?.[0]?.message?.content || '';
+                } else {
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+                    const resp = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: contentsPrompt }] }],
+                            generationConfig: { temperature: 0.2, maxOutputTokens: 32768 }
+                        })
+                    });
+                    if (!resp.ok) {
+                        const errBody = await resp.json().catch(() => ({}));
+                        throw new Error(errBody?.error?.message || `HTTP ${resp.status}`);
+                    }
+                    const data = await resp.json();
+                    raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                }
+
+                // Qwen3のThinkingブロックを除去
+                raw = raw.replace(/<think>[\s\S]*?<\/think>/i, '').trim();
+                // Markdownフェンスを除去
+                raw = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+
+                const parsed = JSON.parse(raw);
+                if (!parsed.places || !parsed.transitions || !parsed.arcs) {
+                    throw new Error('Invalid response structure from AI.');
+                }
+                if (!parsed.templates) parsed.templates = [];
+
+                // --- Auto-fix: Place→Place arcs → insert intermediate Transition ---
+                const placeLabels = new Set(parsed.places.map(p => p.label));
+                const transLabels = new Set(parsed.transitions.map(t => t.label));
+
+                const fixedArcs = [];
+                let autoFixCount = 0;
+                parsed.arcs.forEach(a => {
+                    if (placeLabels.has(a.source) && placeLabels.has(a.target)) {
+                        // Insert synthetic transition between the two places
+                        const synLabel = `Process_${a.source}_to_${a.target}`.replace(/[^A-Za-z0-9_\-\.]/g, '_');
+                        parsed.transitions.push({ label: synLabel, description: `Auto-inserted: transition between ${a.source} and ${a.target}` });
+                        transLabels.add(synLabel);
+                        fixedArcs.push({ source: a.source, target: synLabel });
+                        fixedArcs.push({ source: synLabel, target: a.target });
+                        autoFixCount++;
+                    } else if (transLabels.has(a.source) && transLabels.has(a.target)) {
+                        // Insert synthetic place between two transitions
+                        const synLabel = `State_${a.source}_to_${a.target}`.replace(/[^A-Za-z0-9_\-\.]/g, '_');
+                        parsed.places.push({ label: synLabel, description: `Auto-inserted: state between ${a.source} and ${a.target}`, type: 'condition' });
+                        placeLabels.add(synLabel);
+                        fixedArcs.push({ source: a.source, target: synLabel });
+                        fixedArcs.push({ source: synLabel, target: a.target });
+                        autoFixCount++;
+                    } else {
+                        fixedArcs.push(a);
+                    }
+                });
+                if (autoFixCount > 0) {
+                    parsed.arcs = fixedArcs;
+                }
+
+                // --- Detect self-loops (warn only — user fixes manually) ---
+                const selfLoops = [];
+                transLabels.forEach(trans => {
+                    const inputs  = parsed.arcs.filter(a => a.target === trans).map(a => a.source);
+                    const outputs = parsed.arcs.filter(a => a.source === trans).map(a => a.target);
+                    inputs.forEach(inp => { if (outputs.includes(inp)) selfLoops.push(`${inp} ↔ [${trans}]`); });
+                });
+
+                const warnings = [];
+                if (autoFixCount > 0) {
+                    warnings.push(`${autoFixCount} Place→Place / Transition→Transition arc(s) were auto-fixed by inserting intermediate nodes. Review labels in the canvas.`);
+                }
+                if (selfLoops.length > 0) {
+                    warnings.push(`${selfLoops.length} self-loop(s) detected: ${selfLoops.join(', ')}. Use Delete Arc to fix.`);
+                }
+                if (warnings.length > 0) {
+                    errEl.textContent = `⚠️ ${warnings.join(' / ')}`;
+                }
+
+                _aiParsedResult = parsed;
+
+                // Build preview text
+                const lines = [
+                    `✅ Places (${parsed.places.length}): ${parsed.places.map(p => p.label).join(', ')}`,
+                    `⬜ Transitions (${parsed.transitions.length}): ${parsed.transitions.map(t => t.label).join(', ')}`,
+                    `→  Arcs (${parsed.arcs.length}): ${parsed.arcs.map(a => `${a.source}→${a.target}`).join(', ')}`,
+                ];
+                if (parsed.templates.length > 0) {
+                    lines.push(`📋 Templates (${parsed.templates.length}):`);
+                    parsed.templates.forEach(t => {
+                        lines.push(`  [${t.type}] ${t.place}: ${(t.properties || []).map(p => p.key + (p.value ? `="${p.value}"` : '')).join(', ')}`);
+                    });
+                }
+                document.getElementById('ai-result-preview').textContent = lines.join('\n');
+                document.getElementById('ai-result-note').textContent =
+                    'Review the result above. If the structure looks incorrect, try the recommended [STEP]/[IN:type]/[OUT:type] format for better accuracy.';
+                document.getElementById('ai-result-area').classList.remove('hidden');
+                document.getElementById('ai-apply-btn').disabled = false;
+
+            } catch (e) {
+                errEl.textContent = `Error: ${e.message}`;
+                console.error(e);
+            } finally {
+                clearInterval(_aiTimerInterval);
+                _aiTimerInterval = null;
+                btn.disabled = false;
+                btn.innerHTML = '<i class="ph ph-sparkle"></i> Generate';
+                // 経過時間を結果エリアに残す
+                const elapsed = document.getElementById('ai-elapsed-time');
+                if (elapsed) elapsed.textContent = `処理時間: ${fmtTime(_aiElapsed)}`;
+            }
+        }
+
+        function applyAiResult() {
+            if (!_aiParsedResult) return;
+            const parsed = _aiParsedResult;
+
+            // ----- Calculate max existing IDs -----
+            let maxPlaceId = 0, maxTransId = 0;
+            state._methods.forEach(m => {
+                m.petriNet.places.forEach(p => {
+                    const n = parseInt((p.id.match(/^place_(\d+)$/) || [])[1]);
+                    if (n > maxPlaceId) maxPlaceId = n;
+                });
+                m.petriNet.transitions.forEach(t => {
+                    const n = parseInt((t.id.match(/^trans_(\d+)$/) || [])[1]);
+                    if (n > maxTransId) maxTransId = n;
+                });
+            });
+
+            const labelToId = {};
+
+            // ----- Add Places (temporary position 0,0 — Dagre will fix it) -----
+            parsed.places.forEach(p => {
+                maxPlaceId++;
+                const id = `place_${maxPlaceId}`;
+                labelToId[p.label] = id;
+                state.petriNet.places.push({ id, label: p.label, x: 0, y: 0, type: 'node' });
+            });
+
+            // ----- Add Transitions -----
+            parsed.transitions.forEach(t => {
+                maxTransId++;
+                const id = `trans_${maxTransId}`;
+                labelToId[t.label] = id;
+                state.petriNet.transitions.push({ id, label: t.label, x: 0, y: 0 });
+
+                // Create Events for all Results groups
+                if (!state.events) state.events = [];
+                const groups = state.resultGroups || [{ id: 'rg_default' }];
+                groups.forEach(grp => {
+                    state.events.push({
+                        id: `event_${id}_${grp.id}_${Date.now()}`,
+                        uuid: '',
+                        transitionId: id,
+                        transitionLabel: t.label,
+                        lifecycle: 'complete',
+                        timestamp: '',
+                        resultsGroupId: grp.id,
+                        creatorRef: '',
+                        ownerRef: '',
+                    });
+                });
+            });
+
+            // ----- Add Arcs -----
+            parsed.arcs.forEach(a => {
+                const srcId = labelToId[a.source];
+                const tgtId = labelToId[a.target];
+                if (!srcId || !tgtId) return;
+                state.petriNet.arcs.push({
+                    id: `arc_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+                    source: srcId,
+                    target: tgtId,
+                });
+            });
+
+            // ----- Add Templates (with fallback for missing/untyped entries) -----
+
+            // Pre-compute arc connectivity for fallback type inference
+            // (mirrors the fallback rule in the prompt)
+            const arcSources = new Set(parsed.arcs.map(a => a.source));
+            const arcTargets = new Set(parsed.arcs.map(a => a.target));
+            const inferType = (placeLabel) => {
+                const receivesFromTrans = arcTargets.has(placeLabel);  // output of a transition
+                const sendsToTrans     = arcSources.has(placeLabel);  // input to a transition
+                if (receivesFromTrans && !sendsToTrans) return 'result';
+                if (!receivesFromTrans && sendsToTrans) return 'material';
+                return 'condition'; // intermediate / both directions
+            };
+
+            // Build map of AI-provided templates keyed by place label
+            const aiTemplateMap = {};
+            (parsed.templates || []).forEach(tmpl => {
+                if (tmpl.place) aiTemplateMap[tmpl.place] = tmpl;
+            });
+
+            parsed.places.forEach(p => {
+                const placeId = labelToId[p.label];
+                if (!placeId) return;
+
+                const aiTmpl = aiTemplateMap[p.label];
+                // Resolve type: AI-provided → place-level type → arc-based inference
+                const resolvedType = (aiTmpl?.type && ['material','condition','result'].includes(aiTmpl.type))
+                    ? aiTmpl.type
+                    : (p.type && ['material','condition','result'].includes(p.type))
+                        ? p.type
+                        : inferType(p.label);
+
+                const props = (aiTmpl?.properties || []).map(pr => ({
+                    key: pr.key || '',
+                    type: pr.type || 'stringType',
+                    units: pr.units || '',
+                    description: pr.description || '',
+                    value: pr.value || '',
+                }));
+
+                state.templates.push({
+                    id: `template_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+                    uuid: '',
+                    placeId,
+                    type: resolvedType,
+                    properties: props,
+                    contents: [],
+                });
+            });
+
+            // ----- Apply Dagre layout then render -----
+            applyDagreLayout();
+            closeAiGenerateModal();
+            showToast(`AI generated: ${parsed.places.length} places, ${parsed.transitions.length} transitions, ${parsed.arcs.length} arcs${parsed.templates.length > 0 ? `, ${parsed.templates.length} templates` : ''}.`, 'success', 4000);
+        }
+
         function openImportPlaceModal() {
             const modal = document.getElementById("import-place-modal");
             const methodSelect = document.getElementById("import-method-select");
@@ -9460,6 +10162,162 @@ ${state.petriNet.transitions
             showToast("External Place imported.");
         }
     </script>
+    <!-- AI Generate Modal -->
+    <div id="ai-generate-modal"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-[580px] max-w-[94vw] overflow-hidden border border-slate-200 dark:border-slate-700 flex flex-col max-h-[90vh]">
+            <!-- Header -->
+            <div class="px-6 py-4 bg-gradient-to-r from-amber-500 to-orange-500 flex items-center gap-3 shrink-0">
+                <div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="ph ph-sparkle text-white text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white text-lg">AI Petri Net Generator</h3>
+                    <p class="text-white/80 text-xs">Generate Places, Transitions, Arcs and Templates from procedure text</p>
+                </div>
+                <button onclick="closeAiGenerateModal()" class="ml-auto text-white/70 hover:text-white transition-colors">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            <!-- Body -->
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+            <!-- LLM Provider -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">LLM Provider</label>
+                    <div class="flex gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="ai-provider" id="ai-provider-cloud" value="cloud" checked onchange="toggleAiProvider()" class="text-amber-500 focus:ring-amber-400">
+                            <span class="text-sm text-slate-700 dark:text-slate-300">☁️ Cloud (Gemini)</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="ai-provider" id="ai-provider-local" value="local" onchange="toggleAiProvider()" class="text-amber-500 focus:ring-amber-400">
+                            <span class="text-sm text-slate-700 dark:text-slate-300">🖥️ Local (Ollama)</span>
+                        </label>
+                    </div>
+                </div>
+                <!-- API Key -->
+                <div id="ai-cloud-apikey">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                        Gemini API Key
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank"
+                            class="ml-2 normal-case font-normal text-indigo-500 hover:underline">Get API key →</a>
+                    </label>
+                    <div class="relative">
+                        <input type="password" id="ai-apikey-input" autocomplete="off"
+                            placeholder="AIza..."
+                            class="w-full pl-4 pr-10 py-2.5 text-sm font-mono border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all">
+                        <button type="button"
+                            onclick="const i=document.getElementById('ai-apikey-input'); i.type=i.type==='password'?'text':'password';"
+                            class="absolute right-2 top-2.5 text-slate-400 hover:text-slate-600">
+                            <i class="ph ph-eye text-lg"></i>
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-1">Saved locally in your browser. Not sent anywhere except Google Gemini API.</p>
+                </div>
+                <!-- Procedure Text -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                        Experimental Procedure <span class="required-mark" title="Required">*</span>
+                    </label>
+                    <textarea id="ai-procedure-input" rows="10"
+                        placeholder="Free-form text is accepted. For best results, use the recommended structured format shown below."
+                        class="w-full px-4 py-3 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all resize-none"></textarea>
+                    <!-- Recommended format hint -->
+                    <div class="mt-1.5">
+                        <button type="button" onclick="toggleAiFormatHint()"
+                            class="text-xs text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1">
+                            <i class="ph ph-info"></i>
+                            <span id="ai-format-hint-label">Show recommended format</span>
+                        </button>
+                        <div id="ai-format-hint" class="hidden mt-2">
+                            <div class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-xs font-mono text-slate-600 dark:text-slate-300 max-h-48 overflow-y-auto whitespace-pre leading-relaxed" id="ai-format-example">[STEP] Step name (action verb)
+[IN:material]  Raw substance, reagent, or equipment (no quantities)
+[IN:condition] Condition name | param:value unit, param:value unit
+[IN:result]    Output from a previous STEP
+[OUT:condition] Intermediate state | param:value unit
+[OUT:result]   Final product, observation, or measurement
+
+[STEP] Next step name
+[IN:material] ...
+[IN:condition] ...
+[OUT:result] ...
+
+---
+material  : Pure substance / reagent / equipment (no quantities)
+condition : Quantified state or process parameter (with numeric values and units)
+result    : Output product, observation, or measurement of a step
+Same label across STEPs → automatically shared as one Place (connected by arcs)</div>
+                            <button type="button" onclick="insertAiFormatTemplate()"
+                                class="mt-2 px-3 py-1.5 text-xs font-semibold text-white bg-amber-500 hover:bg-amber-600 rounded-lg transition-all flex items-center gap-1.5">
+                                <i class="ph ph-clipboard-text"></i> Insert template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Options -->
+                <div class="flex gap-4 text-sm">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="ai-gen-templates" checked
+                            class="rounded border-slate-300 text-amber-500 focus:ring-amber-400">
+                        <span class="text-slate-600 dark:text-slate-300">Generate Templates (properties/metadata)</span>
+                    </label>
+                </div>
+                <!-- Model select -->
+                <div id="ai-cloud-model">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Gemini Model</label>
+                    <select id="ai-model-select"
+                        class="w-full px-3 py-2 text-sm font-mono border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all">
+                        <option value="gemini-3.5-flash">gemini-3.5-flash</option>
+                        <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                        <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite</option>
+                    </select>
+                </div>
+                <!-- Ollama Section -->
+                <div id="ai-local-section" class="hidden">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Ollama Model</label>
+                    <div class="flex gap-2">
+                        <select id="ai-ollama-model-select"
+                            class="flex-1 px-3 py-2 text-sm font-mono border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all">
+                            <option value="">-- Click "Fetch Models" --</option>
+                        </select>
+                        <button type="button" onclick="fetchOllamaModels()"
+                            class="px-3 py-2 text-sm font-semibold text-white bg-slate-600 hover:bg-slate-700 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap">
+                            <i class="ph ph-arrows-clockwise"></i> Fetch Models
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-1">Ollama must be running on localhost:11434</p>
+                </div>
+                <!-- Result Preview -->
+                <div id="ai-result-area" class="hidden">
+                    <div class="h-px bg-slate-200 dark:bg-slate-600 my-2"></div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Preview</label>
+                    <div id="ai-result-preview"
+                        class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4 text-xs font-mono text-slate-700 dark:text-slate-300 max-h-48 overflow-y-auto whitespace-pre-wrap"></div>
+                    <p id="ai-result-note" class="text-xs text-slate-500 mt-2"></p>
+                </div>
+                <!-- Error -->
+                <p id="ai-elapsed-time" class="text-xs text-slate-400 min-h-[1rem]"></p>
+                <p id="ai-error-msg" class="text-xs text-red-600 dark:text-red-400 min-h-[1rem]"></p>
+
+            </div>
+            <!-- Footer -->
+            <div class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3 shrink-0">
+                <button onclick="closeAiGenerateModal()"
+                    class="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-all">
+                    Cancel
+                </button>
+                <button id="ai-apply-btn" onclick="applyAiResult()" disabled
+                    class="px-5 py-2.5 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-xl shadow-sm transition-all flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <i class="ph ph-check"></i> Apply to Canvas
+                </button>
+                <button id="ai-generate-btn" onclick="runAiGenerate()"
+                    class="px-5 py-2.5 text-sm font-semibold text-white bg-amber-500 hover:bg-amber-600 rounded-xl shadow-sm transition-all flex items-center gap-2">
+                    <i class="ph ph-sparkle"></i> Generate
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Import Place Modal -->
     <div id="import-place-modal"
         class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center animate-fade-in">
