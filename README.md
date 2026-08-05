@@ -1,3 +1,7 @@
+<p align="right">
+  <a href="https://github.com/MaiML-Tools/MaiMLStudio/README-en.md"><img alt="English README" src="https://img.shields.io/badge/📖_README-English-2b6cb0?style=for-the-badge"></a>
+</p>
+
 # MaiML Studio
 
 **MaiML Studio** は、 [MaiML（Measurement Analysis Instrument Markup Language）](http://www.maiml.org/) に準拠したファイルをビジュアルにデザイン・エクスポートするWebアプリです。
