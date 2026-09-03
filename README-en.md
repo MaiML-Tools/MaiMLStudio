@@ -16,8 +16,9 @@ It runs simply by opening the HTML file in Chrome / Edge — no additional insta
 - **MaiML export** — generate and download an XML file conforming to the MaiML standard
 - **Dark/light mode** — automatically follows the OS setting as the initial value
 - **Excel import feature** — bulk-load definitions from an Excel file
+- **AI Petri net generation** — automatically generate Places / Transitions / Arcs / Templates from experimental procedure text (cloud Gemini API or local Ollama)
 - **XML encryption feature** — protect confidential data with AES-256-GCM
-- **XML digital signature feature** — output tamper-detectable MaiML files with ECDSA P-256
+- **XML digital signature feature** — output tamper-detectable MaiML files with RSA-SHA256 (W3C XML Signature compliant)
 - **File linking feature** — hash-based linking between multiple MaiML files (`<chain>` / `<parent>`)
 
 ---
@@ -76,11 +77,60 @@ Design the experiment/analysis process as a Petri net. All methods are arranged 
 - Each method is displayed as a **lane** with a dotted border, stacked vertically; adding/moving Places, Transitions, and Arcs is restricted to within a lane
 - **Only TemplateRef / InstanceRef** can cross lane boundaries to connect directly to a Place in another method
 - Drag the dotted line at the bottom of a lane to manually adjust its height (it also expands automatically as nodes are placed)
-- Clicking a method tab puts the corresponding lane into a selected state (blue border)
+- Clicking a method tab scrolls to the corresponding lane and puts it into a selected state (highlighted border)
+- Loading a project created with an older version (which used Proxy Places) automatically converts it to direct cross-lane references
 
 **Multiple Methods**
 
 Adding a method via `+ New Method` in the tab bar adds a new lane. The **🐦 Overview** tab at the right end of the tab bar shows a bird's-eye view of all methods (read-only).
+
+Method names must be unique within a project, so you cannot create a method with the same name as an existing one. New methods are given a default name with an auto-incremented number that does not collide with existing names.
+
+#### ✨ AI Petri Net Generation (AI Petri Net Generator)
+
+The **✨** button on the toolbar opens the "AI Petri Net Generator" modal. Enter your experimental procedure as text and it generates Places / Transitions / Arcs / Templates and adds them to the canvas.
+
+**① Choose an LLM provider**
+
+| Provider | Description |
+|------|------|
+| **☁️ Cloud (Gemini)** | Enter a Gemini API key obtained from Google AI Studio and pick a model. The API key is stored in the browser's localStorage and is sent nowhere except the Google Gemini API. Accurate and fast (a few seconds), but your data is sent to Google's servers |
+| **🖥️ Local (Ollama)** | Uses a local Ollama instance. Since no data leaves the machine, this suits confidential experimental data and works without a network connection. Processing time depends on your PC (especially the GPU); on a machine without a GPU it can take several to a dozen-plus minutes |
+
+**② Enter the procedure text**
+
+Free-form text works, but the following recommended structure improves accuracy.
+
+```
+[STEP] Step name (action verb phrase)
+[IN:material] Raw substance, reagent, or instrument name (no quantities)
+[IN:condition] Condition name | param:value unit, param:value unit
+[IN:result] Output of a previous STEP (reuse the name verbatim)
+[OUT:condition] Intermediate state name | param:value unit
+[OUT:result] Final product or measurement result name
+```
+
+Using the same label in multiple STEPs automatically treats it as a shared Place (connected by arcs).
+
+**③ Options and execution**
+
+- **Generate Templates** (ON by default) - also generates the properties (with types and units) of the template for each Place
+- **Generate** - runs the generation. An elapsed-time counter is shown while it works
+- **Preview** - review the list of generated Places / Transitions / Arcs / Templates
+- **Apply to Canvas** - adds the generated result to the canvas. Dagre Auto Layout is applied automatically afterwards
+
+**Setting up Ollama** (when using local mode)
+
+1. Download and run the installer from [https://ollama.com](https://ollama.com)
+2. Pull a model (e.g. `ollama pull gemma4:e4b`)
+3. Start Ollama; it is ready once its icon appears in the notification area
+4. In the AI Generate modal, choose **🖥️ Local (Ollama)** and click **Fetch Models** to list the available models
+
+If you see "Connection failed", quit Ollama, run the following in PowerShell, and restart it (CORS setting).
+
+```powershell
+[System.Environment]::SetEnvironmentVariable("OLLAMA_ORIGINS", "*", "User")
+```
 
 ---
 
@@ -98,14 +148,20 @@ Each template can have `property` (single value) and `content` (list value) adde
 
 Instead of manual entry, you can bulk-load definitions from an Excel file. The target Excel file must have a sheet name matching the Place. **You can express a nested structure in the Key column using the `>` symbol.**
 
-| Element | Key | Type | Units | Description | Value |
-|---------|-----|------|-------|-------------|-------|
-| property | Temperature | propertyListType | | Temperature setting | |
-| property | >Set_Temp | doubleType | °C | Set temperature | 180 |
-| property | >Control | propertyListType | | Control parameters | |
-| property | >>PID_P | doubleType | | P value | 1.2 |
+Ten columns are recognized: `Element` / `Key` / `Type` / `Units` / `Description` / `Value` / `Size` / `Axis` / `ScaleFactor` / `FormatString` (the last four are for `content` rows).
+
+| Element | Key | Type | Units | Description | Value | Size | Axis | ScaleFactor | FormatString |
+|---------|-----|------|-------|-------------|-------|------|------|-------------|--------------|
+| property | Temperature | propertyListType | | Temperature setting | | | | | |
+| property | >Set_Temp | doubleType | °C | Set temperature | 180 | | | | |
+| property | >Control | propertyListType | | Control parameters | | | | | |
+| property | >>PID_P | doubleType | | P value | 1.2 | | | | |
+| content | >>Time_Log | contentDoubleListType | s | Time log | 0 10 20 | 3 | t | 1 | 0.00 |
+| property | Operator | stringType | | Operator | Tanaka | | | | |
 
 **Nesting rules:** `>` = 1 level, `>>` = 2 levels. The parent element must always be `propertyListType`.
+
+**Ordering rule:** within each nesting level, list `property` rows first and `content` rows afterwards. The same order applies at the root level and inside every nested child group. Once you return to a parent level, you can start with `property` again.
 
 ---
 
@@ -142,14 +198,23 @@ The generated instances and events are displayed as a list. The following operat
 
 The tab bar at the top of the Data & Events tab lets you manage instances and events by dividing them into multiple groups.
 
+Each tab corresponds to one `<results>` element in MaiML. Events belong to the active tab and are recorded as `<resultsRef ref="tab name"/>` on export.
+
 | Operation | Method |
 |------|------|
-| Add a group | Click the **`+`** button at the right end of the tab bar |
+| Add a group | Click the **`+ Add Results`** button at the right end of the tab bar |
 | Rename a group | Click the pencil icon on the tab |
-| Delete a group | Click the `×` button on the tab (also deletes the instances/events within the group) |
+| Delete a group | Click the `×` button on the tab (also deletes the instances/events within the group). The last remaining tab cannot be deleted |
 | Switch groups | Click the tab |
 
 Each method has its own independent Results Groups. When you switch groups, the content displayed in the right panel switches to match the group.
+
+⚠️ **Tab name constraints:** the tab name is used as the ID attribute value of `<results id="...">` on export. Since IDs must be unique within the file, the following rules apply (the input dialog validates them in real time).
+
+- Allowed characters are letters, digits, `_`, `-`, and `.`
+- Must start with a letter or `_` (not a digit or symbol)
+- Cannot duplicate another tab's name
+- Reserved names (`document` / `protocol` / `data` / `eventLog`) cannot be used
 
 ---
 
@@ -161,13 +226,15 @@ Each method has its own independent Results Groups. When you switch groups, the 
 | **Load Project (JSON)** | Load a saved JSON file and restore the state |
 | **Import MaiML** | Load an exported `.maiml` / `.xml` file and restore it to an editable state (see the next section for details) |
 | **Export MaiML** | Generate and download a `.maiml` XML file conforming to the MaiML standard |
-| **Export MaiML(+Sign)** | Generate and download a `.maiml` file with an ECDSA P-256 XML digital signature |
+| **Export MaiML(+Sign)** | Generate and download a `.maiml` file with an RSA-SHA256 XML digital signature |
 
 ---
 
 ## 📥 MaiML Import Feature (Import MaiML)
 
-Loads an exported `.maiml` / `.xml` file and restores it to an editable state.
+Loads an exported `.maiml` / `.xml` file and restores it to an editable state. In addition to files exported by Studio, MaiML files produced by other tools (single-method ones) can also be loaded.
+
+Because MaiML files carry no Petri net coordinates, the placement of Places and Transitions is reconstructed by automatic layout on import.
 
 | Item | Content |
 |------|------|
@@ -176,7 +243,7 @@ Loads an exported `.maiml` / `.xml` file and restores it to an editable state.
 | **Encrypted data** | If `<xenc:EncryptedData>` is detected, a password prompt is shown and all such elements are decrypted at once (up to 3 retries; the entire import is aborted on failure) |
 | **Warning for unsupported structures** | If a structure with types other than `propertyListType` having child property/content elements is detected (valid per the schema but unsupported by Studio), a confirmation modal listing the affected items is shown, letting you choose to continue (discarding the affected child elements) or cancel |
 | **Automatic revision history registration** | On successful import, the source file is automatically registered as `<parent key="revised">` (an automatic process with no confirmation, based on the operating rule that "import = revise"). If the source file already had a `<parent>`, that information is preserved nested as a child of the new parent, maintaining the chain of revisions |
-| **Handling of signatures** | If the source file had a `<ds:Signature>`, it is discarded (since re-editing invalidates the signature) |
+| **Handling of signatures** | If the source file had a `<ds:Signature>`, it is discarded (since re-editing invalidates the signature; a warning is shown) |
 
 ### Import Steps
 
@@ -219,7 +286,7 @@ A file linking feature using the `<chain>` element of the MaiML standard (JIS K0
 
 | Item | Description |
 |------|------|
-| **Hash method** | SHA-256 (the byte sequence of the entire file) |
+| **Hash method** | SHA-256 (`<ds:DigestValue>` for signed files; the byte sequence of the entire file for unsigned files) |
 | **Output location** | Immediately after the `<date>` element within the `<document>` element |
 | **key attribute** | The default value is `key="chain"` |
 
@@ -272,11 +339,19 @@ An XML digital signature feature conforming to the MaiML standard (JIS K0200). A
 
 | Item | Description |
 |------|------|
-| **Signature algorithm** | ECDSA P-256 (ecdsa-sha256) |
+| **Signature algorithm** | RSA-SHA256 (`xmldsig-more#rsa-sha256`), 2048-bit key |
 | **Signature method** | Enveloped Signature (the signature element is embedded within the file) |
-| **Canonicalization** | Canonical XML 1.0 (C14N) |
+| **Canonicalization** | Canonical XML 1.0 inclusive (`REC-xml-c14n-20010315`, without comments) |
+| **Transforms** | `enveloped-signature` → `c14n` |
+| **Reference** | `URI=""` (the whole document) |
+| **Key info** | `<ds:KeyValue><ds:RSAKeyValue>` (Modulus / Exponent) inside `<ds:KeyInfo>` |
+| **Position of the signature element** | The first child of `<document>` (JIS K 0200 6.2.2) |
 | **Key management** | A new key pair is generated for each signing operation (the public key is embedded within the signature) |
-| **Compliant specifications** | W3C XML Signature 1.1 / JIS K0200 |
+| **Compliant specifications** | W3C XML Signature (XMLDSig Core) / JIS K0200 |
+
+These six items — algorithm, canonicalization, transforms, reference, key info, and signature
+position — are fixed as the **MaiML signature profile**. Interoperability with other
+implementations, such as .NET `SignedXml`, has been confirmed by testing.
 
 ### Usage Steps
 
@@ -285,3 +360,5 @@ An XML digital signature feature conforming to the MaiML standard (JIS K0200). A
 3. The `<ds:Signature>` element in the output file contains the signature value and public key
 
 > **Note:** A new key pair is generated each time you export. If you need to verify the signature, use the public key (`<ds:KeyValue>`) contained in the output file.
+
+> ⚠️ **What this signature does and does not guarantee:** the public key used for verification is bundled inside the file itself. This feature therefore confirms **integrity** only — that the file has not been changed since it was signed. Anyone who rewrites the content can re-sign it with their own key, so it **does not guarantee the signer's authenticity** ("who signed it"), because there is no certificate/PKI to serve as a root of trust. Treat it as a convenient way to work with the MaiML signature structure.
