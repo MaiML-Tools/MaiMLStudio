@@ -12810,6 +12810,133 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 
         <script>
 
+        /* ------------------------------------------------------------------
+         * TYPE_ATTR_CAPS -- which attributes each property/content type may carry.
+         *
+         * Extracted mechanically from MaiML-Schema-1_0 (maiml-property.xsd) with
+         * type inheritance resolved. The three attributes do NOT share one rule:
+         *   units        : numeric types only
+         *   formatString : numeric types + dateTime types
+         *   scaleFactor  : numeric types only (same set as units)
+         * ------------------------------------------------------------------ */
+        const TYPE_ATTR_CAPS = {
+            base64BinaryListType:          { units: false,  formatString: false,  scaleFactor: false },
+            base64BinaryType:              { units: false,  formatString: false,  scaleFactor: false },
+            booleanListType:               { units: false,  formatString: false,  scaleFactor: false },
+            booleanType:                   { units: false,  formatString: false,  scaleFactor: false },
+            byteListType:                  { units: true,   formatString: true,   scaleFactor: true },
+            byteType:                      { units: true,   formatString: true,   scaleFactor: true },
+            contentBase64BinaryListType:   { units: false,  formatString: false,  scaleFactor: false },
+            contentBooleanListType:        { units: false,  formatString: false,  scaleFactor: false },
+            contentByteListType:           { units: true,   formatString: true,   scaleFactor: true },
+            contentDateTimeListType:       { units: false,  formatString: true,   scaleFactor: false },
+            contentDecimalListType:        { units: true,   formatString: true,   scaleFactor: true },
+            contentDoubleListType:         { units: true,   formatString: true,   scaleFactor: true },
+            contentFloatListType:          { units: true,   formatString: true,   scaleFactor: true },
+            contentHexBinaryListType:      { units: false,  formatString: false,  scaleFactor: false },
+            contentIdRefListType:          { units: false,  formatString: false,  scaleFactor: false },
+            contentIntListType:            { units: true,   formatString: true,   scaleFactor: true },
+            contentLanguageListType:       { units: false,  formatString: false,  scaleFactor: false },
+            contentLongListType:           { units: true,   formatString: true,   scaleFactor: true },
+            contentQualifiedNameListType:  { units: false,  formatString: false,  scaleFactor: false },
+            contentShortListType:          { units: true,   formatString: true,   scaleFactor: true },
+            contentStringEnumType:         { units: false,  formatString: false,  scaleFactor: false },
+            contentStringListType:         { units: false,  formatString: false,  scaleFactor: false },
+            contentUnsignedByteListType:   { units: true,   formatString: true,   scaleFactor: true },
+            contentUnsignedIntListType:    { units: true,   formatString: true,   scaleFactor: true },
+            contentUnsignedLongListType:   { units: true,   formatString: true,   scaleFactor: true },
+            contentUnsignedShortListType:  { units: true,   formatString: true,   scaleFactor: true },
+            contentUriListType:            { units: false,  formatString: false,  scaleFactor: false },
+            contentUuidListType:           { units: false,  formatString: false,  scaleFactor: false },
+            dateTimeListType:              { units: false,  formatString: true,   scaleFactor: false },
+            dateTimeType:                  { units: false,  formatString: true,   scaleFactor: false },
+            decimalListType:               { units: true,   formatString: true,   scaleFactor: true },
+            decimalType:                   { units: true,   formatString: true,   scaleFactor: true },
+            doubleListType:                { units: true,   formatString: true,   scaleFactor: true },
+            doubleType:                    { units: true,   formatString: true,   scaleFactor: true },
+            floatListType:                 { units: true,   formatString: true,   scaleFactor: true },
+            floatType:                     { units: true,   formatString: true,   scaleFactor: true },
+            hexBinaryListType:             { units: false,  formatString: false,  scaleFactor: false },
+            hexBinaryType:                 { units: false,  formatString: false,  scaleFactor: false },
+            idRefListType:                 { units: false,  formatString: false,  scaleFactor: false },
+            idRefType:                     { units: false,  formatString: false,  scaleFactor: false },
+            idType:                        { units: false,  formatString: false,  scaleFactor: false },
+            intListType:                   { units: true,   formatString: true,   scaleFactor: true },
+            intType:                       { units: true,   formatString: true,   scaleFactor: true },
+            languageListType:              { units: false,  formatString: false,  scaleFactor: false },
+            languageType:                  { units: false,  formatString: false,  scaleFactor: false },
+            longListType:                  { units: true,   formatString: true,   scaleFactor: true },
+            longType:                      { units: true,   formatString: true,   scaleFactor: true },
+            propertyListType:              { units: false,  formatString: false,  scaleFactor: false },
+            qualifiedNameListType:         { units: false,  formatString: false,  scaleFactor: false },
+            qualifiedNameType:             { units: false,  formatString: false,  scaleFactor: false },
+            shortListType:                 { units: true,   formatString: true,   scaleFactor: true },
+            shortType:                     { units: true,   formatString: true,   scaleFactor: true },
+            stringEnumType:                { units: false,  formatString: false,  scaleFactor: false },
+            stringListType:                { units: false,  formatString: false,  scaleFactor: false },
+            stringType:                    { units: false,  formatString: false,  scaleFactor: false },
+            tokenType:                     { units: false,  formatString: false,  scaleFactor: false },
+            unsignedByteListType:          { units: true,   formatString: true,   scaleFactor: true },
+            unsignedByteType:              { units: true,   formatString: true,   scaleFactor: true },
+            unsignedIntListType:           { units: true,   formatString: true,   scaleFactor: true },
+            unsignedIntType:               { units: true,   formatString: true,   scaleFactor: true },
+            unsignedLongListType:          { units: true,   formatString: true,   scaleFactor: true },
+            unsignedLongType:              { units: true,   formatString: true,   scaleFactor: true },
+            unsignedShortListType:         { units: true,   formatString: true,   scaleFactor: true },
+            unsignedShortType:             { units: true,   formatString: true,   scaleFactor: true },
+            uriListType:                   { units: false,  formatString: false,  scaleFactor: false },
+            uriType:                       { units: false,  formatString: false,  scaleFactor: false },
+            uuidListType:                  { units: false,  formatString: false,  scaleFactor: false },
+            uuidType:                      { units: false,  formatString: false,  scaleFactor: false },
+        };
+
+        /* Clear attributes the current type cannot carry. */
+        function normalizeTypeAttrs(item) {
+            if (!item || !item.type) return item;
+            const caps = TYPE_ATTR_CAPS[item.type]
+                      || { units: false, formatString: false, scaleFactor: false };
+            if (item.units && !caps.units) item.units = "";
+            if (item.formatString && !caps.formatString) item.formatString = "";
+            if (item.scaleFactor !== undefined && item.scaleFactor !== null
+                && item.scaleFactor !== "" && !caps.scaleFactor) item.scaleFactor = "";
+            return item;
+        }
+
+        /* Call right after a user changes a property/content type. Clears the
+         * attributes the new type cannot carry and tells the user what was
+         * dropped -- the units input disappears from the UI, so a silent clear
+         * would be invisible. */
+        function applyTypeChange(item) {
+            if (!item) return item;
+            const keys = ["units", "formatString", "scaleFactor"];
+            const before = {};
+            keys.forEach(k => before[k] = item[k]);
+            normalizeTypeAttrs(item);
+            const dropped = keys.filter(k =>
+                before[k] !== undefined && before[k] !== null && before[k] !== ""
+                && item[k] === "");
+            if (dropped.length && typeof showToast === "function") {
+                showToast(
+                    dropped.map(k => k + '="' + before[k] + '"').join(", ")
+                    + " cleared (not allowed on " + item.type + ")",
+                    "info", 3500);
+            }
+            return item;
+        }
+
+        /* Call on AI-response ingestion, NOT on user edits. When the type cannot
+         * carry units, move the unit into the value text instead of discarding
+         * it -- nobody asked for that information to be dropped here. */
+        function absorbIllegalUnits(pr) {
+            if (!pr) return pr;
+            const caps = TYPE_ATTR_CAPS[pr.type] || { units: false };
+            if (pr.units && !caps.units) {
+                pr.value = (pr.value ? pr.value + " " : "") + "units=" + pr.units;
+                pr.units = "";
+            }
+            return pr;
+        }
+
         const PROPERTY_TYPE_META = {
             propertyListType: { units: false, placeholder: "" },
             stringType: { units: false, placeholder: "text" },
@@ -13331,6 +13458,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 
         function updateDocProperty(idx, field, value) {
             state.document.properties[idx][field] = value;
+            if (field === "type") applyTypeChange(state.document.properties[idx]);
             if (
                 field === "type" &&
                 value === "propertyListType" &&
@@ -13419,6 +13547,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
             }
             const lastIdx = path[path.length - 1];
             target[lastIdx][field] = value;
+            if (field === "type") applyTypeChange(target[lastIdx]);
             if (
                 field === "type" &&
                 value === "propertyListType" &&
@@ -15825,8 +15954,10 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
         ) {
             if (fieldType === "property") {
                 state.templates[templateIdx].properties[itemIdx][field] = value;
+                if (field === "type") applyTypeChange(state.templates[templateIdx].properties[itemIdx]);
             } else if (fieldType === "content") {
                 state.templates[templateIdx].contents[itemIdx][field] = value;
+                if (field === "type") applyTypeChange(state.templates[templateIdx].contents[itemIdx]);
             }
         }
 
@@ -16097,6 +16228,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             const lastIdx = path[path.length - 1];
             const item = target[lastIdx];
             item[field] = value;
+            if (field === "type") applyTypeChange(item);
 
             // Initialize children object if type changed to propertyListType
             if (
@@ -17791,6 +17923,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             const lastIdx = path[path.length - 1];
             const item = target[lastIdx];
             item[field] = value;
+            if (field === "type") applyTypeChange(item);
             if (
                 field === "type" &&
                 value === "propertyListType" &&
@@ -17818,6 +17951,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             }
             const lastIdx = path[path.length - 1];
             target[lastIdx][field] = value;
+            if (field === "type") applyTypeChange(target[lastIdx]);
         }
 
         // Remove nested content under instanceProperties propertyListType
@@ -22590,7 +22724,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                         while (usedKeys.has(key)) key = `${base}_${i++}`;
                         usedKeys.add(key);
                         if (/[^\x00-\x7F]/.test(pr.key)) renamed.push(`${pr.key} → ${key}`);
-                        return { key, type: pv.type, units: pv.units, description: pr.key, value: pv.value };
+                        return absorbIllegalUnits({ key, type: pv.type, units: pv.units, description: pr.key, value: pv.value });
                     });
                     // "Hexane (ヘキサン)" のように括弧内の説明があるのに [IN/OUT] 行に
                     // "|params" が無い場合、そのままだと日本語の説明が出力先を持たず
@@ -22677,10 +22811,14 @@ CRITICAL RULES:
 2. Every step MUST have at least one [IN:...] line and at least one [OUT:...] line. If the text does not state a step's output explicitly, infer the resulting state or product and write it as [OUT:condition] or [OUT:result].
 3. Steps must form one connected flow: when a step uses anything produced by an earlier step, repeat EXACTLY the same name (character for character) from that earlier [OUT:...] line, as [IN:result] or [IN:condition]. Never rename it and never re-introduce it as [IN:material].
 4. Numeric process parameters (temperature, time, concentration, volume, speed, ...) go after "|" as paramKey:value unit. paramKey must be short camelCase English. Never put quantities inside a name.
-5. If one parameter is tested at several values (e.g. 0.1, 0.25, 0.5 and 10 equivalents), keep ONE step and write the values in a single param such as equivalents:0.1/0.25/0.5/10.
-6. Ignore content that is not procedure: literature references, figure/table citations (e.g. "Fig. S1"), explanations of why, safety notes.
-7. Write every step and input/output name as a short English identifier using only ASCII letters, digits and underscores (e.g. Sodium_Citrate_Solution) — these become XML IDs and QNames. If the procedure is written in another language, append the original name in parentheses right after the identifier: HAuCl4_Solution (HAuCl4水溶液). Reuse identifiers consistently.
-8. Output ONLY structured lines ([STEP], [IN:...], [OUT:...]) and blank lines between steps. No explanations, no markdown fences, no numbering.
+   - value must be ONE number (e.g. 100, 0.1, 5e-4). Never a range, never two numbers, never words.
+   - unit must be a bare unit symbol only (e.g. kV, mm, mL, °C, µm, mM, min, rpm, x). Never words, never a number, never a range. Omit the unit entirely when the quantity has none.
+5. Ranges: when a parameter is given as a range ("200 to 5000", "5e-4~1e-3", "1,000倍から50,000倍", "20〜40 mL"), write TWO params with the suffixes Min and Max, each a single number carrying the same unit. Example: magnificationMin:200 x, magnificationMax:5000 x
+6. Ratios and compositions: never put ":" inside a value. Split a ratio into one param per component. Example: "主剤:硬化剤 = 100:12" becomes resinRatio:100, hardenerRatio:12
+7. If the SAME parameter takes different values at different points of the procedure (e.g. polishing with 3 µm paste, then with 1 µm paste), write them as SEPARATE steps -- never merge them. Only when the procedure genuinely tests several values at one and the same step, keep ONE step and write them "/"-joined WITHOUT a unit (e.g. equivalents:0.1/0.25/0.5/10).
+8. Ignore content that is not procedure: literature references, figure/table citations (e.g. "Fig. S1"), explanations of why, safety notes.
+9. Write every step and input/output name as a short English identifier using only ASCII letters, digits and underscores (e.g. Sodium_Citrate_Solution) — these become XML IDs and QNames. If the procedure is written in another language, append the original name in parentheses right after the identifier: HAuCl4_Solution (HAuCl4水溶液). Reuse identifiers consistently.
+10. Output ONLY structured lines ([STEP], [IN:...], [OUT:...]) and blank lines between steps. No explanations, no markdown fences, no numbering.
 
 Example input:
   Step3. 加熱・沸騰: 1mMの塩化金酸(HAuCl4)水溶液50mLをフラスコに入れ、攪拌しながら加熱し、液温を100℃に保つ。
@@ -23050,7 +23188,7 @@ Rewrite the COMPLETE structured protocol, fixing all the problems above while fo
                         ? p.type
                         : inferType(p.label);
 
-                const props = (aiTmpl?.properties || []).map(pr => ({
+                const props = (aiTmpl?.properties || []).map(pr => absorbIllegalUnits({
                     key: pr.key || '',
                     type: pr.type || 'stringType',
                     units: pr.units || '',
