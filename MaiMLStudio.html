@@ -14554,6 +14554,96 @@ https://github.com/nodeca/pako/blob/main/LICENSE
             renderPetriNet();
         }
 
+        // ============================================================
+        // PLACE TYPE (M/C/R) — 表示のみの導出
+        // ============================================================
+        // Place の型は place 自身の属性ではなく、その place を参照している template の
+        // 集合から導出する。1つの place に複数の template（＝複数の型）を紐づけるのは
+        // 仕様上正当（saveXML() は型ごとに独立した <materialTemplate> 等を吐く）なので、
+        // place に type フィールドを新設して二重の真実を作らない。
+        // 表示チャネルの分担:
+        //   型         → 円の塗り(tint) + 中央バッジ + stroke の「既定値」
+        //   対話状態   → stroke（選択 / arc始点 / 有効・無効ターゲット の4状態）
+        // stroke は対話状態が三項演算の前段で決まり、型色はその最終フォールバックに
+        // だけ入る。したがって対話フィードバックは常に型色より優先され、Viewer が
+        // `.node.selected circle { stroke: ... !important }` で後始末しているような
+        // 上書き合戦は起きない。
+        // 色は Studio 内で統一する。基準は Templates タブのバッジ
+        // （M=green / C=blue / R=purple、renderTemplates() の bg-*-100 / text-*-700 ・
+        // dark:bg-*-900 / dark:text-*-300）で、Viewer のペトリネット図（M=青/C=橙/R=緑）
+        // とは意図的に異ならせている。Viewer 側に合わせると Studio の修正範囲が広くなるため。
+        const PLACE_TYPE_ORDER = ["material", "condition", "result"];
+        const PLACE_TYPE_BADGE = { material: "M", condition: "C", result: "R" };
+        // バッジ文字色: light は text-*-700、dark は dark:text-*-300 と同値
+        const PLACE_TYPE_INK_LIGHT = { material: "#15803d", condition: "#1d4ed8", result: "#7e22ce" };
+        const PLACE_TYPE_INK_DARK = { material: "#86efac", condition: "#93c5fd", result: "#d8b4fe" };
+        // tint: light は bg-*-100 と同値。dark は bg-*-900 をノード地色(slate-800)に
+        // 55% で重ねた値（-900 をそのまま置くとキャンバス上で彩度が立ちすぎる）。
+        const PLACE_TYPE_TINT_LIGHT = { material: "#dcfce7", condition: "#dbeafe", result: "#f3e8ff" };
+        const PLACE_TYPE_TINT_DARK = { material: "#194033", condition: "#1e3267", result: "#3e2265" };
+        // 複数型が混在する place は特定の型色に寄せず中立色にする（先頭型で塗ると誤読を招く）。
+        // 型色ではなく slate 系を使うのは、condition の青と紛れないようにするため。
+        const PLACE_MIXED_TINT_LIGHT = "#e2e8f0";
+        const PLACE_MIXED_TINT_DARK = "#334155";
+        // 輪郭色。単一型はバッジ文字と同色にして「Mの緑なのに輪郭が別の緑」を解消する。
+        // 混在は塗りと同じ slate 系、template 未割り当ては一段弱い slate にして
+        // 「まだ何も付いていない」ことが色の強さで分かるようにする。
+        const PLACE_MIXED_STROKE_LIGHT = "#334155"; // slate-700
+        const PLACE_MIXED_STROKE_DARK = "#e2e8f0"; // slate-200
+        const PLACE_UNTYPED_STROKE_LIGHT = "#64748b"; // slate-500
+        const PLACE_UNTYPED_STROKE_DARK = "#94a3b8"; // slate-400
+
+        // その place に紐づく型を PLACE_TYPE_ORDER の順で返す（0〜3件）
+        function getPlaceTypes(method, placeId) {
+            const present = new Set(
+                (method.templates || [])
+                    .filter((t) => t.placeId === placeId)
+                    .map((t) => t.type),
+            );
+            return PLACE_TYPE_ORDER.filter((t) => present.has(t));
+        }
+
+        // 円の塗り色。template 未割り当ての place は従来どおり baseFill（＝未割り当てが
+        // 一目で分かる＝書き出し前の抜け漏れチェックになる）。
+        function getPlaceTypeFill(types, isDark, baseFill) {
+            if (types.length === 0) return baseFill;
+            if (types.length === 1)
+                return (isDark ? PLACE_TYPE_TINT_DARK : PLACE_TYPE_TINT_LIGHT)[types[0]];
+            return isDark ? PLACE_MIXED_TINT_DARK : PLACE_MIXED_TINT_LIGHT;
+        }
+
+        // 円の輪郭色（対話状態でない場合の既定値）。単一型はバッジ文字と同色。
+        function getPlaceTypeStroke(types, isDark) {
+            if (types.length === 0)
+                return isDark ? PLACE_UNTYPED_STROKE_DARK : PLACE_UNTYPED_STROKE_LIGHT;
+            if (types.length === 1)
+                return (isDark ? PLACE_TYPE_INK_DARK : PLACE_TYPE_INK_LIGHT)[types[0]];
+            return isDark ? PLACE_MIXED_STROKE_DARK : PLACE_MIXED_STROKE_LIGHT;
+        }
+
+        // 中央バッジ。混在時は "M/C" のように併記し、文字ごとに型色を付ける
+        // （Viewer は templates[0] の型しか見ないため混在を黙って隠してしまう）。
+        function buildPlaceTypeBadge(types, cx, cy, r, isDark) {
+            if (types.length === 0) return "";
+            const ink = isDark ? PLACE_TYPE_INK_DARK : PLACE_TYPE_INK_LIGHT;
+            // 区切りは型色より弱く、かつ両テーマで読める slate-400 で固定
+            const sepColor = "#94a3b8";
+            // 0.62em ≒ 太字大文字の平均送り幅。直径の 1.7r を使える幅とみなす。
+            const idealSize = Math.floor(r * 0.8);
+            const fitSize = (chars) => Math.floor((r * 1.7) / (chars * 0.62));
+            // 区切りの "/" は「字を小さくせずに入る」ときだけ付ける。3型（"M/C/R"）や
+            // 縮小表示（Method Overview の r=13）で入れると幅に収めるためフォントが
+            // 潰れて読めなくなるので、その場合は "MCR" と詰める。文字ごとに型色が
+            // 付くため、区切りが無くても2〜3型は判別できる。
+            const useSep = types.length === 1 || fitSize(types.length * 2 - 1) >= idealSize;
+            const chars = useSep ? types.length * 2 - 1 : types.length;
+            const fontSize = Math.max(Math.min(idealSize, fitSize(chars)), 8);
+            const spans = types
+                .map((t) => `<tspan fill="${ink[t]}">${PLACE_TYPE_BADGE[t]}</tspan>`)
+                .join(useSep ? `<tspan fill="${sepColor}">/</tspan>` : "");
+            return `<text x="${cx}" y="${cy}" dy="0.35em" text-anchor="middle" font-size="${fontSize}" font-weight="700" class="select-none" pointer-events="none">${spans}</text>`;
+        }
+
         function renderPetriNet() {
             const svg = document.getElementById("petri-canvas");
             const isDark = document.documentElement.classList.contains("dark");
@@ -14651,6 +14741,11 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                         const srcColor = state.mode === "addTemplateRef" ? "#3b82f6" : state.mode === "addInstanceRef" ? "#10b981" : "#f59e0b";
                         const isSelectedNode = state.selectedNode?.id === p.id && state.selectedNode?.methodId === l.method.id;
 
+                        // 型(M/C/R)は Templates タブで割り当てた template から導出する。
+                        // stroke より先に求めるのは、型色を stroke の既定値に使うため。
+                        const placeTypes = getPlaceTypes(l.method, p.id);
+                        const placeFill = getPlaceTypeFill(placeTypes, isDark, fillColor);
+
                         const stroke = isArcSrc
                             ? srcColor
                             : isValidTarget
@@ -14659,13 +14754,14 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                     ? "#ef4444"
                                     : isSelectedNode
                                         ? "#ef4444"
-                                        : "#10b981";
+                                        : getPlaceTypeStroke(placeTypes, isDark);
                         const strokeWidth = isArcSrc || isArcHover ? "3" : isSelectedNode ? "3" : "2";
                         const cursor = state.mode === "addArc" ? "crosshair" : state.mode === "deleteArc" ? "not-allowed" : "move";
 
                         return `
     <g onmousedown="startDrag(event, '${escJsAttr(p.id)}', 'place', '${escJsAttr(l.method.id)}')" onclick="handleNodeClick('${escJsAttr(p.id)}', 'place', '${escJsAttr(l.method.id)}', event)" style="cursor:${cursor}" class="transition-all duration-200">
-        <circle cx="${p.x}" cy="${py}" r="20" fill="${fillColor}" stroke="${stroke}" stroke-width="${strokeWidth}" class="transition-colors duration-200" />
+        <circle cx="${p.x}" cy="${py}" r="20" fill="${placeFill}" stroke="${stroke}" stroke-width="${strokeWidth}" class="transition-colors duration-200" />
+        ${buildPlaceTypeBadge(placeTypes, p.x, py, 20, isDark)}
 ${isArcSrc ? `<circle cx="${p.x}" cy="${py}" r="26" fill="none" stroke="${srcColor}" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.7" pointer-events="none"/>` : ""}
         <text x="${p.x}" y="${py + 35}" text-anchor="middle" font-size="12" fill="${textColor}" class="font-medium select-none pointer-events-none">${escHtml(p.label)}</text>
     </g>
@@ -22054,7 +22150,6 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             }));
 
             const colorArc = isDark ? "#475569" : "#94a3b8";
-            const colorPlace = isDark ? "#10b981" : "#059669";
             const colorTrans = isDark ? "#6366f1" : "#4f46e5";
             const colorText = isDark ? "#94a3b8" : "#475569";
             const colorBoxFill = isDark ? "#1e293b" : "#f8fafc";
@@ -22101,7 +22196,12 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                 method.petriNet.places.forEach((place) => {
                     const px = svgX + (place.x - l.minX) * SCALE;
                     const py = svgY + (place.y - l.minY) * SCALE;
-                    html += `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${NODE_R}" fill="${colorNodeFill}" stroke="${colorPlace}" stroke-width="2"/>`;
+                    // メインキャンバスと同じ型 tint ＋ バッジ。r=13 なので
+                    // buildPlaceTypeBadge() 側が区切り無し（"MCR"）に切り替わる。
+                    const ovTypes = getPlaceTypes(method, place.id);
+                    const ovFill = getPlaceTypeFill(ovTypes, isDark, colorNodeFill);
+                    html += `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${NODE_R}" fill="${ovFill}" stroke="${getPlaceTypeStroke(ovTypes, isDark)}" stroke-width="2"/>`;
+                    html += buildPlaceTypeBadge(ovTypes, px.toFixed(1), py.toFixed(1), NODE_R, isDark);
                     html += `<text x="${px.toFixed(1)}" y="${(py + NODE_R + LABEL_OFF).toFixed(1)}" text-anchor="middle" font-size="9" fill="${colorText}" pointer-events="none">${escHtml(place.label)}</text>`;
                 });
 
