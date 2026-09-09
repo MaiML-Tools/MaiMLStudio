@@ -8,6 +8,10 @@
 
 HTMLファイルを Chrome / Edge で開くだけで動作し、追加のインストールは一切不要です。
 
+<p align="center">
+  <a href="docs/screenshot.png"><img src="docs/screenshot.png" alt="MaiML Studio の編集画面" width="860"></a>
+</p>
+
 ---
 
 ## 特徴

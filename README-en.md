@@ -4,6 +4,10 @@
 
 It runs simply by opening the HTML file in Chrome / Edge — no additional installation is required.
 
+<p align="center">
+  <a href="docs/screenshot.png"><img src="docs/screenshot.png" alt="The MaiML Studio editing screen" width="860"></a>
+</p>
+
 ---
 
 ## Features
