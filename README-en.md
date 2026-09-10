@@ -5,7 +5,12 @@
 It runs simply by opening the HTML file in Chrome / Edge — no additional installation is required.
 
 <p align="center">
-  <a href="docs/screenshot.png"><img src="docs/screenshot.png" alt="The MaiML Studio editing screen" width="860"></a>
+  <a href="docs/screenshot_design.png">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot_design_dark.png">
+      <img src="docs/screenshot_design.png" alt="The Petri Net Design screen of MaiML Studio" width="860">
+    </picture>
+  </a>
 </p>
 
 ---
@@ -170,6 +175,16 @@ Ten columns are recognized: `Element` / `Key` / `Type` / `Units` / `Description`
 ---
 
 ### 📊 Data & Events Tab
+
+<p align="center">
+  <a href="docs/screenshot.png">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot_dark.png">
+      <img src="docs/screenshot.png" alt="The Data & Events screen of MaiML Studio" width="860">
+    </picture>
+  </a>
+</p>
+
 
 Enter the actual measurement data and events, based on the schemas defined in Templates.
 

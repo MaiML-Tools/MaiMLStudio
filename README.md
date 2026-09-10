@@ -9,7 +9,12 @@
 HTMLファイルを Chrome / Edge で開くだけで動作し、追加のインストールは一切不要です。
 
 <p align="center">
-  <a href="docs/screenshot.png"><img src="docs/screenshot.png" alt="MaiML Studio の編集画面" width="860"></a>
+  <a href="docs/screenshot_design.png">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot_design_dark.png">
+      <img src="docs/screenshot_design.png" alt="MaiML Studio の Petri Net Design 画面" width="860">
+    </picture>
+  </a>
 </p>
 
 ---
@@ -174,6 +179,16 @@ Petri Net Design で定義した Place ごとにカードが表示され、各�
 ---
 
 ### 📊 Data & Events タブ
+
+<p align="center">
+  <a href="docs/screenshot.png">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot_dark.png">
+      <img src="docs/screenshot.png" alt="MaiML Studio の Data & Events 画面" width="860">
+    </picture>
+  </a>
+</p>
+
 
 Templates で定義したスキーマをもとに、実際の計測データ・イベントを入力します。
 
