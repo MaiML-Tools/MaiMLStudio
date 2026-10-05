@@ -23003,16 +23003,17 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             return s;
         }
 
-        // "English_Name (元の名前)" → label from the English part, description
-        // from the parenthesis. Non-ASCII parentheses always split. ASCII ones
-        // (e.g. Spanish "agua desionizada", or "Na-Oct") split only when the
-        // prompt asked for descriptions (non-English browser language) and the
-        // head is identifier-shaped; with an English UI "Washing (final)" keeps
-        // its full name so it never merges with "Washing (first)".
+        // "English_Name (description)" → label from the identifier, description
+        // from the parenthesis — in every language, ASCII or not (Spanish
+        // "agua desionizada", "Na-Oct", English "fumed silica"). Non-ASCII
+        // parentheses always split; ASCII ones split when the head is
+        // identifier-shaped. Note the alias registration in compileDsl: two
+        // names with the same identifier ("Washing (first)" / "Washing (final)")
+        // are one Place — the prompt's rule 3 requires distinct identifiers.
         function _aiSplitBilingualName(rawName) {
             const m = (rawName || '').match(/^(.*?)\s*[（(]([^（）()]+)[)）]$/);
             const isDesc = m && (/[^\x00-\x7F]/.test(m[2])
-                || (_aiDescLanguage().base !== 'en' && /^[A-Za-z_][A-Za-z0-9_.\-]*$/.test(m[1].trim())));
+                || /^[A-Za-z_][A-Za-z0-9_.\-]*$/.test(m[1].trim()));
             if (isDesc && _aiSanitizeNCName(m[1])) {
                 return { labelSrc: m[1].trim(), desc: m[2].trim() };
             }
@@ -23276,7 +23277,9 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                     // 識別用の1エントリを自動生成して説明文の行き先を確保する。
                     // key属性名はPlace自身の英語ラベル(例: "Hexane")をそのまま使う。
                     p._tables.forEach(t => properties.push(_aiTableToProperty(t, usedKeys, renamed)));
-                    if (properties.length === 0 && p.description && p.description !== p.label) {
+                    // 説明がラベルと同じ文字列でも作る（英語では "Fumed_Silica (Fumed_Silica)" も
+                    // あり得るが、description を必ず MaiML に残すため）。
+                    if (properties.length === 0 && p.description) {
                         properties.push({ key: p.label, type: 'stringType', units: '', description: p.description, value: '' });
                     }
                     templates.push({ place: p.label, type: p.type, properties });
@@ -23386,7 +23389,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
         // after each identifier (they become Place / Transition / table descriptions).
         // Follows the browser language so an English user never gets e.g. Japanese
         // descriptions, while a Japanese user gets Japanese ones even for an English
-        // procedure. English needs none: the identifiers already read as English.
+        // procedure. English gets them too ("Fumed_Silica (fumed silica)"): the
+        // parenthesis is what ends up in <description>, so no language is exempt.
         function _aiDescLanguage() {
             const base = String(navigator.language || 'en').toLowerCase().split('-')[0] || 'en';
             let name = 'English';
@@ -23398,18 +23402,15 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             const lang = _aiDescLanguage();
             const isJa = lang.base === 'ja';
             const isEn = lang.base === 'en';
-            // (text) helper for the examples: Japanese wording, nothing for English, and
-            // plain English for any other language (with an explicit note before the
+            // (text) helper for the examples: Japanese wording for Japanese, plain English
+            // otherwise (for a non-English language with an explicit note before the
             // example). A placeholder such as "(<... — in Korean>)" must NOT be used: the
             // model copied it literally, angle brackets and English included.
-            const d = (ja, en) => isJa ? ` (${ja})` : isEn ? '' : ` (${en})`;
+            const d = (ja, en) => isJa ? ` (${ja})` : ` (${en})`;
             const exampleNote = (isJa || isEn) ? '' : `(The descriptions in parentheses in all examples of this prompt — the table example above and the example below — are shown in English only for illustration. In your answer, write every description in ${lang.name} only — no English, no angle brackets.)\n\n`;
-            const descRule = isEn
-                ? `Do NOT add anything in parentheses after an identifier, even if the procedure is written in another language.`
-                : `Right after each identifier, add a short human-readable description in ${lang.name} in parentheses: HAuCl4_Solution ${isJa ? '(HAuCl4水溶液)' : `(a ${lang.name} phrase meaning "HAuCl4 aqueous solution")`}. If the procedure is written in ${lang.name}, use its original wording; otherwise translate into ${lang.name}. Write these descriptions ONLY in ${lang.name}, never in any other language.`;
-            const tableHeaderRule = isEn
-                ? `Header cells are short English identifiers (no parentheses)`
-                : `Header cells are short English identifiers followed by a short ${lang.name} description in parentheses (omit it when the header is just a symbol such as Fe)`;
+            const descExample = isJa ? '(HAuCl4水溶液)' : isEn ? '(HAuCl4 aqueous solution)' : `(a ${lang.name} phrase meaning "HAuCl4 aqueous solution")`;
+            const descRule = `Right after EVERY identifier, add a short human-readable description in ${lang.name} in parentheses, even when it reads almost the same as the identifier: HAuCl4_Solution ${descExample}. If the procedure is written in ${lang.name}, use its original wording; otherwise translate into ${lang.name}. Write these descriptions ONLY in ${lang.name}, never in any other language.`;
+            const tableHeaderRule = `Header cells are short English identifiers followed by a short ${lang.name} description in parentheses (omit it when the header is just a symbol such as Fe)`;
             const exampleBlock = isJa ? `Example input:
   Step3. 加熱・沸騰: 1mMの塩化金酸(HAuCl4)水溶液50mLをフラスコに入れ、攪拌しながら加熱し、液温を100℃に保つ。
   Step4. 還元剤の添加: 沸騰している金溶液に、38.8mMのクエン酸ナトリウム水溶液5mLを一気に加えます。
@@ -23474,8 +23475,8 @@ CRITICAL RULES:
 11. NEVER drop measured data. Every numeric result in the text (measured values, analysis tables, compositions, yields, ratios calculated from the data) must appear as params on an [OUT:result] line of the step that measured it.
    - If the text reports results of a measurement whose procedure is not described (e.g. only a results table such as "EDS定量結果"), still create a [STEP] for that measurement. Its inputs are the sample produced by an earlier step ([IN:result], same name) and the instrument if one is named ([IN:material]). Do not invent conditions that are not written.
    - Tables: copy every table in the text as a [TABLE] block placed right after the [IN:...] or [OUT:...] line it belongs to (results tables go after the [OUT:result] line). Never expand table cells into params.
-     [TABLE] Table_Name${isEn ? '' : ` (${lang.name} title)`} | unit:common unit of the numeric cells
-     | Header${isEn ? '' : ` (${lang.name})`} | Header [unit] | ... |
+     [TABLE] Table_Name (${lang.name} title) | unit:common unit of the numeric cells
+     | Header (${lang.name}) | Header [unit] | ... |
      | cell | cell | ... |
      One "|" row per table row; the first row is the header. ${tableHeaderRule}; a column-specific unit goes in square brackets. Copy every row and every cell value exactly as written (keep the digits, do not round, do not convert). End the block with a blank line.
      Example:
