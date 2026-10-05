@@ -25,7 +25,7 @@ It runs simply by opening the HTML file in Chrome / Edge — no additional insta
 - **MaiML export** — generate and download an XML file conforming to the MaiML standard
 - **Dark/light mode** — automatically follows the OS setting as the initial value
 - **Excel import feature** — bulk-load definitions from an Excel file
-- **AI Petri net generation** — automatically generate Places / Transitions / Arcs / Templates from experimental procedure text (cloud Gemini API or local Ollama)
+- **AI Petri net generation** — automatically generate Places / Transitions / Arcs / Templates from experimental procedure text (cloud Gemini API or local Ollama). Photos or PDFs of handwritten lab notebooks can be read in with AI OCR
 - **XML encryption feature** — protect confidential data with AES-256-GCM
 - **XML digital signature feature** — output tamper-detectable MaiML files with RSA-SHA256 (W3C XML Signature compliant)
 - **File linking feature** — hash-based linking between multiple MaiML files (`<chain>` / `<parent>`)
@@ -88,6 +88,7 @@ Design the experiment/analysis process as a Petri net. All methods are arranged 
 - Drag the dotted line at the bottom of a lane to manually adjust its height (it also expands automatically as nodes are placed)
 - Clicking a method tab scrolls to the corresponding lane and puts it into a selected state (highlighted border)
 - Loading a project created with an older version (which used Proxy Places) automatically converts it to direct cross-lane references
+- A lane with no nodes shows a faint hint in its center on how to start (draw with the toolbar, or generate with AI Generate). It disappears once a node is placed
 
 **Multiple Methods**
 
@@ -95,18 +96,43 @@ Adding a method via `+ New Method` in the tab bar adds a new lane. The **🐦 Ov
 
 Method names must be unique within a project, so you cannot create a method with the same name as an existing one. New methods are given a default name with an auto-incremented number that does not collide with existing names.
 
-#### ✨ AI Petri Net Generation (AI Petri Net Generator)
+#### 🧠 AI Petri Net Generation (AI Petri Net Generator)
 
-The **✨** button on the toolbar opens the "AI Petri Net Generator" modal. Enter your experimental procedure as text and it generates Places / Transitions / Arcs / Templates and adds them to the canvas.
+The **AI Generate** button at the top of the toolbar (a head-with-circuit icon) opens the "AI Petri Net Generator" modal. From experimental procedure text, or from images of a handwritten lab notebook, it generates Places / Transitions / Arcs / Templates and adds them to the canvas.
 
-**① Choose an LLM provider**
+The modal has two columns.
+
+| Area | Content |
+|------|------|
+| **Settings bar (top)** | The method to generate into (Target Method), plus a one-line summary of the provider, model, and API key status. **Change** opens the detailed settings (they open automatically when something is missing) |
+| **① Left column (input)** | Add notebook images → transcribe with **AI OCR ↓** → procedure text → **Generate →** |
+| **② Right column (result)** | The generated Structured Protocol (editable) and the Petri Net Preview |
+| **Footer (bottom)** | Errors, retry status, and elapsed time, plus **Cancel** / **Apply to Canvas** |
+
+**① Choose an LLM provider** (via **Change** in the settings bar)
 
 | Provider | Description |
 |------|------|
 | **☁️ Cloud (Gemini)** | Enter a Gemini API key obtained from Google AI Studio and pick a model. The API key is stored in the browser's localStorage and is sent nowhere except the Google Gemini API. Accurate and fast (a few seconds), but your data is sent to Google's servers |
 | **🖥️ Local (Ollama)** | Uses a local Ollama instance. Since no data leaves the machine, this suits confidential experimental data and works without a network connection. Processing time depends on your PC (especially the GPU); on a machine without a GPU it can take several to a dozen-plus minutes |
 
-**② Enter the procedure text**
+- Before you click **Fetch Models**, the Gemini model list offers `gemini-flash-lite-latest` (default) and `gemini-flash-latest`. **Fetch Models** loads the current list of models available to your key
+- When Gemini is busy (temporary errors such as `high demand`), the request is retried automatically up to 3 times, after 2, 4, and 8 seconds. The status is shown in the footer while waiting
+
+**② Read a handwritten notebook (AI OCR)** — optional
+
+1. Use **Add notebook images** to add photos or scans of lab-notebook pages (multiple images, paste, and drag-and-drop are supported; PDF works with Cloud only)
+2. Reorder pages with ◀ ▶ under each thumbnail. Click a thumbnail to enlarge it
+3. Click **AI OCR ↓**, shown to the right of the thumbnails, to transcribe the images in order into the procedure field (appended below any text already there)
+4. Check the transcript against the images, fix it in the procedure field if needed, then Generate
+
+For AI OCR, choose a **model that accepts image input**. Gemini's flash / flash-lite models do, but the Fetch Models list also includes models that cannot do OCR, such as text-to-speech (`-tts`) or music generation (`lyria`) models. On Ollama it depends on the model: text-only models and variants (e.g. names containing `TextOnly`) will not work.
+
+> ⚠️ Lite models and small local models may replace illegible characters with plausible words or numbers instead of marking them as □ (e.g. "8 h" → "6 h"). Always check numbers against the original images.
+>
+> If you click Generate with images added but the procedure field still empty, you are prompted to run AI OCR first.
+
+**③ Enter the procedure text**
 
 Free-form text works, but the following recommended structure improves accuracy.
 
@@ -121,25 +147,40 @@ Free-form text works, but the following recommended structure improves accuracy.
 
 Using the same label in multiple STEPs automatically treats it as a shared Place (connected by arcs).
 
-**③ Options and execution**
+**Tables** such as measurement results are handled as `[TABLE]` blocks. A table becomes a template with one content per column (column contents grouped under a `propertyListType`), and cell values are kept exactly as written.
+
+```
+[OUT:result] XRF_Result (XRF分析結果)
+[TABLE] XRF_Quantification (XRF定量結果) | unit:mass%
+| Point (点) | Fe | Cr | Ni |
+| A1 | 70.2 | 18.5 | 8.3 |
+| A2 | 69.8 | 18.9 | 8.1 |
+```
+
+**④ Generate, review, and apply**
 
 - **Generate Templates** (ON by default) - also generates the properties (with types and units) of the template for each Place
-- **Generate** - runs the generation. An elapsed-time counter is shown while it works
-- **Preview** - review the list of generated Places / Transitions / Arcs / Templates
-- **Apply to Canvas** - adds the generated result to the canvas. Dagre Auto Layout is applied automatically afterwards
+- **Generate →** (bottom of the left column) - runs the generation. The elapsed time is shown on the button while it works. Input already written in `[STEP]` format is converted directly without calling the AI
+- **Structured Protocol (right column)** - the intermediate form the AI converts your text into. You can edit it directly; the Petri Net Preview below updates as you type
+- **Data-loss checks** - if a number in the source text is missing from the result, the preview shows a warning. If a structural problem is found, such as a source table not output as a `[TABLE]` block or different values merging into one Place with the same name, the AI is asked once to fix it automatically
+- **Apply to Canvas** (footer) - adds the generated result to the canvas. Dagre Auto Layout is applied automatically afterwards
 
 **Setting up Ollama** (when using local mode)
 
 1. Download and run the installer from [https://ollama.com](https://ollama.com)
 2. Pull a model (e.g. `ollama pull gemma4:e4b`)
 3. Start Ollama; it is ready once its icon appears in the notification area
-4. In the AI Generate modal, choose **🖥️ Local (Ollama)** and click **Fetch Models** to list the available models
+4. In the AI Generate modal, click **Change** in the settings bar, choose **🖥️ Local (Ollama)**, and click **Fetch Models** to list the available models
+
+AI OCR (reading images) requires a model that accepts image input (e.g. `qwen3-vision`, or an image-capable gemma4).
 
 If you see "Connection failed", quit Ollama, run the following in PowerShell, and restart it (CORS setting).
 
 ```powershell
 [System.Environment]::SetEnvironmentVariable("OLLAMA_ORIGINS", "*", "User")
 ```
+
+If you see an error such as `An existing connection was forcibly closed by the remote host`, Ollama may have failed to load the model because the PC is short of memory. Close other applications and restart Ollama.
 
 ---
 

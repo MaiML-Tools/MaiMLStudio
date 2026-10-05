@@ -1,9 +1,9 @@
 {
   "document": {
     "id": "MaiML_DataFile_CP_SEM",
-    "uuid": "",
-    "name": "MaiML_DataFile_CP_SEM",
-    "description": "MaiML DataFile CP SEM",
+    "uuid": "cfe0574c-652f-4c82-b79e-d09fbadec579",
+    "name": "sample_MultiMethod-CP_SEM",
+    "description": "sample_MultiMethod-CP_SEM",
     "properties": [
       {
         "key": "CompanyC:projectName",
@@ -93,7 +93,9 @@
         "prefix": "CompanyC",
         "uri": "http://www.company_c.co.jp/NS/"
       }
-    ]
+    ],
+    "chains": [],
+    "parent": null
   },
   "_methods": [
     {
@@ -355,7 +357,8 @@
         "x": 99.58726987445954,
         "y": 89.20111451954347
       },
-      "canvasScale": 1.0097616513546062
+      "canvasScale": 1.0097616513546062,
+      "laneHeight": null
     },
     {
       "id": "method_1770964099270",
@@ -383,15 +386,6 @@
             "x": 244,
             "y": 219,
             "type": "node"
-          },
-          {
-            "id": "proxy_1772078691844 ",
-            "label": "processedMaterial (CP_Method)",
-            "x": 122.4367325953657,
-            "y": 46.198365590383666,
-            "type": "proxy",
-            "originalMethodId": "method_1770964067784",
-            "originalPlaceId": "place_2"
           }
         ],
         "transitions": [
@@ -419,20 +413,8 @@
             "target": "trans_2"
           }
         ],
-        "templateRefs": [
-          {
-            "id": "ref_1772078696810",
-            "source": "place_3",
-            "target": "proxy_1772078691844 "
-          }
-        ],
-        "instanceRefs": [
-          {
-            "id": "ref_1772078700719",
-            "source": "place_3",
-            "target": "proxy_1772078691844 "
-          }
-        ]
+        "templateRefs": [],
+        "instanceRefs": []
       },
       "templates": [
         {
@@ -859,10 +841,32 @@
         "x": 99.58726987445954,
         "y": 89.20111451954347
       },
-      "canvasScale": 1.0097616513546062
+      "canvasScale": 1.0097616513546062,
+      "laneHeight": null
     }
   ],
   "_activeMethodId": "method_1770964099270",
+  "crossRefs": [
+    {
+      "id": "xref_1791179895635_1bje",
+      "kind": "templateRef",
+      "sourceMethodId": "method_1770964099270",
+      "sourcePlaceId": "place_3",
+      "targetMethodId": "method_1770964067784",
+      "targetPlaceId": "place_2"
+    },
+    {
+      "id": "xref_1791179895635_9u3w",
+      "kind": "instanceRef",
+      "sourceMethodId": "method_1770964099270",
+      "sourcePlaceId": "place_3",
+      "targetMethodId": "method_1770964067784",
+      "targetPlaceId": "place_2"
+    }
+  ],
+  "_selectedLaneMethodId": "method_1770964099270",
+  "_canvasTranslate": null,
+  "_canvasScale": null,
   "activeMethod": {
     "id": "method_1770964099270",
     "uuid": "e8134722-7980-4c41-ba5b-d9f889c5931c",
@@ -889,15 +893,6 @@
           "x": 244,
           "y": 219,
           "type": "node"
-        },
-        {
-          "id": "proxy_1772078691844 ",
-          "label": "processedMaterial (CP_Method)",
-          "x": 122.4367325953657,
-          "y": 46.198365590383666,
-          "type": "proxy",
-          "originalMethodId": "method_1770964067784",
-          "originalPlaceId": "place_2"
         }
       ],
       "transitions": [
@@ -925,20 +920,8 @@
           "target": "trans_2"
         }
       ],
-      "templateRefs": [
-        {
-          "id": "ref_1772078696810",
-          "source": "place_3",
-          "target": "proxy_1772078691844 "
-        }
-      ],
-      "instanceRefs": [
-        {
-          "id": "ref_1772078700719",
-          "source": "place_3",
-          "target": "proxy_1772078691844 "
-        }
-      ]
+      "templateRefs": [],
+      "instanceRefs": []
     },
     "templates": [
       {
@@ -1365,8 +1348,11 @@
       "x": 99.58726987445954,
       "y": 89.20111451954347
     },
-    "canvasScale": 1.0097616513546062
+    "canvasScale": 1.0097616513546062,
+    "laneHeight": null
   },
+  "resultGroups": [],
+  "_activeResultsGroupId": "rg_default",
   "petriNet": {
     "places": [
       {
@@ -1389,15 +1375,6 @@
         "x": 244,
         "y": 219,
         "type": "node"
-      },
-      {
-        "id": "proxy_1772078691844 ",
-        "label": "processedMaterial (CP_Method)",
-        "x": 122.4367325953657,
-        "y": 46.198365590383666,
-        "type": "proxy",
-        "originalMethodId": "method_1770964067784",
-        "originalPlaceId": "place_2"
       }
     ],
     "transitions": [
@@ -1425,20 +1402,8 @@
         "target": "trans_2"
       }
     ],
-    "templateRefs": [
-      {
-        "id": "ref_1772078696810",
-        "source": "place_3",
-        "target": "proxy_1772078691844 "
-      }
-    ],
-    "instanceRefs": [
-      {
-        "id": "ref_1772078700719",
-        "source": "place_3",
-        "target": "proxy_1772078691844 "
-      }
-    ]
+    "templateRefs": [],
+    "instanceRefs": []
   },
   "templates": [
     {
@@ -1873,12 +1838,13 @@
   "arcPreview": null,
   "arcHoverTarget": null,
   "petriNetSubView": "canvas",
-  "activeTab": "data",
+  "activeTab": "document",
   "draggingNode": null,
   "dragOffset": {
     "x": 0,
     "y": 0
   },
+  "nodeDragMoved": false,
   "isPanning": false,
   "lastMousePos": {
     "x": 0,

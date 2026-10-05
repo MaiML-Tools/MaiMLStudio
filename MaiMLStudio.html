@@ -8793,12 +8793,18 @@ https://github.com/nodeca/pako/blob/main/LICENSE
         }
 
         /* Petri Net Background Pattern */
+        /* Light: slate-400 @60% on slate-50 ≈ #bcc6d3, a touch darker than the
+           lane dashes (#cbd5e1) since a 1px dot reads fainter than a line. */
         .bg-pattern-light {
-            background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiNjYmQ1ZTEiIGZpbGwtb3BhY2l0eT0iMC40Ii8+PC9zdmc+");
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='1' fill='%2394a3b8' fill-opacity='0.6'/%3E%3C/svg%3E");
         }
 
+        /* Dark: unchanged look (slate-300 @40% on slate-900 ≈ #5a6373). The markup's
+           "dark:bg-pattern-dark" has no generated rule in the static Tailwind build,
+           so dark mode is handled here explicitly. */
+        .dark .bg-pattern-light,
         .bg-pattern-dark {
-            background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiM2NDc0OGIiIGZpbGwtb3BhY2l0eT0iMC40Ii8+PC9zdmc+");
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23cbd5e1' fill-opacity='0.4'/%3E%3C/svg%3E");
         }
 
         /* Manual Styles Reset for inside Modal */
@@ -8813,6 +8819,168 @@ https://github.com/nodeca/pako/blob/main/LICENSE
         .manual-content h3 {
             color: #0f172a;
             /* slate-900 */
+        }
+
+        /* AI Generate (head-circuit icon): pale amber tint at rest, solid amber on hover */
+        .ai-gen-btn {
+            background-color: #fef3c7; /* amber-100 */
+            color: #d97706; /* amber-600 */
+        }
+        .ai-gen-btn:hover {
+            background-color: #f59e0b; /* amber-500 */
+            color: #ffffff;
+        }
+        .dark .ai-gen-btn {
+            background-color: rgba(245, 158, 11, 0.15);
+            color: #fbbf24; /* amber-400 */
+        }
+        .dark .ai-gen-btn:hover {
+            background-color: #f59e0b;
+            color: #ffffff;
+        }
+
+        /* ===== AI Generate modal: settings bar / 2 columns / status footer ===== */
+        #ai-generate-panel {
+            width: min(1100px, 94vw);
+            height: 90vh;
+        }
+        #ai-cfg-detail:not(.hidden) {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr);
+            gap: 16px;
+            align-items: start;
+            margin-top: 12px;
+        }
+        .ai-cfg-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 9px;
+            border-radius: 999px;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            font-size: 12px;
+            color: #334155;
+            white-space: nowrap;
+        }
+        .dark .ai-cfg-chip {
+            border-color: #475569;
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+        .ai-cfg-chip.ok { color: #059669; }
+        .ai-cfg-chip.warn { color: #d97706; }
+        .dark .ai-cfg-chip.ok { color: #34d399; }
+        .dark .ai-cfg-chip.warn { color: #fbbf24; }
+        #ai-gen-body {
+            flex: 1;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        }
+        .ai-gen-col {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-height: 0;
+            padding: 16px 20px;
+            overflow-y: auto;
+        }
+        .ai-gen-col + .ai-gen-col { border-left: 1px solid #e2e8f0; }
+        .dark .ai-gen-col + .ai-gen-col { border-color: #334155; }
+        .ai-gen-fill {
+            flex: 1 1 auto;
+            min-height: 160px;
+        }
+        #ai-result-area:not(.hidden) {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        #ai-result-preview {
+            flex: 0 0 auto;
+            max-height: 10rem;
+        }
+        #ai-result-empty {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-align: center;
+            padding: 20px;
+            border: 1.5px dashed #cbd5e1;
+            border-radius: 12px;
+        }
+        .dark #ai-result-empty { border-color: #475569; }
+        #ai-result-empty i { font-size: 40px; color: #cbd5e1; }
+        .dark #ai-result-empty i { color: #475569; }
+        #ai-result-area:not(.hidden) + #ai-result-empty { display: none; }
+        .ai-step-badge {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #fef3c7; /* amber-100 */
+            color: #d97706; /* amber-600 */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            letter-spacing: 0;
+        }
+        .dark .ai-step-badge {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+        }
+        #ai-gen-status {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        #ai-elapsed-time:empty { display: none; }
+        /* Cancel: light gray fill so it reads as a button next to the solid Apply */
+        .ai-btn-secondary {
+            background-color: #f1f5f9; /* slate-100 */
+            color: #475569; /* slate-600 */
+            border: 1px solid #e2e8f0;
+        }
+        .ai-btn-secondary:hover { background-color: #e2e8f0; }
+        .dark .ai-btn-secondary {
+            background-color: #334155; /* slate-700 */
+            color: #e2e8f0;
+            border-color: #475569;
+        }
+        .dark .ai-btn-secondary:hover { background-color: #475569; }
+        /* error (red) or retry notice (amber, inline color) — framed in its own color */
+        #ai-error-msg:not(:empty) {
+            border: 1px solid currentColor;
+            border-radius: 8px;
+            padding: 4px 10px;
+            max-height: 4.5em;
+            overflow-y: auto;
+        }
+        @media (max-width: 900px) {
+            #ai-gen-body {
+                grid-template-columns: minmax(0, 1fr);
+                grid-auto-rows: max-content;
+                overflow-y: auto;
+            }
+            .ai-gen-col { overflow: visible; }
+            .ai-gen-col + .ai-gen-col {
+                border-left: none;
+                border-top: 1px solid #e2e8f0;
+            }
+            .dark .ai-gen-col + .ai-gen-col { border-color: #334155; }
+            .ai-gen-fill { flex: none; height: 220px; }
+            #ai-result-empty { flex: none; min-height: 140px; }
+            #ai-cfg-detail:not(.hidden) { grid-template-columns: minmax(0, 1fr); }
+            #ai-generate-panel > div:last-child { flex-wrap: wrap; justify-content: flex-end; }
+            #ai-gen-status { flex-basis: 100%; }
         }
 
         /* Required field marker */
@@ -9228,8 +9396,9 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                                     class="text-xs text-slate-500">インスタンス継承（緑破線）</span>
                                             </li>
                                         </ul>
-                                        <div
-                                            class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                    </div>
+                                    <div
+                                        class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
                                             <h4
                                                 class="font-bold text-sm mb-2 text-slate-500">
                                                 操作方法
@@ -9349,14 +9518,16 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                     class="mt-4 bg-amber-50 p-4 rounded-xl border border-amber-200">
                                     <h4
                                         class="font-bold text-amber-800 text-sm mb-3">
-                                        <i class="ph ph-sparkle"></i> AI
+                                        <i class="ph ph-head-circuit"></i> AI
                                         Generate（AIによるペトリネット自動生成）
                                     </h4>
                                     <p class="text-sm text-amber-700 mb-3">
-                                        ツールバーの <strong>✨ ボタン</strong>
+                                        ツールバー最上段の <strong><i class="ph ph-head-circuit"></i> ボタン</strong>
                                         をクリックすると「AI Petri Net
-                                        Generator」モーダルが開きます。実験手順テキストを入力するだけで、Place・Transition・Arc・Template
+                                        Generator」モーダルが開きます。実験手順テキスト、または手書きノートの画像から、Place・Transition・Arc・Template
                                         を自動生成してキャンバスに追加します。
+                                        モーダルは、上部の<strong>設定バー</strong>、左の<strong>入力（①）</strong>、右の<strong>結果（②）</strong>、
+                                        下部の<strong>フッタ</strong>（エラー・リトライ状況・経過時間と Cancel / Apply to Canvas）で構成されます。
                                     </p>
                                     <div
                                         class="space-y-3 text-xs text-amber-800">
@@ -9364,25 +9535,30 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                             class="bg-white rounded-lg p-3 border border-amber-100 space-y-2">
                                             <p
                                                 class="font-bold text-amber-700">①
-                                                LLM プロバイダーの選択</p>
+                                                LLM プロバイダーの選択（設定バーの「Change」から）</p>
+                                            <p>設定済みの場合、設定バーにはプロバイダー・モデル・API キーの状態が1行で表示されます。
+                                                API キーやモデルが未設定のときは、詳細設定が自動で開きます。</p>
                                             <p><strong>☁️ Cloud
                                                     (Gemini)：</strong> Google AI
                                                 Studio で取得した Gemini API
                                                 キーを入力し、使用モデルを選択します。APIキーはブラウザのローカルストレージに保存され、Google
                                                 Gemini API
-                                                以外には送信されません。高精度・高速（数秒）ですが、データが
+                                                以外には送信されません。高精度・高速（数秒）ですが、データ（AI OCR でノート画像を読み取る場合は画像も）が
                                                 Google のサーバーに送信されます。</p>
                                             <p><strong>🖥️ Local
                                                     (Ollama)：</strong>
                                                 データが外部に送信されないため、機密性の高い実験データに適しています。ネットワーク環境がなくても利用できます。処理時間は
                                                 PC のスペック（特に GPU）に依存し、GPU 非搭載 PC
                                                 では数分〜十数分かかる場合があります。</p>
+                                            <p>Gemini のモデルは、「Fetch Models」を押す前は <code>gemini-flash-lite-latest</code>（既定）と
+                                                <code>gemini-flash-latest</code> の2つが候補に出ます。「Fetch Models」で、そのキーで使える最新のモデル一覧を取得できます。
+                                                Gemini が混雑している（high demand などの一時的なエラー）場合は、2 → 4 → 8 秒の間隔で最大3回まで自動で再送します。</p>
                                         </div>
                                         <div
                                             class="bg-white rounded-lg p-3 border border-amber-100 space-y-2">
                                             <p
                                                 class="font-bold text-amber-700">②
-                                                実験手順テキストの入力</p>
+                                                実験手順の入力（左カラム）</p>
                                             <p>自由形式のテキストでも入力できますが、以下の<strong>推奨構造形式</strong>を使うと精度が向上します。</p>
                                             <div
                                                 class="bg-slate-50 rounded p-2 font-mono text-[10px] leading-relaxed text-slate-600 whitespace-pre overflow-x-auto">[STEP] ステップ名（動作を示す動詞句）
@@ -9395,24 +9571,47 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                                 class="text-[10px] text-slate-500">同じラベルを複数の
                                                 STEP で使うと、自動的に共有
                                                 Place（アークで接続）として扱われます。</p>
+                                            <p>測定結果などの<strong>表</strong>は <code>[TABLE]</code> ブロックとして扱われ、列ごとの content を持つテンプレート（<code>propertyListType</code> の下に列ごとの content）に変換されます。セルの値は書かれた文字列のまま保持されます。</p>
+                                            <div
+                                                class="bg-slate-50 rounded p-2 font-mono text-[10px] leading-relaxed text-slate-600 whitespace-pre overflow-x-auto">[OUT:result] XRF_Result (XRF分析結果)
+[TABLE] XRF_Quantification (XRF定量結果) | unit:mass%
+| Point (点) | Fe | Cr | Ni |
+| A1 | 70.2 | 18.5 | 8.3 |
+| A2 | 69.8 | 18.9 | 8.1 |</div>
+                                            <p><strong>ノート画像から入力（AI OCR）：</strong>
+                                                「Add notebook images」で実験ノートの写真・スキャン（画像、Cloud 利用時は PDF も可）を追加すると、
+                                                サムネイルの右に「AI OCR ↓」ボタンが現れます。押すと、書かれている内容が<strong>文字として読み取られ、手順欄に入力されます</strong>。
+                                                画像は手順欄への貼り付け（Ctrl+V）やドラッグ＆ドロップでも追加できます。
+                                                複数枚は表示順（番号）に 1 ページずつ読み取られるので、◀ ▶ で並べ替えてください。
+                                                手順欄にすでに文章がある場合は、その下に追記されます。
+                                                画像を追加しただけで手順欄が空のまま Generate を押すと、先に AI OCR を実行するよう案内が出ます。</p>
+                                            <p>読み取り結果は手順欄で自由に修正できます。<strong>Generate の前に、数値・単位・用語を元画像と照合してください</strong>（サムネイルをクリックすると拡大表示）。
+                                                特に lite 系モデルやローカルの小型モデルは、読めない文字を □ にせず、もっともらしい語や数値（例：8 h → 6 h）に置き換えることがあります。
+                                                PDF は Cloud (Gemini) のみ対応です。元画像は MaiML には保存されません。</p>
+                                            <p><strong>AI OCR には画像入力に対応したモデルを選んでください。</strong>
+                                                Gemini の flash / flash-lite 系は対応していますが、「Fetch Models」の一覧には音声合成用（<code>-tts</code>）や音楽生成用（<code>lyria</code>）など OCR に使えないモデルも含まれます。
+                                                Ollama ではモデルごとに異なり、テキスト専用のモデルや派生版（名前に <code>TextOnly</code> などが付くもの）は使えません。</p>
                                         </div>
                                         <div
                                             class="bg-white rounded-lg p-3 border border-amber-100 space-y-2">
                                             <p
                                                 class="font-bold text-amber-700">③
-                                                オプションと実行</p>
+                                                生成・確認・適用</p>
                                             <p><strong>Generate
                                                     Templates：</strong>
                                                 チェックON（デフォルト）で、各 Place
                                                 に対応するテンプレートのプロパティ（型・単位付き）も同時生成します。</p>
-                                            <p><strong>Generate ボタン：</strong>
-                                                AIによる生成を実行します。処理中は経過時間タイマーが表示されます。</p>
-                                            <p><strong>プレビュー確認：</strong> 生成された
-                                                Place / Transition / Arc /
-                                                Template
-                                                の一覧を確認します。内容が不正確な場合は、推奨構造形式で入力し直すと精度が改善します。</p>
+                                            <p><strong>Generate → ボタン（左カラム下）：</strong>
+                                                AIによる生成を実行します。処理中はボタン上に経過時間が表示されます。
+                                                <code>[STEP]</code> 形式で書かれた入力は、AI を呼ばずにそのまま変換されます。</p>
+                                            <p><strong>Structured Protocol（右カラム）：</strong>
+                                                AI が手順テキストを変換した中間表現です。直接編集でき、編集すると下の Petri Net Preview が即座に更新されます。
+                                                内容が不正確な場合は、ここで直すか、推奨構造形式で入力し直すと精度が改善します。</p>
+                                            <p><strong>データ欠落のチェック：</strong>
+                                                元のテキストにある数値が生成結果に見当たらない場合は、プレビューに警告が出ます。
+                                                元の表が <code>[TABLE]</code> として出力されていない、同じ名前の Place に異なる値が合流する、といった構造上の問題が見つかった場合は、AI に1回だけ自動で修正を依頼します。</p>
                                             <p><strong>Apply to Canvas
-                                                    ボタン：</strong>
+                                                    ボタン（フッタ）：</strong>
                                                 確認後にクリックすると生成結果がキャンバスに追加され、Dagre
                                                 Auto Layout が自動適用されます。</p>
                                         </div>
@@ -9445,9 +9644,9 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                                     スタートメニューからOllamaを起動します。タスクバーの通知領域にアイコンが表示されれば準備完了です。</li>
                                                 <li><strong>MaiML Studio
                                                         でローカルモードを使用：</strong> AI
-                                                    Generate モーダルの LLM Provider
+                                                    Generate モーダルの設定バーで「Change」を押し、LLM Provider
                                                     で「🖥️ Local
-                                                    (Ollama)」を選択し、「Fetch
+                                                    (Ollama)」を選択して、「Fetch
                                                     Models」ボタンをクリックしてモデル一覧を取得します。</li>
                                                 <li><strong>接続できない場合のCORS設定：</strong>
                                                     手順4で「Connection
@@ -9456,6 +9655,8 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                                         class="bg-slate-900 text-green-400 rounded p-2 font-mono text-[11px] mt-1">[System.Environment]::SetEnvironmentVariable("OLLAMA_ORIGINS",
                                                         "*", "User")</div>
                                                 </li>
+                                                <li><strong>モデルを読み込めない場合：</strong>
+                                                    「An existing connection was forcibly closed by the remote host」のようなエラーが出る場合は、PC のメモリ不足で Ollama がモデルを読み込めていない可能性があります。他のアプリを閉じてから Ollama を再起動してください。</li>
                                             </ol>
                                         </div>
                                     </div>
@@ -10899,18 +11100,22 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                     class="mt-4 bg-amber-50 p-4 rounded-xl border border-amber-200">
                                     <h4
                                         class="font-bold text-amber-800 text-sm mb-3">
-                                        <i class="ph ph-sparkle"></i> AI
+                                        <i class="ph ph-head-circuit"></i> AI
                                         Generate (Automatic Petri Net
                                         Generation)
                                     </h4>
                                     <p class="text-sm text-amber-700 mb-3">
-                                        Click the <strong>✨ button</strong> in
-                                        the toolbar to open the
+                                        Click the <strong><i class="ph ph-head-circuit"></i> button</strong> at
+                                        the top of the toolbar to open the
                                         "AI Petri Net Generator" modal. Simply
-                                        enter an experimental procedure text and
+                                        enter an experimental procedure text, or
+                                        add images of a handwritten lab notebook, and
                                         the AI will automatically generate
                                         Places, Transitions, Arcs, and
                                         Templates, then add them to the canvas.
+                                        The modal consists of a <strong>settings bar</strong> at the top,
+                                        the <strong>input (①)</strong> on the left, the <strong>result (②)</strong> on the right,
+                                        and a <strong>footer</strong> (errors, retry status and elapsed time, plus Cancel / Apply to Canvas).
                                     </p>
                                     <div
                                         class="space-y-3 text-xs text-amber-800">
@@ -10918,7 +11123,10 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                             class="bg-white rounded-lg p-3 border border-amber-100 space-y-2">
                                             <p
                                                 class="font-bold text-amber-700">①
-                                                Select LLM Provider</p>
+                                                Select LLM Provider (via "Change" in the settings bar)</p>
+                                            <p>Once configured, the settings bar shows the provider, model and
+                                                API key status on one line. The detailed settings open automatically
+                                                when the API key or model is missing.</p>
                                             <p><strong>☁️ Cloud
                                                     (Gemini):</strong> Enter a
                                                 Gemini API key from Google AI
@@ -10927,7 +11135,9 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                                 browser's local storage and is
                                                 sent only to the Google Gemini
                                                 API. High accuracy and fast
-                                                (seconds), but data is sent to
+                                                (seconds), but data (including
+                                                notebook images when
+                                                using AI OCR) is sent to
                                                 Google's servers.</p>
                                             <p><strong>🖥️ Local
                                                     (Ollama):</strong> Data
@@ -10938,12 +11148,17 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                                 (especially GPU); expect several
                                                 minutes on CPU-only
                                                 machines.</p>
+                                            <p>Before you click "Fetch Models", the Gemini model list offers
+                                                <code>gemini-flash-lite-latest</code> (default) and <code>gemini-flash-latest</code>.
+                                                "Fetch Models" loads the current list of models available to your key.
+                                                When Gemini is busy (temporary errors such as high demand), the request is
+                                                retried automatically up to 3 times, after 2, 4 and 8 seconds.</p>
                                         </div>
                                         <div
                                             class="bg-white rounded-lg p-3 border border-amber-100 space-y-2">
                                             <p
                                                 class="font-bold text-amber-700">②
-                                                Enter Experimental Procedure</p>
+                                                Enter the Procedure (left column)</p>
                                             <p>Free-form text is accepted, but
                                                 using the <strong>recommended
                                                     structured format</strong>
@@ -10962,30 +11177,64 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                                 STEPs automatically creates a
                                                 shared Place connected by
                                                 arcs.</p>
+                                            <p><strong>Tables</strong> such as measurement results are handled as <code>[TABLE]</code> blocks.
+                                                A table becomes a template with one content per column (column contents grouped under a
+                                                <code>propertyListType</code>), and cell values are kept exactly as written.</p>
+                                            <div
+                                                class="bg-slate-50 rounded p-2 font-mono text-[10px] leading-relaxed text-slate-600 whitespace-pre overflow-x-auto">[OUT:result] XRF_Result (XRF分析結果)
+[TABLE] XRF_Quantification (XRF定量結果) | unit:mass%
+| Point (点) | Fe | Cr | Ni |
+| A1 | 70.2 | 18.5 | 8.3 |
+| A2 | 69.8 | 18.9 | 8.1 |</div>
+                                            <p><strong>Input from notebook images (AI OCR):</strong>
+                                                Add photos or scans of lab-notebook pages with "Add notebook images"
+                                                (images; PDF also with Cloud); an "AI OCR ↓" button then appears to the right of the
+                                                thumbnails. Click it and what is written is
+                                                <strong>extracted as text into the procedure field</strong>. You can also paste (Ctrl+V)
+                                                images into the procedure field or drag &amp; drop them onto the dialog.
+                                                Multiple pages are read in the order shown (numbered); reorder them with ◀ ▶.
+                                                If the procedure field already contains text, the extracted text is appended below it.
+                                                If you click Generate with images added but the procedure field still empty, you are
+                                                prompted to run AI OCR first.</p>
+                                            <p>The extracted text can be edited freely in the procedure field. <strong>Before clicking
+                                                Generate, check numbers, units and terms against the images</strong> (click a
+                                                thumbnail to enlarge). Lite models and small local models in particular may
+                                                replace illegible text with plausible-looking words or numbers (e.g. 8 h → 6 h)
+                                                instead of marking it □. PDF is supported with Cloud (Gemini) only. The images are not
+                                                stored in the MaiML file.</p>
+                                            <p><strong>For AI OCR, choose a model that accepts image input.</strong>
+                                                Gemini's flash / flash-lite models do, but the "Fetch Models" list also includes models
+                                                that cannot do OCR, such as text-to-speech (<code>-tts</code>) or music generation
+                                                (<code>lyria</code>) models. On Ollama it depends on the model: text-only models and
+                                                variants (e.g. names containing <code>TextOnly</code>) will not work.</p>
                                         </div>
                                         <div
                                             class="bg-white rounded-lg p-3 border border-amber-100 space-y-2">
                                             <p
                                                 class="font-bold text-amber-700">③
-                                                Options and Execution</p>
+                                                Generate, Review and Apply</p>
                                             <p><strong>Generate
                                                     Templates:</strong> When
                                                 checked (default), typed
                                                 properties with units are
                                                 automatically generated for each
                                                 Place's template.</p>
-                                            <p><strong>Generate button:</strong>
-                                                Starts AI generation. An
-                                                elapsed-time timer is shown
-                                                during processing.</p>
-                                            <p><strong>Preview:</strong> Review
-                                                the generated Places /
-                                                Transitions / Arcs / Templates.
-                                                If the result looks incorrect,
-                                                try the recommended structured
-                                                format for better accuracy.</p>
+                                            <p><strong>Generate → button (bottom of the left column):</strong>
+                                                Starts AI generation. The elapsed time is shown on the button
+                                                during processing. Input already written in <code>[STEP]</code>
+                                                format is converted directly without calling the AI.</p>
+                                            <p><strong>Structured Protocol (right column):</strong> The
+                                                intermediate form the AI converts your text into. You can edit it
+                                                directly; the Petri Net Preview below updates as you type. If the
+                                                result looks incorrect, fix it here or try the recommended
+                                                structured format for better accuracy.</p>
+                                            <p><strong>Data-loss checks:</strong> If a number in the source
+                                                text is missing from the result, the preview shows a warning. If a
+                                                structural problem is found, such as a source table not output as a
+                                                <code>[TABLE]</code> block or different values merging into one Place
+                                                with the same name, the AI is asked once to fix it automatically.</p>
                                             <p><strong>Apply to Canvas
-                                                    button:</strong> Adds the
+                                                    button (footer):</strong> Adds the
                                                 generated elements to the canvas
                                                 and automatically applies Dagre
                                                 Auto Layout.</p>
@@ -11030,7 +11279,8 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                                 <li><strong>Use Local mode in
                                                         MaiML Studio:</strong>
                                                     In the AI Generate modal,
-                                                    select "🖥️ Local (Ollama)"
+                                                    click "Change" in the settings
+                                                    bar, select "🖥️ Local (Ollama)"
                                                     as the LLM Provider, then
                                                     click "Fetch Models" to
                                                     retrieve the list of
@@ -11046,6 +11296,8 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                                         class="bg-slate-900 text-green-400 rounded p-2 font-mono text-[11px] mt-1">[System.Environment]::SetEnvironmentVariable("OLLAMA_ORIGINS",
                                                         "*", "User")</div>
                                                 </li>
+                                                <li><strong>If the model fails to load:</strong>
+                                                    An error such as "An existing connection was forcibly closed by the remote host" may mean Ollama could not load the model because the PC is short of memory. Close other applications and restart Ollama.</li>
                                             </ol>
                                         </div>
                                     </div>
@@ -12613,6 +12865,14 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                     <div id="petriNet-canvas-view" class="flex h-full relative">
                         <div
                             class="absolute left-6 top-6 z-10 flex flex-col gap-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur shadow-lg border border-slate-200 dark:border-slate-700 p-2 rounded-xl">
+                            <button onclick="openAiGenerateModal()"
+                                id="btn-aiGenerate"
+                                class="ai-gen-btn p-3 rounded-lg transition-colors"
+                                title="AI Generate from procedure text / image">
+                                <i class="ph ph-head-circuit text-xl"></i>
+                            </button>
+                            <div
+                                class="h-px bg-slate-200 dark:bg-slate-600 w-full my-1"></div>
                             <button onclick="setMode('select')" id="btn-select"
                                 class="p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors tooltip-right group relative"
                                 title="Select">
@@ -12662,14 +12922,6 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                 title="InstanceRef">
                                 <i
                                     class="ph ph-arrows-in-line-horizontal text-xl text-green-500"></i>
-                            </button>
-                            <div
-                                class="h-px bg-slate-200 dark:bg-slate-600 w-full my-1"></div>
-                            <button onclick="openAiGenerateModal()"
-                                id="btn-aiGenerate"
-                                class="p-3 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-900/30 text-amber-500 dark:text-amber-400 transition-colors"
-                                title="AI Generate from procedure text">
-                                <i class="ph ph-sparkle text-xl"></i>
                             </button>
                             <button onclick="applyDagreLayout()"
                                 id="btn-autoLayout"
@@ -14654,6 +14906,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
             const laneBorder = isDark ? "#475569" : "#cbd5e1";
             const laneBorderSelected = "#6366f1";
             const laneLabelColor = isDark ? "#94a3b8" : "#64748b";
+            const emptyHintColor = isDark ? "#64748b" : "#94a3b8"; // slate-500 : slate-400
 
             // Adjust marker color
             const markerColor = strokeColor;
@@ -14675,6 +14928,18 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                 body += `<rect x="${l.left}" y="${l.bottom - 5}" width="${l.right - l.left}" height="10"
                     fill="transparent" style="cursor:row-resize"
                     onmousedown="startLaneResize(event, '${escJsAttr(l.method.id)}')" />`;
+
+                // 空のメソッド（Place/Transition が0個）だけ、レーン中央に薄い文字で始め方を案内。
+                // ボタンは置かない（「必ずここから」と誤解させないため）。クリックは素通し。
+                if (l.method.petriNet.places.length === 0 && l.method.petriNet.transitions.length === 0) {
+                    const cx = (l.left + l.right) / 2;
+                    const cy = l.top + l.height / 2;
+                    body += `<g pointer-events="none" class="select-none" text-anchor="middle" fill="${emptyHintColor}">
+                        <text x="${cx}" y="${cy - 18}" font-size="16" font-weight="600">This method is empty</text>
+                        <text x="${cx}" y="${cy + 6}" font-size="13">Draw the net with the toolbar on the left,</text>
+                        <text x="${cx}" y="${cy + 26}" font-size="13">or let <tspan font-family="Phosphor" fill="#f59e0b">&#xe7d4;</tspan> AI Generate build it from procedure text or images.</text>
+                    </g>`;
+                }
             });
 
             // ── 各メソッドのローカル内容（同一メソッド内ref・arc・place・transition）──
@@ -22555,6 +22820,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             document.getElementById('ai-procedure-input').value = '';
             document.getElementById('ai-dsl-editor').value = '';
             document.getElementById('ai-dsl-source-note').textContent = '';
+            clearAiOcrFiles();
+            _wireAiOcrDrop();
             // Restore saved API key
             const saved = localStorage.getItem('gemini_api_key');
             if (saved) document.getElementById('ai-apikey-input').value = saved;
@@ -22575,6 +22842,12 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             toggleAiProvider();
             if (savedProvider === 'local') fetchOllamaModels();
             else fetchGeminiModels(false);
+            document.getElementById('ai-elapsed-time').textContent = '';
+            _wireAiCfgSummary();
+            updateAiCfgSummary();
+            toggleAiCfgDetail(savedProvider === 'local'
+                ? !localStorage.getItem('ollama_model')
+                : !document.getElementById('ai-apikey-input').value.trim());
             document.getElementById('ai-new-method-name-input').value = '';
             populateAiTargetMethodSelect();
             document.getElementById('ai-generate-modal').classList.remove('hidden');
@@ -22625,6 +22898,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                 if (forceRefresh) alert('Network error: ' + e.message);
             } finally {
                 if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.innerHTML = '<i class="ph ph-arrows-clockwise"></i> Fetch Models'; }
+                updateAiCfgSummary();
             }
         }
 
@@ -22638,6 +22912,43 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             document.getElementById('ai-cloud-model').classList.toggle('hidden', isLocal);
             document.getElementById('ai-local-section').classList.toggle('hidden', !isLocal);
             localStorage.setItem('ai_provider', isLocal ? 'local' : 'cloud');
+            updateAiCfgSummary();
+        }
+
+        // One-line summary of provider / model / key state shown in the settings bar.
+        function updateAiCfgSummary() {
+            const el = document.getElementById('ai-cfg-summary');
+            if (!el) return;
+            const chip = (icon, text, cls = '') =>
+                `<span class="ai-cfg-chip ${cls}"><i class="ph ${icon}"></i>${escHtml(text)}</span>`;
+            if (document.getElementById('ai-provider-local').checked) {
+                const m = document.getElementById('ai-ollama-model-select').value;
+                el.innerHTML = chip('ph-desktop', 'Local (Ollama)')
+                    + (m ? chip('ph-cpu', m, 'font-mono') : chip('ph-warning-circle', 'No model selected', 'warn'));
+            } else {
+                const m = document.getElementById('ai-model-select').value;
+                const hasKey = !!document.getElementById('ai-apikey-input').value.trim();
+                el.innerHTML = chip('ph-cloud', 'Cloud (Gemini)')
+                    + chip('ph-cpu', m, 'font-mono')
+                    + (hasKey ? chip('ph-check-circle', 'API key set', 'ok') : chip('ph-warning-circle', 'No API key', 'warn'));
+            }
+        }
+
+        // Settings detail: collapsed once configured, expanded when something is missing.
+        function toggleAiCfgDetail(force) {
+            const d = document.getElementById('ai-cfg-detail');
+            const open = typeof force === 'boolean' ? force : d.classList.contains('hidden');
+            d.classList.toggle('hidden', !open);
+            document.querySelector('#ai-cfg-toggle span').textContent = open ? 'Hide' : 'Change';
+        }
+
+        let _aiCfgWired = false;
+        function _wireAiCfgSummary() {
+            if (_aiCfgWired) return;
+            _aiCfgWired = true;
+            const d = document.getElementById('ai-cfg-detail');
+            d.addEventListener('input', updateAiCfgSummary);
+            d.addEventListener('change', updateAiCfgSummary);
         }
 
         async function fetchOllamaModels() {
@@ -22661,6 +22972,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             } catch (e) {
                 sel.innerHTML = '<option value="">Connection failed</option>';
                 errEl.textContent = 'Cannot connect to Ollama. Make sure Ollama is running on localhost:11434.';
+            } finally {
+                updateAiCfgSummary();
             }
         }
 
@@ -22691,11 +23004,16 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
         }
 
         // "English_Name (元の名前)" → label from the English part, description
-        // from the original-language part. Splits only when the parenthesis
-        // holds non-ASCII text, so "Washing (final)" keeps its full name.
+        // from the parenthesis. Non-ASCII parentheses always split. ASCII ones
+        // (e.g. Spanish "agua desionizada", or "Na-Oct") split only when the
+        // prompt asked for descriptions (non-English browser language) and the
+        // head is identifier-shaped; with an English UI "Washing (final)" keeps
+        // its full name so it never merges with "Washing (first)".
         function _aiSplitBilingualName(rawName) {
             const m = (rawName || '').match(/^(.*?)\s*[（(]([^（）()]+)[)）]$/);
-            if (m && /[^\x00-\x7F]/.test(m[2]) && _aiSanitizeNCName(m[1])) {
+            const isDesc = m && (/[^\x00-\x7F]/.test(m[2])
+                || (_aiDescLanguage().base !== 'en' && /^[A-Za-z_][A-Za-z0-9_.\-]*$/.test(m[1].trim())));
+            if (isDesc && _aiSanitizeNCName(m[1])) {
                 return { labelSrc: m[1].trim(), desc: m[2].trim() };
             }
             return { labelSrc: rawName, desc: rawName };
@@ -22715,17 +23033,129 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             return { value: s, units: '', type: 'stringType' };
         }
 
+        // ---------- Tables ----------
+        // Result tables (e.g. EDS quantification) travel as Markdown pipe tables:
+        // OCR output, the LLM's [TABLE] blocks and the source check all use the
+        // same form, so whether something is a table is decided by code, not
+        // left to the LLM's judgement.
+
+        function _aiSplitTableRow(line) {
+            return line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(c => c.trim());
+        }
+
+        // LaTeX array/tabular and tab-separated blocks → Markdown pipe tables.
+        // OCR engines emit any of these for the same printed table.
+        function _aiNormalizeTables(text) {
+            const toMd = rows => {
+                rows = rows.filter(r => r.some(c => c !== ''));
+                if (rows.length < 2) return null;
+                const line = r => '| ' + r.join(' | ') + ' |';
+                return [line(rows[0]), '|' + rows[0].map(() => '---').join('|') + '|', ...rows.slice(1).map(line)].join('\n');
+            };
+            let s = (text || '').replace(/\\begin\{(array|tabular)\}(?:\{[^}]*\})?([\s\S]*?)\\end\{\1\}/g, (all, env, body) => {
+                const rows = body.replace(/\\hline/g, '').split(/\\\\/)
+                    .map(r => r.trim()).filter(Boolean)
+                    .map(r => r.split('&').map(c => c.trim().replace(/^\\(?:text|mathrm)\{(.*)\}$/, '$1')));
+                return toMd(rows) || all;
+            });
+            // Two or more consecutive lines with at least one tab each
+            s = s.replace(/(?:^[^\n\t]*\t[^\n]*(?:\n|$)){2,}/gm, block => {
+                const md = toMd(block.replace(/\n$/, '').split('\n').map(l => l.split('\t').map(c => c.trim())));
+                return md ? md + (block.endsWith('\n') ? '\n' : '') : block;
+            });
+            return s;
+        }
+
+        // Markdown pipe tables in free text: 2+ consecutive "|" rows (header + data).
+        function detectSourceTables(text) {
+            const tables = [];
+            let rows = [];
+            const flush = () => { if (rows.length >= 2) tables.push({ header: rows[0], rows: rows.slice(1) }); rows = []; };
+            (text || '').split(/\r?\n/).forEach(raw => {
+                const line = raw.trim().replace(/｜/g, '|');
+                if (/^\|.*\|$/.test(line) && (line.match(/\|/g) || []).length >= 3) {
+                    if (!/^\|[\s:\-|]+\|$/.test(line)) rows.push(_aiSplitTableRow(line));
+                } else flush();
+            });
+            flush();
+            return tables;
+        }
+
+        // [TABLE] → one propertyListType grouping one content per column:
+        // numeric columns become contentFloatListType, others contentStringListType.
+        // Header cell "Temp (温度) [°C]" → key Temp, description 温度, units °C.
+        function _aiTableToProperty(table, usedKeys, renamed) {
+            const header = table.rows[0] || [];
+            const data = table.rows.slice(1);
+            const isNum = c => /^[+-]?(\d+(\.\d+)?|\.\d+)([eE][+-]?\d+)?$/.test(c.replace(/,/g, ''));
+            const colKeys = new Set();
+            const contents = header.map((h, ci) => {
+                let units = '', head = h;
+                const um = head.match(/^(.*?)\s*\[([^\[\]]+)\]$/);
+                if (um) { head = um[1]; units = um[2].trim(); }
+                const parts = _aiSplitBilingualName(head);
+                let labelSrc = parts.labelSrc;
+                if (!units) {
+                    const am = labelSrc.match(/^(.*?)\s*\(([\x20-\x7E]+)\)$/);
+                    if (am && _aiSanitizeNCName(am[1])) { labelSrc = am[1]; units = am[2].trim(); }
+                }
+                let key = _aiSanitizeNCName(labelSrc) || `col_${ci + 1}`;
+                const base = key; let i = 2;
+                while (colKeys.has(key)) key = `${base}_${i++}`;
+                colKeys.add(key);
+                if (/[^\x00-\x7F]/.test(labelSrc)) renamed.push(`${h} → ${key}`);
+                const cells = data.map(r => (r[ci] ?? '').trim());
+                const numeric = cells.some(c => c !== '') && cells.every(c => c === '' || isNum(c));
+                if (numeric) {
+                    return { key, type: 'contentFloatListType', units: units || table.unit || '', description: parts.desc,
+                             value: cells.map(c => c === '' ? 'NaN' : c.replace(/,/g, '')).join(' ') };  // keep digits as written (0.30 ≠ 0.3)
+                }
+                // xs:list items are whitespace-separated, so spaces inside a cell become "_"
+                return { key, type: 'contentStringListType', units: '', description: parts.desc,
+                         value: cells.map(c => c === '' ? '-' : c.replace(/\s+/g, '_')).join(' ') };
+            });
+            const tParts = _aiSplitBilingualName(table.name || 'Table');
+            let key = _aiSanitizeNCName(tParts.labelSrc) || 'Table';
+            const base = key; let i = 2;
+            while (usedKeys.has(key)) key = `${base}_${i++}`;
+            usedKeys.add(key);
+            return { key, type: 'propertyListType', units: '', description: tParts.desc, value: '',
+                     children: { properties: [], contents } };
+        }
+
         function parseDsl(text) {
             const steps = [];
             const unrecognized = [];
-            let cur = null;
+            let cur = null, lastIo = null, curTable = null;
             (text || '').split(/\r?\n/).forEach(rawLine => {
                 const line = rawLine.trim()
                     .replace(/［/g, '[').replace(/］/g, ']')
                     .replace(/：/g, ':').replace(/｜/g, '|');
+                // [TABLE] block: pipe rows until a blank line or the next [...] line
+                if (curTable) {
+                    if (line && !line.startsWith('[') && line.includes('|')) {
+                        if (!/^\|?[\s:\-|]+$/.test(line)) curTable.rows.push(_aiSplitTableRow(line));  // skip |---|---|
+                        return;
+                    }
+                    curTable = null;
+                }
                 if (!line || line.startsWith('#') || /^-{3,}$/.test(line)) return;
-                let m = line.match(/^\[\s*STEP\s*\]\s*(.+)$/i);
-                if (m) { cur = { name: m[1].trim(), ins: [], outs: [] }; steps.push(cur); return; }
+                let m = line.match(/^\[\s*TABLE\s*\]\s*(.*)$/i);
+                if (m) {
+                    if (!lastIo) { unrecognized.push(rawLine.trim()); return; }
+                    const body = m[1];
+                    const barIdx = body.indexOf('|');
+                    const params = {};
+                    if (barIdx >= 0) body.slice(barIdx + 1).split(/[,、]/).forEach(tok => {
+                        const ci = tok.indexOf(':');
+                        if (ci > 0) params[tok.slice(0, ci).trim().toLowerCase()] = tok.slice(ci + 1).trim();
+                    });
+                    curTable = { name: (barIdx >= 0 ? body.slice(0, barIdx) : body).trim(), unit: params.unit || '', rows: [] };
+                    lastIo.tables.push(curTable);
+                    return;
+                }
+                m = line.match(/^\[\s*STEP\s*\]\s*(.+)$/i);
+                if (m) { cur = { name: m[1].trim(), ins: [], outs: [] }; steps.push(cur); lastIo = null; return; }
                 m = line.match(/^\[\s*(IN|OUT)\s*:\s*(material|condition|result)\s*\]\s*(.+)$/i);
                 if (m) {
                     if (!cur) { unrecognized.push(rawLine.trim()); return; }
@@ -22743,8 +23173,9 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                             else params.push({ key: tok, raw: '' });
                         });
                     }
-                    const io = { name, type: m[2].toLowerCase(), params };
+                    const io = { name, type: m[2].toLowerCase(), params, tables: [] };
                     (m[1].toUpperCase() === 'IN' ? cur.ins : cur.outs).push(io);
+                    lastIo = io;
                     return;
                 }
                 unrecognized.push(rawLine.trim());
@@ -22762,6 +23193,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             const usedLabels = new Set();
             const arcSet = new Set();
             const renamed = [];
+            const conflicts = [];
             let autoN = 0;
 
             const uniqueLabel = base => {
@@ -22787,13 +23219,25 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                 let rec = keys.map(k => placeByKey.get(k)).find(Boolean);
                 if (!rec) {
                     const typeBase = io.type.charAt(0).toUpperCase() + io.type.slice(1);
-                    rec = { label: labelFor(io.name, parts, typeBase), description: parts.desc, type: io.type, _props: new Map() };
+                    rec = { label: labelFor(io.name, parts, typeBase), description: parts.desc, type: io.type, _props: new Map(), _tables: [] };
                     places.push(rec);
                 }
                 keys.forEach(k => placeByKey.set(k, rec));
                 io.params.forEach(pr => {
                     const pk = _aiNormKey(pr.key) || pr.key;
-                    if (!rec._props.has(pk)) rec._props.set(pk, pr);
+                    const prev = rec._props.get(pk);
+                    if (!prev) rec._props.set(pk, pr);
+                    // Same name = same Place, so a second value for the same key
+                    // would be silently dropped (e.g. rough 6 kV / finish 4 kV
+                    // both named "Polishing_Condition"). Record it as a conflict.
+                    else if (_aiNormKey(prev.raw) !== _aiNormKey(pr.raw)) {
+                        conflicts.push({ name: io.name, key: pr.key, kept: prev.raw, dropped: pr.raw });
+                    }
+                });
+                // The same table repeated on a later [IN:...] line is kept once
+                (io.tables || []).forEach(t => {
+                    const sig = JSON.stringify(t.rows);
+                    if (!rec._tables.some(x => JSON.stringify(x.rows) === sig)) rec._tables.push(t);
                 });
                 return rec;
             };
@@ -22831,6 +23275,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                     // 消えてしまう。schemaはdescription要素に非ASCII文字を許容するため、
                     // 識別用の1エントリを自動生成して説明文の行き先を確保する。
                     // key属性名はPlace自身の英語ラベル(例: "Hexane")をそのまま使う。
+                    p._tables.forEach(t => properties.push(_aiTableToProperty(t, usedKeys, renamed)));
                     if (properties.length === 0 && p.description && p.description !== p.label) {
                         properties.push({ key: p.label, type: 'stringType', units: '', description: p.description, value: '' });
                     }
@@ -22841,17 +23286,36 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                 places: places.map(p => ({ label: p.label, description: p.description, type: p.type })),
                 transitions, arcs, templates,
                 renamed: [...new Set(renamed)],
+                conflicts,
             };
         }
 
         // Structural validation. "issues" are hard problems (trigger the automatic
         // AI repair round); "notes" are soft warnings shown to the user.
-        function validateAiStructure(steps, compiled) {
+        function validateAiStructure(steps, compiled, source) {
             const issues = [], notes = [];
             if (steps.length === 0) {
                 issues.push('No [STEP] lines were found.');
                 return { issues, notes };
             }
+            // Tables: every table found in the source must come back as a [TABLE] block
+            const dslTables = steps.flatMap(s => [...s.ins, ...s.outs]).flatMap(io => io.tables || []);
+            dslTables.forEach(t => {
+                const width = (t.rows[0] || []).length;
+                if (t.rows.length < 2) issues.push(`[TABLE] "${t.name || '(unnamed)'}" has no data rows.`);
+                t.rows.slice(1).forEach((r, i) => {
+                    if (r.length !== width) issues.push(`[TABLE] "${t.name || '(unnamed)'}" row ${i + 1} has ${r.length} cells; the header has ${width}.`);
+                });
+            });
+            if (source != null && !/[\[［]\s*STEP\s*[\]］]/i.test(source)) {
+                const srcTables = detectSourceTables(_aiNormalizeTables(source));
+                if (srcTables.length > dslTables.length) {
+                    issues.push(`The source text contains ${srcTables.length} table(s) but the protocol has ${dslTables.length} [TABLE] block(s). Copy every table as a [TABLE] block (rule 11).`);
+                }
+            }
+            (compiled.conflicts || []).forEach(c => {
+                issues.push(`"${c.name}" is used with different values (${c.key}: ${c.kept} vs ${c.dropped}); only the first is kept. Give each a distinct name.`);
+            });
             steps.forEach(s => {
                 if (s.ins.length === 0) issues.push(`Step "${s.name}" has no [IN:...] line.`);
                 if (s.outs.length === 0) issues.push(`Step "${s.name}" has no [OUT:...] line.`);
@@ -22887,9 +23351,96 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             return { issues, notes };
         }
 
+        // Data-loss guard: numbers that appear in the source text but nowhere in
+        // the structured protocol. The LLM may silently drop whole sections
+        // (e.g. an EDS results table), so this is checked deterministically and
+        // shown to the user. Soft warning only — dates, room temperature etc.
+        // are legitimately left out, so it never triggers the repair round.
+        function _aiNumberKey(s) {
+            const n = parseFloat(s.replace(/,/g, ''));
+            return isFinite(n) ? String(n) : null;
+        }
+        function findMissingSourceNumbers(source, dsl) {
+            const src = (source || '').normalize('NFKC')
+                .replace(/^-{3}\s*p\.\s*\d+\s*-{3}$/gim, '')      // OCR page markers
+                .replace(/^\s*\d+\s*[.)](?!\d)/gm, '');            // list / section numbers "1." "2)"
+            const inDsl = new Set();
+            ((dsl || '').normalize('NFKC').match(/\d+(?:,\d{3})*(?:\.\d+)?/g) || [])
+                .forEach(t => { const k = _aiNumberKey(t); if (k) inDsl.add(k); });
+            const missing = [], seen = new Set();
+            // Skip digits inside identifiers (S-2609-03, JSM-IT700HR, SiO2, P1) and dates (2024年9月17日)
+            const re = /(?<![A-Za-z\d_.\-])(\d+(?:,\d{3})*(?:\.\d+)?)(?![\d年月日])/gu;
+            let m;
+            while ((m = re.exec(src))) {
+                const k = _aiNumberKey(m[1]);
+                if (!k || inDsl.has(k) || seen.has(k)) continue;
+                seen.add(k);
+                missing.push(m[1]);
+            }
+            return missing;
+        }
+
         // ---------- LLM prompts: free-form text → structured protocol ----------
 
+        // Language for the human-readable descriptions the LLM puts in parentheses
+        // after each identifier (they become Place / Transition / table descriptions).
+        // Follows the browser language so an English user never gets e.g. Japanese
+        // descriptions, while a Japanese user gets Japanese ones even for an English
+        // procedure. English needs none: the identifiers already read as English.
+        function _aiDescLanguage() {
+            const base = String(navigator.language || 'en').toLowerCase().split('-')[0] || 'en';
+            let name = 'English';
+            try { name = new Intl.DisplayNames(['en'], { type: 'language' }).of(base) || 'English'; } catch (e) { /* old browser */ }
+            return { base, name };
+        }
+
         function buildDslPrompt(procedure) {
+            const lang = _aiDescLanguage();
+            const isJa = lang.base === 'ja';
+            const isEn = lang.base === 'en';
+            // (text) helper for the examples: Japanese wording, nothing for English, and
+            // plain English for any other language (with an explicit note before the
+            // example). A placeholder such as "(<... — in Korean>)" must NOT be used: the
+            // model copied it literally, angle brackets and English included.
+            const d = (ja, en) => isJa ? ` (${ja})` : isEn ? '' : ` (${en})`;
+            const exampleNote = (isJa || isEn) ? '' : `(The descriptions in parentheses in all examples of this prompt — the table example above and the example below — are shown in English only for illustration. In your answer, write every description in ${lang.name} only — no English, no angle brackets.)\n\n`;
+            const descRule = isEn
+                ? `Do NOT add anything in parentheses after an identifier, even if the procedure is written in another language.`
+                : `Right after each identifier, add a short human-readable description in ${lang.name} in parentheses: HAuCl4_Solution ${isJa ? '(HAuCl4水溶液)' : `(a ${lang.name} phrase meaning "HAuCl4 aqueous solution")`}. If the procedure is written in ${lang.name}, use its original wording; otherwise translate into ${lang.name}. Write these descriptions ONLY in ${lang.name}, never in any other language.`;
+            const tableHeaderRule = isEn
+                ? `Header cells are short English identifiers (no parentheses)`
+                : `Header cells are short English identifiers followed by a short ${lang.name} description in parentheses (omit it when the header is just a symbol such as Fe)`;
+            const exampleBlock = isJa ? `Example input:
+  Step3. 加熱・沸騰: 1mMの塩化金酸(HAuCl4)水溶液50mLをフラスコに入れ、攪拌しながら加熱し、液温を100℃に保つ。
+  Step4. 還元剤の添加: 沸騰している金溶液に、38.8mMのクエン酸ナトリウム水溶液5mLを一気に加えます。
+
+Example output:
+[STEP] Heating (加熱・沸騰)
+[IN:material] HAuCl4
+[IN:condition] HAuCl4_Solution (HAuCl4水溶液) | concentration:1 mM, volume:50 mL
+[IN:condition] Heating_Condition (加熱条件) | temperature:100 °C
+[OUT:condition] Boiling_HAuCl4_Solution (沸騰状態のHAuCl4溶液) | temperature:100 °C
+
+[STEP] Add_Reducing_Agent (還元剤の添加)
+[IN:condition] Boiling_HAuCl4_Solution (沸騰状態のHAuCl4溶液)
+[IN:condition] Sodium_Citrate_Solution (クエン酸ナトリウム水溶液) | concentration:38.8 mM, volume:5 mL
+[IN:condition] Addition_Condition (添加条件) | additionMethod:一括添加
+[OUT:condition] Reaction_Mixture (反応混合液)` : `Example input:
+  Step 3. Heating: Put 50 mL of a 1 mM HAuCl4 aqueous solution into a flask and heat it with stirring, keeping the liquid at 100 °C.
+  Step 4. Adding the reducing agent: Quickly add 5 mL of a 38.8 mM sodium citrate solution to the boiling gold solution.
+
+Example output:
+[STEP] Heating${d('', 'heating')}
+[IN:material] HAuCl4
+[IN:condition] HAuCl4_Solution${d('', 'HAuCl4 aqueous solution')} | concentration:1 mM, volume:50 mL
+[IN:condition] Heating_Condition${d('', 'heating condition')} | temperature:100 °C
+[OUT:condition] Boiling_HAuCl4_Solution${d('', 'boiling HAuCl4 solution')} | temperature:100 °C
+
+[STEP] Add_Reducing_Agent${d('', 'adding the reducing agent')}
+[IN:condition] Boiling_HAuCl4_Solution${d('', 'boiling HAuCl4 solution')}
+[IN:condition] Sodium_Citrate_Solution${d('', 'sodium citrate solution')} | concentration:38.8 mM, volume:5 mL
+[IN:condition] Addition_Condition${d('', 'addition condition')} | additionMethod:all_at_once
+[OUT:condition] Reaction_Mixture${d('', 'reaction mixture')}`;
             return `You are an expert at converting experimental procedures into a structured protocol format used by MaiML (JIS K0200), a scientific data format based on Petri nets.
 
 Convert the experimental procedure below into this exact line-based format:
@@ -22910,32 +23461,32 @@ CRITICAL RULES:
 1. One [STEP] per process operation, in chronological order.
 2. Every step MUST have at least one [IN:...] line and at least one [OUT:...] line. If the text does not state a step's output explicitly, infer the resulting state or product and write it as [OUT:condition] or [OUT:result].
 3. Steps must form one connected flow: when a step uses anything produced by an earlier step, repeat EXACTLY the same name (character for character) from that earlier [OUT:...] line, as [IN:result] or [IN:condition]. Never rename it and never re-introduce it as [IN:material].
+   Conversely, the same name always means the same Place: things with different parameter values need distinct names (e.g. Rough_Polishing_Condition and Finish_Polishing_Condition, never Polishing_Condition twice).
 4. Numeric process parameters (temperature, time, concentration, volume, speed, ...) go after "|" as paramKey:value unit. paramKey must be short camelCase English. Never put quantities inside a name.
    - value must be ONE number (e.g. 100, 0.1, 5e-4). Never a range, never two numbers, never words.
    - unit must be a bare unit symbol only (e.g. kV, mm, mL, °C, µm, mM, min, rpm, x). Never words, never a number, never a range. Omit the unit entirely when the quantity has none.
 5. Ranges: when a parameter is given as a range ("200 to 5000", "5e-4~1e-3", "1,000倍から50,000倍", "20〜40 mL"), write TWO params with the suffixes Min and Max, each a single number carrying the same unit. Example: magnificationMin:200 x, magnificationMax:5000 x
 6. Ratios and compositions: never put ":" inside a value. Split a ratio into one param per component. Example: "主剤:硬化剤 = 100:12" becomes resinRatio:100, hardenerRatio:12
 7. If the SAME parameter takes different values at different points of the procedure (e.g. polishing with 3 µm paste, then with 1 µm paste), write them as SEPARATE steps -- never merge them. Only when the procedure genuinely tests several values at one and the same step, keep ONE step and write them "/"-joined WITHOUT a unit (e.g. equivalents:0.1/0.25/0.5/10).
-8. Ignore content that is not procedure: literature references, figure/table citations (e.g. "Fig. S1"), explanations of why, safety notes.
-9. Write every step and input/output name as a short English identifier using only ASCII letters, digits and underscores (e.g. Sodium_Citrate_Solution) — these become XML IDs and QNames. If the procedure is written in another language, append the original name in parentheses right after the identifier: HAuCl4_Solution (HAuCl4水溶液). Reuse identifiers consistently.
+8. Ignore only these: literature references, figure/table citations (e.g. "Fig. S1"), explanations of why, safety notes. Measured data is NOT ignorable content (see rule 11).
+9. Write every step and input/output name as a short English identifier using only ASCII letters, digits and underscores (e.g. Sodium_Citrate_Solution) — these become XML IDs and QNames. ${descRule} Reuse identifiers consistently.
 10. Output ONLY structured lines ([STEP], [IN:...], [OUT:...]) and blank lines between steps. No explanations, no markdown fences, no numbering.
+11. NEVER drop measured data. Every numeric result in the text (measured values, analysis tables, compositions, yields, ratios calculated from the data) must appear as params on an [OUT:result] line of the step that measured it.
+   - If the text reports results of a measurement whose procedure is not described (e.g. only a results table such as "EDS定量結果"), still create a [STEP] for that measurement. Its inputs are the sample produced by an earlier step ([IN:result], same name) and the instrument if one is named ([IN:material]). Do not invent conditions that are not written.
+   - Tables: copy every table in the text as a [TABLE] block placed right after the [IN:...] or [OUT:...] line it belongs to (results tables go after the [OUT:result] line). Never expand table cells into params.
+     [TABLE] Table_Name${isEn ? '' : ` (${lang.name} title)`} | unit:common unit of the numeric cells
+     | Header${isEn ? '' : ` (${lang.name})`} | Header [unit] | ... |
+     | cell | cell | ... |
+     One "|" row per table row; the first row is the header. ${tableHeaderRule}; a column-specific unit goes in square brackets. Copy every row and every cell value exactly as written (keep the digits, do not round, do not convert). End the block with a blank line.
+     Example:
+     [OUT:result] XRF_Result${d('XRF分析結果', 'XRF analysis result')}
+     [TABLE] XRF_Quantification${d('XRF定量結果', 'XRF quantification')} | unit:mass%
+     | Point${d('点', 'point')} | Fe | Cr | Ni |
+     | A1 | 70.2 | 18.5 | 8.3 |
+     | A2 | 69.8 | 18.9 | 8.1 |
+   - "value ± error" becomes two params: thickness:512 nm, thicknessError:18 nm
 
-Example input:
-  Step3. 加熱・沸騰: 1mMの塩化金酸(HAuCl4)水溶液50mLをフラスコに入れ、攪拌しながら加熱し、液温を100℃に保つ。
-  Step4. 還元剤の添加: 沸騰している金溶液に、38.8mMのクエン酸ナトリウム水溶液5mLを一気に加えます。
-
-Example output:
-[STEP] Heating (加熱・沸騰)
-[IN:material] HAuCl4
-[IN:condition] HAuCl4_Solution (HAuCl4水溶液) | concentration:1 mM, volume:50 mL
-[IN:condition] Heating_Condition (加熱条件) | temperature:100 °C
-[OUT:condition] Boiling_HAuCl4_Solution (沸騰状態のHAuCl4溶液) | temperature:100 °C
-
-[STEP] Add_Reducing_Agent (還元剤の添加)
-[IN:condition] Boiling_HAuCl4_Solution (沸騰状態のHAuCl4溶液)
-[IN:condition] Sodium_Citrate_Solution (クエン酸ナトリウム水溶液) | concentration:38.8 mM, volume:5 mL
-[IN:condition] Addition_Condition (添加条件) | additionMethod:一括添加
-[OUT:condition] Reaction_Mixture (反応混合液)
+${exampleNote}${exampleBlock}
 
 --- PROCEDURE ---
 ${procedure}`;
@@ -22984,20 +23535,370 @@ Rewrite the COMPLETE structured protocol, fixing all the problems above while fo
             const apiKey = document.getElementById('ai-apikey-input').value.trim();
             const model = document.getElementById('ai-model-select').value;
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-            const resp = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: promptText }] }],
-                    generationConfig: { temperature: 0, maxOutputTokens: 32768 }
-                })
-            });
-            if (!resp.ok) {
+            return _geminiResponseText(await _geminiPost(url, {
+                contents: [{ parts: [{ text: promptText }] }],
+                generationConfig: { temperature: 0, maxOutputTokens: 32768 }
+            }));
+        }
+
+        // POST to Gemini generateContent with exponential backoff on transient errors
+        // (429 RESOURCE_EXHAUSTED / 500 INTERNAL / 503 UNAVAILABLE "high demand").
+        // While waiting, a notice is shown in amber in #ai-error-msg and cleared on success.
+        async function _geminiPost(url, body) {
+            const delays = [2000, 4000, 8000];
+            const note = document.getElementById('ai-error-msg');
+            for (let attempt = 0; ; attempt++) {
+                const resp = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                if (resp.ok) {
+                    if (attempt > 0 && note) { note.textContent = ''; note.style.color = ''; }
+                    return resp.json();
+                }
                 const errBody = await resp.json().catch(() => ({}));
+                if (attempt < delays.length && [429, 500, 503].includes(resp.status)) {
+                    if (note) {
+                        note.style.color = '#d97706'; // amber-600
+                        note.textContent = `Model busy (HTTP ${resp.status}) — retrying in ${delays[attempt] / 1000} s (${attempt + 1}/${delays.length})...`;
+                    }
+                    await new Promise(r => setTimeout(r, delays[attempt]));
+                    continue;
+                }
+                if (attempt > 0 && note) { note.textContent = ''; note.style.color = ''; }
                 throw new Error(errBody?.error?.message || `HTTP ${resp.status}`);
             }
-            const data = await resp.json();
-            return data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        }
+
+        // Join only the text parts: thinking models may return parts without text
+        // (or flagged as thought), and a long answer can be split across parts.
+        function _geminiResponseText(data) {
+            const cand = data?.candidates?.[0];
+            if (!cand) {
+                const blocked = data?.promptFeedback?.blockReason;
+                if (blocked) throw new Error(`The response was blocked (${blocked}).`);
+                return '';
+            }
+            return (cand.content?.parts || [])
+                .filter(p => typeof p.text === 'string' && !p.thought)
+                .map(p => p.text).join('');
+        }
+
+        // ---------- Notebook images → procedure text (transcription) ----------
+        // Images go to the model directly instead of running a separate OCR engine
+        // first: once an OCR engine misreads handwriting the original information is
+        // gone, and a text-only model has nothing to recover it from.
+        // The model only TRANSCRIBES here (order preserved). Splitting into steps /
+        // material / condition / result is left to buildDslPrompt, which needs the
+        // step order that a pre-classified summary would lose.
+
+        // Images are billed per 768x768 tile; 1600 px on the long edge is still
+        // enough to read handwriting.
+        const AI_OCR_MAX_EDGE = 1600;
+        const AI_OCR_JPEG_QUALITY = 0.85;
+        // PDF cannot be shrunk and base64 grows by ~4/3; Gemini accepts up to 50 MB
+        // per request with PDF, so stop well below that.
+        const AI_OCR_PDF_MAX_MB = 35;
+        // Ollama: images consume up to ~1K tokens each, so the 8K cap used for DSL
+        // generation is too tight for several pages plus the transcript.
+        const AI_OCR_OLLAMA_NUM_CTX = 16384;
+
+        let _aiOcrFiles = [];      // [{ file, name, isPdf, url }] in page order
+        let _aiOcrBusy = false;
+        let _aiOcrDropWired = false;
+
+        function _isAiOcrPdf(f) {
+            return f.type === 'application/pdf' || /\.pdf$/i.test(f.name || '');
+        }
+
+        function addAiOcrFiles(fileList) {
+            const files = Array.from(fileList || []).filter(f =>
+                String(f.type || '').startsWith('image/') || _isAiOcrPdf(f));
+            if (files.length === 0) return;
+            files.forEach(f => _aiOcrFiles.push({
+                file: f,
+                name: f.name || 'pasted-image.png',
+                isPdf: _isAiOcrPdf(f),
+                url: URL.createObjectURL(f)
+            }));
+            renderAiOcrList();
+        }
+
+        function clearAiOcrFiles() {
+            _aiOcrFiles.forEach(it => URL.revokeObjectURL(it.url));
+            _aiOcrFiles = [];
+            renderAiOcrList();
+            _setAiOcrNote('');
+        }
+
+        function removeAiOcrFile(i) {
+            const [it] = _aiOcrFiles.splice(i, 1);
+            if (it) URL.revokeObjectURL(it.url);
+            renderAiOcrList();
+        }
+
+        function moveAiOcrFile(i, delta) {
+            const j = i + delta;
+            if (j < 0 || j >= _aiOcrFiles.length) return;
+            [_aiOcrFiles[i], _aiOcrFiles[j]] = [_aiOcrFiles[j], _aiOcrFiles[i]];
+            renderAiOcrList();
+        }
+
+        // Built with DOM APIs (not innerHTML): file names come from the user's disk.
+        function renderAiOcrList() {
+            const list = document.getElementById('ai-ocr-list');
+            if (!list) return;
+            list.textContent = '';
+            _aiOcrFiles.forEach((it, i) => {
+                const card = document.createElement('div');
+                card.className = 'relative border border-slate-300 dark:border-slate-600 rounded-lg overflow-hidden bg-slate-50 dark:bg-slate-900';
+                card.style.width = '84px';
+                card.title = it.name;
+
+                const thumb = document.createElement(it.isPdf ? 'div' : 'img');
+                thumb.style.cssText = 'width:84px;height:84px;display:flex;align-items:center;justify-content:center;object-fit:cover;cursor:zoom-in;';
+                if (it.isPdf) {
+                    thumb.innerHTML = '<i class="ph ph-file-pdf text-3xl text-red-500"></i>';
+                } else {
+                    thumb.src = it.url;
+                    thumb.alt = it.name;
+                    thumb.style.background = '#fff';   // paper; keeps transparent scans legible in dark mode
+                }
+                thumb.onclick = () => openAiOcrPreview(i);
+                card.appendChild(thumb);
+
+                const page = document.createElement('span');
+                page.className = 'absolute top-1 left-1 text-[10px] font-bold text-white bg-slate-600 rounded px-1';
+                page.textContent = String(i + 1);
+                card.appendChild(page);
+
+                const bar = document.createElement('div');
+                bar.className = 'flex items-center justify-between text-slate-500 dark:text-slate-300';
+                bar.style.cssText = 'font-size:12px;padding:2px 4px;';
+                const mk = (icon, title, fn, disabled) => {
+                    const b = document.createElement('button');
+                    b.type = 'button';
+                    b.title = title;
+                    b.innerHTML = `<i class="ph ${icon}"></i>`;
+                    b.className = 'hover:text-amber-600 disabled:opacity-30';
+                    b.disabled = !!disabled;
+                    b.onclick = fn;
+                    return b;
+                };
+                bar.appendChild(mk('ph-caret-left', 'Move earlier', () => moveAiOcrFile(i, -1), i === 0));
+                bar.appendChild(mk('ph-x', 'Remove', () => removeAiOcrFile(i)));
+                bar.appendChild(mk('ph-caret-right', 'Move later', () => moveAiOcrFile(i, 1), i === _aiOcrFiles.length - 1));
+                card.appendChild(bar);
+
+                list.appendChild(card);
+            });
+            const btn = document.getElementById('ai-ocr-btn');
+            if (btn) {
+                btn.disabled = _aiOcrBusy || _aiOcrFiles.length === 0;
+                btn.classList.toggle('hidden', _aiOcrFiles.length === 0);
+            }
+        }
+
+        // Enlarged view, so the transcript can be checked against the page.
+        function openAiOcrPreview(i) {
+            const it = _aiOcrFiles[i];
+            if (!it) return;
+            if (it.isPdf) { window.open(it.url, '_blank'); return; }
+            const ov = document.createElement('div');
+            ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;cursor:zoom-out;';
+            const img = document.createElement('img');
+            img.src = it.url;
+            img.alt = it.name;
+            img.style.cssText = 'max-width:96vw;max-height:96vh;object-fit:contain;background:#fff;';
+            ov.appendChild(img);
+            const close = () => { ov.remove(); document.removeEventListener('keydown', onKey, true); };
+            const onKey = (e) => { if (e.key === 'Escape') { e.stopPropagation(); close(); } };
+            ov.onclick = close;
+            document.addEventListener('keydown', onKey, true);
+            document.body.appendChild(ov);
+        }
+
+        // Paste into the procedure field and drop anywhere on the modal add images.
+        // Wired on first open because the modal markup comes after this script.
+        function _wireAiOcrDrop() {
+            if (_aiOcrDropWired) return;
+            _aiOcrDropWired = true;
+            const modal = document.getElementById('ai-generate-modal');
+            modal.addEventListener('dragover', (e) => {
+                if (Array.from(e.dataTransfer?.types || []).includes('Files')) e.preventDefault();
+            });
+            modal.addEventListener('drop', (e) => {
+                if (!e.dataTransfer?.files?.length) return;
+                e.preventDefault();
+                addAiOcrFiles(e.dataTransfer.files);
+            });
+            document.getElementById('ai-procedure-input').addEventListener('paste', (e) => {
+                const files = Array.from(e.clipboardData?.files || []);
+                if (files.length === 0) return;   // plain text paste: leave to the browser
+                e.preventDefault();
+                addAiOcrFiles(files);
+            });
+        }
+
+        function _setAiOcrNote(text, warn) {
+            const el = document.getElementById('ai-ocr-note');
+            if (!el) return;
+            el.textContent = text ||
+                'Optional. Images are sent to the selected provider (Cloud: Google Gemini / Local: stays on this PC). PDF is supported with Cloud only.';
+            el.classList.toggle('text-amber-600', !!warn);
+            el.classList.toggle('dark:text-amber-400', !!warn);
+            el.classList.toggle('text-slate-400', !warn);
+        }
+
+        // Shrink and re-encode as JPEG; returns base64 without the data: header.
+        function _aiImageToBase64Jpeg(blob) {
+            return new Promise((resolve, reject) => {
+                const url = URL.createObjectURL(blob);
+                const im = new Image();
+                im.onload = () => {
+                    URL.revokeObjectURL(url);
+                    const scale = Math.min(1, AI_OCR_MAX_EDGE / Math.max(im.naturalWidth, im.naturalHeight));
+                    const c = document.createElement('canvas');
+                    c.width = Math.max(1, Math.round(im.naturalWidth * scale));
+                    c.height = Math.max(1, Math.round(im.naturalHeight * scale));
+                    const ctx = c.getContext('2d');
+                    ctx.fillStyle = '#fff';   // transparent PNG → white, not black, in JPEG
+                    ctx.fillRect(0, 0, c.width, c.height);
+                    ctx.drawImage(im, 0, 0, c.width, c.height);
+                    const dataUrl = c.toDataURL('image/jpeg', AI_OCR_JPEG_QUALITY);
+                    resolve(dataUrl.slice(dataUrl.indexOf(',') + 1));
+                };
+                im.onerror = () => {
+                    URL.revokeObjectURL(url);
+                    reject(new Error(`Cannot read "${blob.name || 'image'}" as an image (HEIC and some formats are not supported by the browser; save it as JPEG/PNG).`));
+                };
+                im.src = url;
+            });
+        }
+
+        function _aiFileToBase64(blob) {
+            return new Promise((resolve, reject) => {
+                const r = new FileReader();
+                r.onload = () => { const s = String(r.result); resolve(s.slice(s.indexOf(',') + 1)); };
+                r.onerror = () => reject(new Error(`Cannot read "${blob.name || 'file'}".`));
+                r.readAsDataURL(blob);
+            });
+        }
+
+        function buildAiTranscribePrompt(count, hasPdf) {
+            return `The attached ${count === 1 ? 'file is a page' : count + ' files are pages'} of a laboratory notebook (photographed or scanned${hasPdf ? '; a PDF may contain several pages' : ''}), given in page order.
+Transcribe everything that is written, keeping line breaks, indentation, numbering and the order of items as close to the original as possible. Do not summarize, reorder, translate or correct anything.
+
+Strict rules:
+- Write only what you can actually read. Never guess or fill in missing content.
+- Never replace a word or number with a similar-looking or similar-meaning one. If a character is illegible, write □ in its place.
+- Keep numbers, units and symbols exactly as written (no rounding, no unit conversion). Keep arrows, ranges and signs such as →, 〜, ±, ×, ℃.
+- Write chemical subscripts and superscripts as plain characters (e.g. SiO2, Al2O3).
+- Write every table as a Markdown pipe table: one line per row starting and ending with "|", the header row first, followed by a |---|---| separator row. Never use LaTeX (no \\begin{array}, no &, no \\hline) and never flatten a table into running text.
+- Keep the original language.
+- When there is more than one page, start every page after the first with its own line "--- p.2 ---", "--- p.3 ---", and so on.
+- Output only the transcription: no comments, no headings of your own, no markdown fences.`;
+        }
+
+        async function runAiTranscribe() {
+            if (_aiOcrBusy || _aiOcrFiles.length === 0) return;
+            const errEl = document.getElementById('ai-error-msg');
+            const btn = document.getElementById('ai-ocr-btn');
+            const isLocal = document.getElementById('ai-provider-local').checked;
+            errEl.textContent = '';
+
+            let model;
+            if (isLocal) {
+                model = document.getElementById('ai-ollama-model-select').value;
+                if (!model) { errEl.textContent = 'Please fetch and select an Ollama model (a vision-capable one, e.g. gemma4).'; toggleAiCfgDetail(true); return; }
+                if (_aiOcrFiles.some(it => it.isPdf)) {
+                    errEl.textContent = 'AI OCR of PDF files needs Cloud (Gemini). With Local (Ollama), add the pages as images (JPEG/PNG).';
+                    return;
+                }
+            } else {
+                const apiKey = document.getElementById('ai-apikey-input').value.trim();
+                if (!apiKey) { errEl.textContent = 'Please enter your Gemini API key.'; toggleAiCfgDetail(true); return; }
+                localStorage.setItem('gemini_api_key', apiKey);
+                model = document.getElementById('ai-model-select').value;
+                const pdfMB = _aiOcrFiles.filter(it => it.isPdf).reduce((s, it) => s + it.file.size, 0) / 1048576;
+                if (pdfMB > AI_OCR_PDF_MAX_MB) {
+                    errEl.textContent = `PDF files total ${pdfMB.toFixed(1)} MB; the limit is ${AI_OCR_PDF_MAX_MB} MB. Split the PDF or add pages as images.`;
+                    return;
+                }
+            }
+
+            _aiOcrBusy = true;
+            btn.disabled = true;
+            const btnHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Running OCR...';
+            try {
+                const encoded = [];
+                for (const it of _aiOcrFiles) {
+                    encoded.push(it.isPdf
+                        ? { mime: 'application/pdf', data: await _aiFileToBase64(it.file) }
+                        : { mime: 'image/jpeg', data: await _aiImageToBase64Jpeg(it.file) });
+                }
+                const prompt = buildAiTranscribePrompt(encoded.length, encoded.some(e => e.mime === 'application/pdf'));
+
+                let text;
+                if (isLocal) {
+                    const resp = await fetch('http://localhost:11434/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            model,
+                            messages: [{ role: 'user', content: prompt, images: encoded.map(e => e.data) }],
+                            stream: false,
+                            options: { temperature: 0, num_ctx: AI_OCR_OLLAMA_NUM_CTX }
+                        })
+                    });
+                    if (!resp.ok) {
+                        const errBody = await resp.json().catch(() => ({}));
+                        throw new Error(errBody?.error?.message || errBody?.error || `HTTP ${resp.status}`);
+                    }
+                    const data = await resp.json();
+                    text = data?.message?.content || '';
+                } else {
+                    const apiKey = document.getElementById('ai-apikey-input').value.trim();
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+                    text = _geminiResponseText(await _geminiPost(url, {
+                        contents: [{ parts: [{ text: prompt }].concat(encoded.map(e => ({ inline_data: { mime_type: e.mime, data: e.data } }))) }],
+                        generationConfig: { temperature: 0, maxOutputTokens: 32768 }
+                    }));
+                }
+
+                text = (text || '')
+                    .replace(/<think>[\s\S]*?<\/think>/gi, '')
+                    .replace(/^```[a-z]*\s*/i, '').replace(/```\s*$/i, '')
+                    .trim();
+                if (!text) throw new Error('The model returned no text. If you use Local, check that the model supports images.');
+
+                // Never overwrite what the user already typed: append below it instead.
+                const ta = document.getElementById('ai-procedure-input');
+                const current = ta.value.trim();
+                text = _aiNormalizeTables(text);  // LaTeX / TSV tables → Markdown, visible to the user
+                ta.value = current ? `${current}\n\n${text}` : text;
+                ta.focus();
+
+                // Lite and small local models tend to substitute plausible words or
+                // numbers (e.g. "8 h" → "6 h") rather than marking them illegible,
+                // which then passes the numeric checks of the Petri net unnoticed.
+                const risky = isLocal || /lite/i.test(model);
+                _setAiOcrNote(
+                    `AI OCR done: ${encoded.length} file(s) with ${model}${current ? ' (appended below your text)' : ''}. ` +
+                    (risky
+                        ? 'Lite / local models may replace words or numbers with plausible-looking ones (e.g. 8 h → 6 h). Compare numbers and terms carefully with the images (click a thumbnail to enlarge) before generating.'
+                        : 'Check numbers and technical terms against the images (click a thumbnail to enlarge), then click Generate.'),
+                    risky);
+            } catch (e) {
+                errEl.textContent = `AI OCR error: ${e.message}`;
+                console.error(e);
+            } finally {
+                _aiOcrBusy = false;
+                btn.innerHTML = btnHtml;
+                renderAiOcrList();
+            }
         }
 
         function _cleanLlmDsl(raw) {
@@ -23025,7 +23926,8 @@ Rewrite the COMPLETE structured protocol, fixing all the problems above while fo
             const genTemplates = document.getElementById('ai-gen-templates').checked;
             const { steps, unrecognized } = parseDsl(document.getElementById('ai-dsl-editor').value);
             const compiled = compileDsl(steps, genTemplates);
-            const v = validateAiStructure(steps, compiled);
+            const source = document.getElementById('ai-procedure-input').value;
+            const v = validateAiStructure(steps, compiled, source);
 
             _aiParsedResult = steps.length > 0 ? compiled : null;
             document.getElementById('ai-apply-btn').disabled = steps.length === 0;
@@ -23038,11 +23940,31 @@ Rewrite the COMPLETE structured protocol, fixing all the problems above while fo
             if (compiled.templates.length > 0) {
                 lines.push(`📋 Templates (${compiled.templates.length}):`);
                 compiled.templates.forEach(t => {
-                    lines.push(`  [${t.type}] ${t.place}: ${t.properties.map(p => p.key + (p.value ? `=${p.value}${p.units ? ' ' + p.units : ''}` : '')).join(', ')}`);
+                    lines.push(`  [${t.type}] ${t.place}: ${t.properties.map(p => {
+                        const cols = p.children?.contents;
+                        if (cols) return `${p.key} = table ${cols[0] ? cols[0].value.split(' ').length : 0} rows × ${cols.length} cols (${cols.map(c => c.key + (c.units ? ' ' + c.units : '')).join(', ')})`;
+                        return p.key + (p.value ? `=${p.value}${p.units ? ' ' + p.units : ''}` : '');
+                    }).join(', ')}`);
                 });
             }
             v.issues.forEach(s => lines.push(`❌ ${s}`));
             v.notes.forEach(s => lines.push(`⚠️ ${s}`));
+            if (!/[\[［]\s*STEP\s*[\]］]/i.test(source)) {
+                const srcTables = detectSourceTables(_aiNormalizeTables(source));
+                if (srcTables.length > 0) {
+                    lines.push(`📊 Table(s) detected in the source text: ${srcTables.map(t => `${t.rows.length} rows × ${t.header.length} cols`).join(', ')}`);
+                }
+                // Compare against what will actually be applied (template values),
+                // not the DSL text, so values lost in a Place merge are caught too.
+                const applied = genTemplates
+                    ? compiled.templates.flatMap(t => t.properties.flatMap(p => [p.value, ...(p.children?.contents || []).map(c => c.value)])).join(' ')
+                    : document.getElementById('ai-dsl-editor').value;
+                const missing = findMissingSourceNumbers(source, applied);
+                if (missing.length > 0) {
+                    lines.push(`⚠️ ${missing.length} number(s) in the source text do not appear in the protocol: ${missing.slice(0, 20).join(', ')}${missing.length > 20 ? ' …' : ''}`);
+                    lines.push(`   Check that no measured data (e.g. result tables) was dropped. Dates or ambient conditions may be omitted intentionally.`);
+                }
+            }
             if (unrecognized.length > 0) {
                 lines.push(`⚠️ ${unrecognized.length} unrecognized line(s) ignored: ${unrecognized.slice(0, 3).join(' / ')}${unrecognized.length > 3 ? ' …' : ''}`);
             }
@@ -23054,7 +23976,7 @@ Rewrite the COMPLETE structured protocol, fixing all the problems above while fo
         }
 
         async function runAiGenerate() {
-            const procedure = document.getElementById('ai-procedure-input').value.trim();
+            let procedure = document.getElementById('ai-procedure-input').value.trim();
             const genTemplates = document.getElementById('ai-gen-templates').checked;
             const errEl = document.getElementById('ai-error-msg');
             const btn = document.getElementById('ai-generate-btn');
@@ -23064,6 +23986,10 @@ Rewrite the COMPLETE structured protocol, fixing all the problems above while fo
             document.getElementById('ai-apply-btn').disabled = true;
             document.getElementById('ai-result-area').classList.add('hidden');
 
+            if (!procedure && _aiOcrFiles.length > 0) {
+                errEl.textContent = 'Images are added but not read yet. Click "AI OCR" to extract their text into the procedure field first.';
+                return;
+            }
             if (!procedure) { errEl.textContent = 'Please enter the experimental procedure.'; return; }
 
             // Already-structured input compiles directly — no AI call, no API key needed.
@@ -23072,10 +23998,10 @@ Rewrite the COMPLETE structured protocol, fixing all the problems above while fo
             const isLocal = document.getElementById('ai-provider-local').checked;
             if (!looksStructured) {
                 const apiKey = document.getElementById('ai-apikey-input').value.trim();
-                if (!isLocal && !apiKey) { errEl.textContent = 'Please enter your Gemini API key.'; return; }
+                if (!isLocal && !apiKey) { errEl.textContent = 'Please enter your Gemini API key.'; toggleAiCfgDetail(true); return; }
                 if (isLocal) {
                     const ollamaModel = document.getElementById('ai-ollama-model-select').value;
-                    if (!ollamaModel || ollamaModel === '') { errEl.textContent = 'Please fetch and select an Ollama model.'; return; }
+                    if (!ollamaModel || ollamaModel === '') { errEl.textContent = 'Please fetch and select an Ollama model.'; toggleAiCfgDetail(true); return; }
                     localStorage.setItem('ollama_model', ollamaModel);
                 }
                 if (!isLocal) localStorage.setItem('gemini_api_key', apiKey);
@@ -23095,17 +24021,20 @@ Rewrite the COMPLETE structured protocol, fixing all the problems above while fo
                     dslText = procedure;
                     sourceNote = 'Input was recognized as a structured protocol and compiled directly (no AI call).';
                 } else {
+                    // LaTeX / tab-separated tables → Markdown, so the LLM and the
+                    // table check see the same form
+                    procedure = _aiNormalizeTables(procedure);
                     dslText = _cleanLlmDsl(await callAiLlm(buildDslPrompt(procedure)));
                     sourceNote = 'Generated by AI from your free-form text. Edit freely — the preview below updates as you type.';
 
                     // One automatic repair round if hard structural problems are found
                     const first = parseDsl(dslText);
-                    const v1 = validateAiStructure(first.steps, compileDsl(first.steps, genTemplates));
+                    const v1 = validateAiStructure(first.steps, compileDsl(first.steps, genTemplates), procedure);
                     if (v1.issues.length > 0) {
                         try {
                             const repairedText = _cleanLlmDsl(await callAiLlm(buildDslRepairPrompt(procedure, dslText, v1.issues)));
                             const second = parseDsl(repairedText);
-                            const v2 = validateAiStructure(second.steps, compileDsl(second.steps, genTemplates));
+                            const v2 = validateAiStructure(second.steps, compileDsl(second.steps, genTemplates), procedure);
                             if (second.steps.length > 0 && v2.issues.length < v1.issues.length) {
                                 dslText = repairedText;
                                 sourceNote += ' (1 automatic refinement round applied.)';
@@ -23128,7 +24057,7 @@ Rewrite the COMPLETE structured protocol, fixing all the problems above while fo
                 clearInterval(_aiTimerInterval);
                 _aiTimerInterval = null;
                 btn.disabled = false;
-                btn.innerHTML = '<i class="ph ph-sparkle"></i> Generate';
+                btn.innerHTML = '<i class="ph ph-head-circuit"></i> Generate <i class="ph ph-arrow-right"></i>';
                 // 経過時間を結果エリアに残す
                 const elapsed = document.getElementById('ai-elapsed-time');
                 if (elapsed) elapsed.textContent = `elapsed time: ${fmtTime(_aiElapsed)}`;
@@ -23294,6 +24223,8 @@ Rewrite the COMPLETE structured protocol, fixing all the problems above while fo
                     units: pr.units || '',
                     description: pr.description || '',
                     value: pr.value || '',
+                    // [TABLE] → propertyListType holding one content per column
+                    ...(pr.children ? { children: pr.children } : {}),
                 }));
 
                 targetMethod.templates.push({
@@ -23557,16 +24488,19 @@ Rewrite the COMPLETE structured protocol, fixing all the problems above while fo
 
     </script>
         <!-- AI Generate Modal -->
+        <!-- Layout: header / one-line settings bar (expandable) / two columns
+             (1 input, 2 result) / footer with always-visible status + actions.
+             Below 900px wide the columns stack (see #ai-gen-body CSS). -->
         <div id="ai-generate-modal"
             class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center">
-            <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-[580px] max-w-[94vw] overflow-hidden border border-slate-200 dark:border-slate-700 flex flex-col max-h-[90vh]">
+            <div id="ai-generate-panel"
+                class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 flex flex-col">
                 <!-- Header -->
                 <div
                     class="px-6 py-4 bg-gradient-to-r from-amber-500 to-orange-500 flex items-center gap-3 shrink-0">
                     <div
                         class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center">
-                        <i class="ph ph-sparkle text-white text-xl"></i>
+                        <i class="ph ph-head-circuit text-white text-xl"></i>
                     </div>
                     <div>
                         <h3 class="font-bold text-white text-lg">AI Petri Net
@@ -23580,93 +24514,190 @@ Rewrite the COMPLETE structured protocol, fixing all the problems above while fo
                         <i class="ph ph-x text-xl"></i>
                     </button>
                 </div>
-                <!-- Body -->
-                <div class="p-6 space-y-4 overflow-y-auto flex-1">
-                    <!-- Target Method -->
-                    <div>
-                        <label
-                            class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Target
+                <!-- Settings bar: target method + provider summary (details expand on demand) -->
+                <div id="ai-cfg"
+                    class="px-6 py-3 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 shrink-0">
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <label for="ai-target-method-select"
+                            class="text-xs font-bold text-slate-500 uppercase tracking-wider">Target
                             Method</label>
                         <select id="ai-target-method-select"
                             onchange="toggleAiNewMethodNameInput()"
-                            class="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg outline-none bg-slate-50 dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all">
+                            class="px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg outline-none bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all">
                             <!-- Options populated via JS: existing methods + "Create new method" -->
                         </select>
                         <input type="text" id="ai-new-method-name-input"
                             placeholder="New method name (letters, numbers, underscores)"
-                            class="w-full mt-2 px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg outline-none bg-slate-50 dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all hidden">
+                            class="px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg outline-none bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all hidden"
+                            style="width:300px">
+                        <div id="ai-cfg-summary" class="flex items-center gap-2 flex-wrap ml-auto"></div>
+                        <button type="button" id="ai-cfg-toggle" onclick="toggleAiCfgDetail()"
+                            class="text-xs text-indigo-500 hover:underline flex items-center gap-1">
+                            <i class="ph ph-gear-six"></i> <span>Change</span>
+                        </button>
                     </div>
-                    <!-- LLM Provider -->
-                    <div>
-                        <label
-                            class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">LLM
-                            Provider</label>
-                        <div class="flex gap-6">
+                    <div id="ai-cfg-detail" class="hidden">
+                        <!-- LLM Provider -->
+                        <div>
                             <label
-                                class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" name="ai-provider"
-                                    id="ai-provider-cloud" value="cloud" checked
-                                    onchange="toggleAiProvider()"
-                                    class="text-amber-500 focus:ring-amber-400">
-                                <span
-                                    class="text-sm text-slate-700 dark:text-slate-300">☁️
-                                    Cloud (Gemini)</span>
-                            </label>
+                                class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">LLM
+                                Provider</label>
+                            <div class="flex gap-6">
+                                <label
+                                    class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="ai-provider"
+                                        id="ai-provider-cloud" value="cloud" checked
+                                        onchange="toggleAiProvider()"
+                                        class="text-amber-500 focus:ring-amber-400">
+                                    <span
+                                        class="text-sm text-slate-700 dark:text-slate-300">☁️
+                                        Cloud (Gemini)</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="ai-provider"
+                                        id="ai-provider-local" value="local"
+                                        onchange="toggleAiProvider()"
+                                        class="text-amber-500 focus:ring-amber-400">
+                                    <span
+                                        class="text-sm text-slate-700 dark:text-slate-300">🖥️
+                                        Local (Ollama)</span>
+                                </label>
+                            </div>
+                        </div>
+                        <!-- API Key -->
+                        <div id="ai-cloud-apikey">
                             <label
-                                class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" name="ai-provider"
-                                    id="ai-provider-local" value="local"
-                                    onchange="toggleAiProvider()"
-                                    class="text-amber-500 focus:ring-amber-400">
-                                <span
-                                    class="text-sm text-slate-700 dark:text-slate-300">🖥️
-                                    Local (Ollama)</span>
+                                class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                                Gemini API Key
+                                <a href="https://aistudio.google.com/app/apikey"
+                                    target="_blank"
+                                    class="ml-2 normal-case font-normal text-indigo-500 hover:underline">Get
+                                    API key →</a>
                             </label>
+                            <div class="relative">
+                                <input type="password" id="ai-apikey-input"
+                                    autocomplete="off"
+                                    placeholder="AIza..."
+                                    class="w-full pl-4 pr-10 py-2 text-sm font-mono border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all">
+                                <button type="button"
+                                    onclick="const i=document.getElementById('ai-apikey-input'); i.type=i.type==='password'?'text':'password';"
+                                    class="absolute right-2 top-2 text-slate-400 hover:text-slate-600">
+                                    <i class="ph ph-eye text-lg"></i>
+                                </button>
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-1">Saved locally
+                                in your browser. Not sent anywhere except Google
+                                Gemini API.</p>
+                        </div>
+                        <!-- Model select -->
+                        <div id="ai-cloud-model">
+                            <label
+                                class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Gemini
+                                Model</label>
+                            <div class="flex gap-2">
+                                <select id="ai-model-select"
+                                    onchange="localStorage.setItem('gemini_model', this.value)"
+                                    class="flex-1 min-w-0 px-3 py-2 text-sm font-mono border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all">
+                                    <option
+                                        value="gemini-flash-lite-latest">gemini-flash-lite-latest</option>
+                                    <option
+                                        value="gemini-flash-latest">gemini-flash-latest</option>
+                                </select>
+                                <button type="button" id="ai-fetch-models-btn" onclick="fetchGeminiModels(true)"
+                                    class="px-3 py-2 text-sm font-semibold text-white bg-slate-600 hover:bg-slate-700 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                    <i class="ph ph-arrows-clockwise"></i> Fetch
+                                    Models
+                                </button>
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-1">The list
+                                above is a fallback shown before fetching. Click
+                                "Fetch Models" (requires an API key) to load the
+                                live, up-to-date model list from Google.</p>
+                        </div>
+                        <!-- Ollama Section -->
+                        <div id="ai-local-section" class="hidden">
+                            <label
+                                class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Ollama
+                                Model</label>
+                            <div class="flex gap-2">
+                                <select id="ai-ollama-model-select"
+                                    class="flex-1 min-w-0 px-3 py-2 text-sm font-mono border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all">
+                                    <option value>-- Click "Fetch Models"
+                                        --</option>
+                                </select>
+                                <button type="button" onclick="fetchOllamaModels()"
+                                    class="px-3 py-2 text-sm font-semibold text-white bg-slate-600 hover:bg-slate-700 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                    <i class="ph ph-arrows-clockwise"></i> Fetch
+                                    Models
+                                </button>
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-1">Ollama must
+                                be running on localhost:11434</p>
                         </div>
                     </div>
-                    <!-- API Key -->
-                    <div id="ai-cloud-apikey">
+                </div>
+                <!-- Body: 1 input | 2 result -->
+                <div id="ai-gen-body">
+                    <!-- 1. Procedure Text -->
+                    <div class="ai-gen-col">
                         <label
-                            class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                            Gemini API Key
-                            <a href="https://aistudio.google.com/app/apikey"
-                                target="_blank"
-                                class="ml-2 normal-case font-normal text-indigo-500 hover:underline">Get
-                                API key →</a>
-                        </label>
-                        <div class="relative">
-                            <input type="password" id="ai-apikey-input"
-                                autocomplete="off"
-                                placeholder="AIza..."
-                                class="w-full pl-4 pr-10 py-2.5 text-sm font-mono border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all">
-                            <button type="button"
-                                onclick="const i=document.getElementById('ai-apikey-input'); i.type=i.type==='password'?'text':'password';"
-                                class="absolute right-2 top-2.5 text-slate-400 hover:text-slate-600">
-                                <i class="ph ph-eye text-lg"></i>
-                            </button>
-                        </div>
-                        <p class="text-[10px] text-slate-400 mt-1">Saved locally
-                            in your browser. Not sent anywhere except Google
-                            Gemini API.</p>
-                    </div>
-                    <!-- Procedure Text -->
-                    <div>
-                        <label
-                            class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                            class="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            <span class="ai-step-badge">1</span>
                             Experimental Procedure <span class="required-mark"
                                 title="Required">*</span>
                         </label>
-                        <textarea id="ai-procedure-input" rows="10"
+                        <!-- Notebook images → transcription. The transcript is written into the
+                             procedure field below, where the user reviews and edits it before
+                             generating; nothing downstream changes. -->
+                        <div id="ai-ocr-section">
+                            <div class="flex items-center gap-2">
+                                <button type="button"
+                                    onclick="document.getElementById('ai-ocr-file-input').click()"
+                                    title="Add photos or scans of lab-notebook pages (you can also paste or drop them here)"
+                                    class="px-3 py-1.5 text-xs font-semibold text-white bg-slate-600 hover:bg-slate-700 rounded-lg transition-all flex items-center gap-1.5">
+                                    <i class="ph ph-image"></i> Add notebook images
+                                </button>
+                                <input type="file" id="ai-ocr-file-input"
+                                    accept="image/*,application/pdf" multiple
+                                    class="hidden"
+                                    onchange="addAiOcrFiles(this.files); this.value='';">
+                            </div>
+                            <!-- Thumbnails, then the OCR action right after them (shown only
+                                 while images exist); its ↓ points at the procedure field it fills -->
+                            <div class="flex flex-wrap items-center gap-2 mt-2">
+                                <div id="ai-ocr-list" class="flex flex-wrap gap-2"></div>
+                                <button type="button" id="ai-ocr-btn"
+                                    onclick="runAiTranscribe()" disabled
+                                    title="Extract text from the images (in the order shown) into the procedure field below"
+                                    class="hidden px-4 py-2 text-sm font-semibold text-white bg-amber-500 hover:bg-amber-600 rounded-xl shadow-sm transition-all flex items-center gap-1.5 whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed">
+                                    <i class="ph ph-text-aa"></i> AI OCR <i class="ph ph-arrow-down"></i>
+                                </button>
+                            </div>
+                            <p id="ai-ocr-note"
+                                class="text-[10px] text-slate-400 mt-1">Optional. Images are sent to the selected provider (Cloud: Google Gemini / Local: stays on this PC). PDF is supported with Cloud only.</p>
+                        </div>
+                        <textarea id="ai-procedure-input"
                             placeholder="Paste free-form procedure text (lab-notebook style). AI converts it into an editable structured protocol, and the Petri net is built deterministically from that. Input already in [STEP] format is compiled directly without an AI call."
-                            class="w-full px-4 py-3 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all resize-none"></textarea>
-                        <!-- Recommended format hint -->
-                        <div class="mt-1.5">
-                            <button type="button" onclick="toggleAiFormatHint()"
-                                class="text-xs text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1">
-                                <i class="ph ph-info"></i>
-                                <span id="ai-format-hint-label">Show recommended
-                                    format</span>
-                            </button>
+                            class="ai-gen-fill w-full px-4 py-3 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all resize-none"></textarea>
+                        <!-- Recommended format hint + options -->
+                        <div>
+                            <div class="flex items-center justify-between gap-3 flex-wrap">
+                                <button type="button" onclick="toggleAiFormatHint()"
+                                    class="text-xs text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1">
+                                    <i class="ph ph-info"></i>
+                                    <span id="ai-format-hint-label">Show recommended
+                                        format</span>
+                                </button>
+                                <label class="flex items-center gap-2 cursor-pointer text-sm">
+                                    <input type="checkbox" id="ai-gen-templates" checked
+                                        onchange="recompileAiPreviewIfVisible()"
+                                        class="rounded border-slate-300 text-amber-500 focus:ring-amber-400">
+                                    <span
+                                        class="text-slate-600 dark:text-slate-300">Generate
+                                        Templates (properties/metadata)</span>
+                                </label>
+                            </div>
                             <div id="ai-format-hint" class="hidden mt-2">
                                 <div
                                     class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-xs font-mono text-slate-600 dark:text-slate-300 max-h-48 overflow-y-auto whitespace-pre leading-relaxed"
@@ -23697,106 +24728,60 @@ the original name in parentheses: HAuCl4_Solution (original name)</div>
                                 </button>
                             </div>
                         </div>
-                    </div>
-                    <!-- Options -->
-                    <div class="flex gap-4 text-sm">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" id="ai-gen-templates" checked
-                                onchange="recompileAiPreviewIfVisible()"
-                                class="rounded border-slate-300 text-amber-500 focus:ring-amber-400">
-                            <span
-                                class="text-slate-600 dark:text-slate-300">Generate
-                                Templates (properties/metadata)</span>
-                        </label>
-                    </div>
-                    <!-- Model select -->
-                    <div id="ai-cloud-model">
-                        <label
-                            class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Gemini
-                            Model</label>
-                        <div class="flex gap-2">
-                            <select id="ai-model-select"
-                                onchange="localStorage.setItem('gemini_model', this.value)"
-                                class="flex-1 px-3 py-2 text-sm font-mono border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all">
-                                <option
-                                    value="gemini-3.5-flash">gemini-3.5-flash</option>
-                                <option
-                                    value="gemini-2.5-flash">gemini-2.5-flash</option>
-                                <option
-                                    value="gemini-2.5-flash-lite">gemini-2.5-flash-lite</option>
-                            </select>
-                            <button type="button" id="ai-fetch-models-btn" onclick="fetchGeminiModels(true)"
-                                class="px-3 py-2 text-sm font-semibold text-white bg-slate-600 hover:bg-slate-700 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap">
-                                <i class="ph ph-arrows-clockwise"></i> Fetch
-                                Models
+                        <!-- Generate sits at the end of the input flow; the arrow points at
+                             the result column it fills -->
+                        <div class="flex justify-end">
+                            <button id="ai-generate-btn" onclick="runAiGenerate()"
+                                title="Convert the procedure into a structured protocol (shown on the right)"
+                                class="px-5 py-2.5 text-sm font-semibold text-white bg-amber-500 hover:bg-amber-600 rounded-xl shadow-sm transition-all flex items-center gap-2 whitespace-nowrap">
+                                <i class="ph ph-head-circuit"></i> Generate <i class="ph ph-arrow-right"></i>
                             </button>
                         </div>
-                        <p class="text-[10px] text-slate-400 mt-1">The list
-                            above is a fallback shown before fetching. Click
-                            "Fetch Models" (requires an API key) to load the
-                            live, up-to-date model list from Google.</p>
                     </div>
-                    <!-- Ollama Section -->
-                    <div id="ai-local-section" class="hidden">
+                    <!-- 2. Result: editable structured protocol + compiled Petri net preview -->
+                    <div class="ai-gen-col">
                         <label
-                            class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Ollama
-                            Model</label>
-                        <div class="flex gap-2">
-                            <select id="ai-ollama-model-select"
-                                class="flex-1 px-3 py-2 text-sm font-mono border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all">
-                                <option value>-- Click "Fetch Models"
-                                    --</option>
-                            </select>
-                            <button type="button" onclick="fetchOllamaModels()"
-                                class="px-3 py-2 text-sm font-semibold text-white bg-slate-600 hover:bg-slate-700 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap">
-                                <i class="ph ph-arrows-clockwise"></i> Fetch
-                                Models
-                            </button>
+                            class="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            <span class="ai-step-badge">2</span>
+                            Structured Protocol (review &amp; edit)</label>
+                        <div id="ai-result-area" class="hidden">
+                            <textarea id="ai-dsl-editor"
+                                spellcheck="false" oninput="onAiDslEdited()"
+                                class="ai-gen-fill w-full px-3 py-2 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all resize-none"></textarea>
+                            <p id="ai-dsl-source-note"
+                                class="text-[10px] text-slate-400"></p>
+                            <label
+                                class="block text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Petri
+                                Net Preview</label>
+                            <div id="ai-result-preview"
+                                class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4 text-xs font-mono text-slate-700 dark:text-slate-300 overflow-y-auto whitespace-pre-wrap"></div>
+                            <p id="ai-result-note"
+                                class="text-xs text-slate-500"></p>
                         </div>
-                        <p class="text-[10px] text-slate-400 mt-1">Ollama must
-                            be running on localhost:11434</p>
+                        <!-- Shown until a result exists (hidden by CSS when #ai-result-area is visible) -->
+                        <div id="ai-result-empty">
+                            <i class="ph ph-tree-structure"></i>
+                            <div class="text-sm text-slate-500 dark:text-slate-400">The generated protocol and Petri net preview will appear here</div>
+                            <div class="text-xs text-slate-400">Enter the procedure on the left, then click Generate</div>
+                        </div>
                     </div>
-                    <!-- Result: editable structured protocol + compiled Petri net preview -->
-                    <div id="ai-result-area" class="hidden">
-                        <div
-                            class="h-px bg-slate-200 dark:bg-slate-600 my-2"></div>
-                        <label
-                            class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Structured
-                            Protocol (review &amp; edit)</label>
-                        <textarea id="ai-dsl-editor" rows="10"
-                            spellcheck="false" oninput="onAiDslEdited()"
-                            class="w-full px-3 py-2 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all resize-y"></textarea>
-                        <p id="ai-dsl-source-note"
-                            class="text-[10px] text-slate-400 mt-1"></p>
-                        <label
-                            class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 mt-3">Petri
-                            Net Preview</label>
-                        <div id="ai-result-preview"
-                            class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4 text-xs font-mono text-slate-700 dark:text-slate-300 max-h-48 overflow-y-auto whitespace-pre-wrap"></div>
-                        <p id="ai-result-note"
-                            class="text-xs text-slate-500 mt-2"></p>
-                    </div>
-                    <!-- Error -->
-                    <p id="ai-elapsed-time"
-                        class="text-xs text-slate-400 min-h-[1rem]"></p>
-                    <p id="ai-error-msg"
-                        class="text-xs text-red-600 dark:text-red-400 min-h-[1rem]"></p>
-
                 </div>
-                <!-- Footer -->
+                <!-- Footer: status (always visible) + actions -->
                 <div
-                    class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3 shrink-0">
+                    class="px-6 py-3 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex items-center gap-3 shrink-0">
+                    <div id="ai-gen-status">
+                        <p id="ai-elapsed-time"
+                            class="text-xs text-slate-400"></p>
+                        <p id="ai-error-msg"
+                            class="text-xs text-red-600 dark:text-red-400"></p>
+                    </div>
                     <button onclick="closeAiGenerateModal()"
-                        class="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-all">
+                        class="ai-btn-secondary px-5 py-2.5 text-sm font-semibold rounded-xl transition-all">
                         Cancel
                     </button>
                     <button id="ai-apply-btn" onclick="applyAiResult()" disabled
-                        class="px-5 py-2.5 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-xl shadow-sm transition-all flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                        class="px-5 py-2.5 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-xl shadow-sm transition-all flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap">
                         <i class="ph ph-check"></i> Apply to Canvas
-                    </button>
-                    <button id="ai-generate-btn" onclick="runAiGenerate()"
-                        class="px-5 py-2.5 text-sm font-semibold text-white bg-amber-500 hover:bg-amber-600 rounded-xl shadow-sm transition-all flex items-center gap-2">
-                        <i class="ph ph-sparkle"></i> Generate
                     </button>
                 </div>
             </div>

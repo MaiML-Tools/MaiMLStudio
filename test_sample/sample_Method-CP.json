@@ -1,9 +1,9 @@
 {
   "document": {
     "id": "MaiML_DataFile_CP",
-    "uuid": "",
-    "name": "MaiML_DataFile_CP",
-    "description": "MaiML DataFile CP",
+    "uuid": "7b2eaaca-85f9-4e13-8fe5-6d2307e12a59",
+    "name": "sample_Method-CP",
+    "description": "sample_Method-CP",
     "properties": [
       {
         "key": "CompanyC:projectName",
@@ -70,7 +70,8 @@
         "uri": "http://www.company_c.co.jp/NS/"
       }
     ],
-    "chains": []
+    "chains": [],
+    "parent": null
   },
   "_methods": [
     {
@@ -486,10 +487,18 @@
         "x": 99.58726987445954,
         "y": 89.20111451954347
       },
-      "canvasScale": 1.0097616513546062
+      "canvasScale": 1.0097616513546062,
+      "laneHeight": null
     }
   ],
   "_activeMethodId": "method_1770964067784",
+  "crossRefs": [],
+  "_selectedLaneMethodId": "method_1770964067784",
+  "_canvasTranslate": {
+    "x": -222,
+    "y": -18
+  },
+  "_canvasScale": 1,
   "activeMethod": {
     "id": "method_1770964067784",
     "uuid": "885d9981-1a60-4612-8bcd-9cfd3cf8531b",
@@ -903,8 +912,11 @@
       "x": 99.58726987445954,
       "y": 89.20111451954347
     },
-    "canvasScale": 1.0097616513546062
+    "canvasScale": 1.0097616513546062,
+    "laneHeight": null
   },
+  "resultGroups": [],
+  "_activeResultsGroupId": "rg_default",
   "petriNet": {
     "places": [
       {
@@ -1311,34 +1323,27 @@
     }
   ],
   "canvasTranslate": {
-    "x": 99.58726987445954,
-    "y": 89.20111451954347
+    "x": -222,
+    "y": -18
   },
-  "canvasScale": 1.0097616513546062,
+  "canvasScale": 1,
   "mode": "select",
-  "selectedNode": {
-    "id": "place_7",
-    "label": "processedMaterial3",
-    "x": 537.1690729172453,
-    "y": 352.4675947071289,
-    "type": "place",
-    "previousValidLabel": "processedMaterial3"
-  },
+  "selectedNode": null,
   "arcStart": null,
   "arcDragging": false,
   "arcPreview": null,
   "arcHoverTarget": null,
   "petriNetSubView": "canvas",
-  "activeTab": "data",
+  "activeTab": "document",
   "draggingNode": null,
   "dragOffset": {
-    "x": -2.970998151866297,
-    "y": -7.922661738310126
+    "x": 0,
+    "y": 0
   },
+  "nodeDragMoved": false,
   "isPanning": false,
   "lastMousePos": {
-    "x": 783,
-    "y": 364
-  },
-  "panMoved": false
+    "x": 0,
+    "y": 0
+  }
 }

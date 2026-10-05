@@ -1,9 +1,9 @@
 {
   "document": {
     "id": "MaiML_DataFile_SEM",
-    "uuid": "",
-    "name": "MaiML_DataFile_SEM",
-    "description": "MaiML DataFile SEM",
+    "uuid": "fee3d15c-3b31-48c5-b43f-3efd2802ff1f",
+    "name": "sample_Method-SEM",
+    "description": "sample_Method-SEM",
     "properties": [
       {
         "key": "CompanyC:projectName",
@@ -79,7 +79,8 @@
         "hashMethod": "SHA-256",
         "fileName": "MaiML_DataFile_CP.maiml"
       }
-    ]
+    ],
+    "parent": null
   },
   "_methods": [
     {
@@ -563,10 +564,18 @@
         "x": 99.58726987445954,
         "y": 89.20111451954347
       },
-      "canvasScale": 1.0097616513546062
+      "canvasScale": 1.0097616513546062,
+      "laneHeight": null
     }
   ],
   "_activeMethodId": "method_1770964099270",
+  "crossRefs": [],
+  "_selectedLaneMethodId": "method_1770964099270",
+  "_canvasTranslate": {
+    "x": -222,
+    "y": -18
+  },
+  "_canvasScale": 1,
   "activeMethod": {
     "id": "method_1770964099270",
     "uuid": "e8134722-7980-4c41-ba5b-d9f889c5931c",
@@ -1048,8 +1057,11 @@
       "x": 99.58726987445954,
       "y": 89.20111451954347
     },
-    "canvasScale": 1.0097616513546062
+    "canvasScale": 1.0097616513546062,
+    "laneHeight": null
   },
+  "resultGroups": [],
+  "_activeResultsGroupId": "rg_default",
   "petriNet": {
     "places": [
       {
@@ -1524,19 +1536,12 @@
     }
   ],
   "canvasTranslate": {
-    "x": 99.58726987445954,
-    "y": 89.20111451954347
+    "x": -222,
+    "y": -18
   },
-  "canvasScale": 1.0097616513546062,
+  "canvasScale": 1,
   "mode": "select",
-  "selectedNode": {
-    "id": "place_7",
-    "label": "processedMaterial3",
-    "x": 537.1690729172453,
-    "y": 352.4675947071289,
-    "type": "place",
-    "previousValidLabel": "processedMaterial3"
-  },
+  "selectedNode": null,
   "arcStart": null,
   "arcDragging": false,
   "arcPreview": null,
@@ -1545,13 +1550,13 @@
   "activeTab": "document",
   "draggingNode": null,
   "dragOffset": {
-    "x": -2.970998151866297,
-    "y": -7.922661738310126
+    "x": 0,
+    "y": 0
   },
+  "nodeDragMoved": false,
   "isPanning": false,
   "lastMousePos": {
-    "x": 783,
-    "y": 364
-  },
-  "panMoved": false
+    "x": 0,
+    "y": 0
+  }
 }

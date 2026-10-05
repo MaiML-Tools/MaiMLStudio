@@ -1,9 +1,9 @@
 {
   "document": {
     "id": "ALL_dataType",
-    "uuid": "",
-    "name": "ALL_dataType",
-    "description": "ALL dataType Test",
+    "uuid": "cfae2831-999b-4e01-8f67-157410621c6b",
+    "name": "sample_All_dataType",
+    "description": "sample_All_dataType",
     "properties": [
       {
         "key": "test:key1",
@@ -94,7 +94,9 @@
         "name": "SEM",
         "description": "走査型電子顕微鏡"
       }
-    ]
+    ],
+    "chains": [],
+    "parent": null
   },
   "_methods": [
     {
@@ -1172,10 +1174,15 @@
         "x": -222,
         "y": -18
       },
-      "canvasScale": 1
+      "canvasScale": 1,
+      "laneHeight": null
     }
   ],
   "_activeMethodId": "method_1771914350417",
+  "crossRefs": [],
+  "_selectedLaneMethodId": "method_1771914350417",
+  "_canvasTranslate": null,
+  "_canvasScale": null,
   "activeMethod": {
     "id": "method_1771914350417",
     "uuid": "c6a8455d-1285-4d73-9618-b7e1dc0ec16c",
@@ -2251,8 +2258,11 @@
       "x": -222,
       "y": -18
     },
-    "canvasScale": 1
+    "canvasScale": 1,
+    "laneHeight": null
   },
+  "resultGroups": [],
+  "_activeResultsGroupId": "rg_default",
   "petriNet": {
     "places": [
       {
@@ -3332,12 +3342,13 @@
   "arcPreview": null,
   "arcHoverTarget": null,
   "petriNetSubView": "canvas",
-  "activeTab": "data",
+  "activeTab": "document",
   "draggingNode": null,
   "dragOffset": {
     "x": 0,
     "y": 0
   },
+  "nodeDragMoved": false,
   "isPanning": false,
   "lastMousePos": {
     "x": 0,
