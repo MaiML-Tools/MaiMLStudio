@@ -55,7 +55,7 @@ MaiMLファイル全体のメタデータを編集します。
 |-----------|------|
 | **General Information** | Document ID・UUID・Document Name・Description を設定 |
 | **Namespaces** | Property / Content の Key に使用する名前空間接頭辞（Prefix）とURIを登録。登録したPrefixはKey入力時の補完候補として表示される |
-| **Global Properties** | ファイル全体に付与するプロパティ（Key / Type / Value / Description）を階層構造で追加・編集。`propertyListType` によるネスト構造に対応 |
+| **Global Properties** | ファイル全体に付与するプロパティ（Key / Type / Value / Description）を階層構造で追加・編集（Property / Content の両方）。どの型の要素も子の property / content を持てる |
 | **Vendors** | 使用機器のメーカー情報を登録 |
 | **Instruments** | 使用した分析機器を登録 |
 | **Owners** | データオーナーを登録 |
@@ -196,7 +196,7 @@ Petri Net Design で定義した Place ごとにカードが表示され、各�
 - **+ Add condition** — 条件・パラメータデータのテンプレートを追加
 - **+ Add result** — 結果・出力データのテンプレートを追加
 
-各テンプレートには `property`（単一値）と `content`（リスト値）を追加でき、`propertyListType` によるネスト構造にも対応しています。他のメソッドのテンプレートをベースに継承（TemplateRef）したテンプレートは読み取り専用で表示されます。
+各テンプレートには `property`（単一値）と `content`（リスト値）を追加でき、どの型の要素も子の property / content を持てます（値と子の併存も可。各行右端の「+ property」「+ content」で追加）。他のメソッドのテンプレートをベースに継承（TemplateRef）したテンプレートは読み取り専用で表示されます。
 
 #### 📊 Excel インポート機能
 
@@ -213,7 +213,7 @@ Petri Net Design で定義した Place ごとにカードが表示され、各�
 | content | >>Time_Log | contentDoubleListType | s | 時間記録 | 0 10 20 | 3 | t | 1 | 0.00 |
 | property | Operator | stringType | | 担当者 | Tanaka | | | | |
 
-**ネスト構造のルール:** `>` = 1階層、`>>` = 2階層。親要素は必ず `propertyListType` である必要があります。
+**ネスト構造のルール:** `>` = 1階層、`>>` = 2階層。どの型の要素も親にできます（値と子を両方持つ親も可）。
 
 **並び順の規定:** 各階層レベルごとに `property` を先に、`content` を後に記述してください。ルートレベルでも、ネストした子要素グループ内でも同じ順序が必要です。親レベルに戻れば、再び `property` から記述できます。
 
@@ -305,7 +305,7 @@ MaiML ファイルはペトリネットの座標情報を持たないため、Pl
 | **対応範囲** | 単一メソッド（`<method>` 1件）のMaiMLファイルのみ対応。複数メソッドを含むファイルは現時点では非対応（インポート時にエラー表示） |
 | **テンプレート収集** | `protocol` / `method` / `program` のいずれの階層下にあるテンプレートも収集 |
 | **暗号化データ** | `<xenc:EncryptedData>` を検出した場合はパスワード入力を求めて一括復号（最大3回まで再試行、失敗時はインポート全体を中止） |
-| **未対応構造の警告** | `propertyListType` 以外の型が子 property / content を持つ構造（スキーマ上は合法だがStudio未対応）を検出した場合、対象一覧を表示する確認モーダルが表示され、続行（該当の子要素を破棄）または中止を選択できる |
+| **ネスト構造** | どの型の property / content も、子の property / content を持つ構造をそのまま取り込む（値と子を両方持つ親も保持）。Global Properties と `<document>` 直下の content にも対応 |
 | **改訂履歴の自動登録** | インポートに成功すると、インポート元ファイルは自動的に `<parent key="revised">` として登録されます（確認なしの自動処理。「インポート＝改編する」という運用ルールに基づく）。インポート元ファイルが既に `<parent>` を持っていた場合、その情報は新しい parent の子要素として入れ子で保持され、改訂の連鎖が維持されます |
 | **署名の扱い** | インポート元に `<ds:Signature>` があった場合は破棄されます（再編集により署名は無効になるため。警告が表示されます） |
 
@@ -314,8 +314,7 @@ MaiML ファイルはペトリネットの座標情報を持たないため、Pl
 1. ヘッダーの **Import MaiML** ボタンをクリックし、`.maiml` / `.xml` ファイルを選択
 2. 編集中の内容がある場合は、現在の内容を破棄してよいかの確認ダイアログが表示されます
 3. 暗号化データがある場合はパスワード入力ダイアログが表示されます
-4. 未対応のネスト構造が検出された場合は内容を確認し、続行するか中止するかを選択します
-5. インポートが完了すると、Document Metadata・Petri Net Design・Templates・Data & Events の各タブに内容が復元されます
+4. インポートが完了すると、Document Metadata・Petri Net Design・Templates・Data & Events の各タブに内容が復元されます
 
 > **注意:** インポート元ファイルを直接上書きすることは想定されていません。「別名で保存し、改訂履歴（`<parent>`）で連鎖をたどる」という運用を前提としています。
 

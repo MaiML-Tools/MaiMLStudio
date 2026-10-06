@@ -51,7 +51,7 @@ Edit the metadata for the entire MaiML file.
 |-----------|------|
 | **General Information** | Set the Document ID, UUID, Document Name, and Description |
 | **Namespaces** | Register the namespace prefix and URI used for Property / Content keys. Registered prefixes appear as autocomplete suggestions when entering a Key |
-| **Global Properties** | Add and edit properties (Key / Type / Value / Description) applied to the entire file, in a hierarchical structure. Supports nested structures via `propertyListType` |
+| **Global Properties** | Add and edit properties (Key / Type / Value / Description) applied to the entire file, in a hierarchical structure (both Property and Content). Any type can hold child property / content elements |
 | **Vendors** | Register manufacturer information for the instruments used |
 | **Instruments** | Register the analytical instruments used |
 | **Owners** | Register data owners |
@@ -192,7 +192,7 @@ A card is displayed for each Place defined in Petri Net Design, and the buttons 
 - **+ Add condition** — add a template for condition/parameter data
 - **+ Add result** — add a template for result/output data
 
-Each template can have `property` (single value) and `content` (list value) added to it, and also supports nested structures via `propertyListType`. Templates inherited from another method's template (via TemplateRef) are displayed as read-only.
+Each template can have `property` (single value) and `content` (list value) added to it, and any type can hold child property / content elements (a parent may carry both a value and children; use the "+ property" / "+ content" buttons at the right end of each row). Templates inherited from another method's template (via TemplateRef) are displayed as read-only.
 
 #### 📊 Excel Import Feature
 
@@ -209,7 +209,7 @@ Ten columns are recognized: `Element` / `Key` / `Type` / `Units` / `Description`
 | content | >>Time_Log | contentDoubleListType | s | Time log | 0 10 20 | 3 | t | 1 | 0.00 |
 | property | Operator | stringType | | Operator | Tanaka | | | | |
 
-**Nesting rules:** `>` = 1 level, `>>` = 2 levels. The parent element must always be `propertyListType`.
+**Nesting rules:** `>` = 1 level, `>>` = 2 levels. Any type can be a parent (including a parent that carries both a value and children).
 
 **Ordering rule:** within each nesting level, list `property` rows first and `content` rows afterwards. The same order applies at the root level and inside every nested child group. Once you return to a parent level, you can start with `property` again.
 
@@ -301,7 +301,7 @@ Because MaiML files carry no Petri net coordinates, the placement of Places and 
 | **Supported scope** | Only MaiML files containing a single method (one `<method>`) are supported. Files containing multiple methods are not currently supported (an error is displayed on import) |
 | **Template collection** | Templates located under any of the `protocol` / `method` / `program` hierarchy levels are collected |
 | **Encrypted data** | If `<xenc:EncryptedData>` is detected, a password prompt is shown and all such elements are decrypted at once (up to 3 retries; the entire import is aborted on failure) |
-| **Warning for unsupported structures** | If a structure with types other than `propertyListType` having child property/content elements is detected (valid per the schema but unsupported by Studio), a confirmation modal listing the affected items is shown, letting you choose to continue (discarding the affected child elements) or cancel |
+| **Nested structures** | Property / content elements of any type that hold child property / content elements are imported as-is (parents carrying both a value and children are preserved). Global Properties and content placed directly under `<document>` are also supported |
 | **Automatic revision history registration** | On successful import, the source file is automatically registered as `<parent key="revised">` (an automatic process with no confirmation, based on the operating rule that "import = revise"). If the source file already had a `<parent>`, that information is preserved nested as a child of the new parent, maintaining the chain of revisions |
 | **Handling of signatures** | If the source file had a `<ds:Signature>`, it is discarded (since re-editing invalidates the signature; a warning is shown) |
 
@@ -310,8 +310,7 @@ Because MaiML files carry no Petri net coordinates, the placement of Places and 
 1. Click the **Import MaiML** button in the header and select a `.maiml` / `.xml` file
 2. If there is content currently being edited, a confirmation dialog asks whether it is okay to discard the current content
 3. If there is encrypted data, a password input dialog is displayed
-4. If an unsupported nested structure is detected, review the content and choose whether to continue or cancel
-5. Once the import is complete, the content is restored across the Document Metadata, Petri Net Design, Templates, and Data & Events tabs
+4. Once the import is complete, the content is restored across the Document Metadata, Petri Net Design, Templates, and Data & Events tabs
 
 > **Note:** Directly overwriting the source file is not the intended workflow. The assumption is that you "save under a new name and trace the chain via revision history (`<parent>`)."
 

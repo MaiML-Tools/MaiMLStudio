@@ -9279,6 +9279,8 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                         <code>dateTime</code>,
                                         <code>uri</code>
                                         などの型を指定して、文書全体に関わる属性（プロジェクトコード等）を追加できます。
+                                        <strong>[Add Content]</strong> で配列データ（content）も直接置けます。各カード右端の
+                                        <strong>[+ property]</strong> / <strong>[+ content]</strong> で、どの型の下にも子要素を入れ子にできます。
                                     </div>
                                 </div>
                                 <div
@@ -9787,6 +9789,12 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                                 </tbody>
                                             </table>
                                         </div>
+                                        <p class="mt-3 text-xs text-slate-600">
+                                            <i class="ph ph-tree-structure"></i>
+                                            <strong>ネスト（階層化）:</strong>
+                                            各 property / content カード右端の <strong>[+ property]</strong> / <strong>[+ content]</strong> で、その要素の下に子要素を追加できます。MaiML 規格どおり、<strong>どの型でも親になれます</strong>。
+                                            <code>propertyListType</code> は値を持たないグループ専用の型で、それ以外の型（例: 値が <code>true</code> の booleanType の下に関連パラメータを置く）は値と子要素を両方持てます。
+                                        </p>
                                         <div
                                             class="mt-4 p-3 border border-dashed border-indigo-300 rounded bg-indigo-50/50">
                                             <h4
@@ -9963,7 +9971,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                                 <i class="ph ph-info"></i>
                                                 <strong>ネスト構造のルール:</strong>
                                                 Key列の先頭に<code>&gt;</code>記号を付けることでネストレベルを表現します。<code>&gt;</code>=1階層、<code>&gt;&gt;</code>=2階層。
-                                                親要素は必ず<strong>propertyListType</strong>である必要があります。
+                                                親要素の型は問いません（<strong>propertyListType</strong> は値を持たないグループ、それ以外の型は値と子要素を両方持てます）。
                                             </p>
 
                                             <p
@@ -10297,8 +10305,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                                 <strong
                                                     class="text-slate-600 block mb-1">ネスト構造の暗号化</strong>
                                                 <p
-                                                    class="text-slate-600 text-xs">propertyListType
-                                                    の親要素を暗号化すると、子の property /
+                                                    class="text-slate-600 text-xs">親要素（型を問わない）を暗号化すると、子の property /
                                                     content / uncertainty
                                                     もまとめて暗号化されます。</p>
                                             </div>
@@ -10498,6 +10505,12 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                             <code>&lt;parent
                                                 key="revised"&gt;</code>（UUID＋ハッシュ）として自動登録されます。インポート元が既にparentを持っていた場合、その履歴は新しいparentの子要素として入れ子で引き継がれ、改訂の連鎖が保存されます。
                                         </li>
+                                        <li>
+                                            <strong>インスタンスの Properties / Additional Properties の振り分け:</strong>
+                                            material / condition / result の property・content のうち、参照先テンプレートと<strong>キーが一致するもの</strong>を Properties（テンプレート由来）、それ以外を Additional Properties（インスタンスで追加された要素）として取り込みます。
+                                            テンプレートの要素を雛形にしてキーを変えて繰り返したデータ（例: テンプレートの <code>OnePointTemplate</code> に対しインスタンスが <code>OnePoint0001</code>, <code>OnePoint4515</code>）は、構造が同じでも Additional Properties 側に入ります。
+                                            エクスポート時は Properties → Additional Properties の順に出力します（B-RAMAN のように入力がこの順に並んでいれば、ファイルの内容は変わりません）。
+                                        </li>
                                     </ul>
                                     <div
                                         class="bg-yellow-50 p-3 rounded text-sm text-yellow-800 border border-yellow-200 mb-3">
@@ -10511,10 +10524,6 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                         <li>
                                             <strong>単一メソッドのみ:</strong>
                                             複数の<code>&lt;method&gt;</code>を含むファイルは現在インポートできません（エラー表示で中止されます）。
-                                        </li>
-                                        <li>
-                                            <strong>未対応のネスト構造:</strong>
-                                            <code>propertyListType</code>以外の型がネストした子要素（property/content）を持つ場合（MaiML規格上は許容）、Studioのデータモデルでは保持できません。該当箇所の一覧が確認ダイアログに表示され、<strong>続行（子要素を破棄）</strong>か<strong>中止</strong>かを選択できます。
                                         </li>
                                     </ul>
                                     <div
@@ -10779,7 +10788,13 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                             <code>uri</code> to add
                                             attributes related to the entire
                                             document (e.g., project
-                                            code).
+                                            code). <strong>[Add Content]</strong>
+                                            places list data (content) directly
+                                            as well, and
+                                            <strong>[+ property]</strong> /
+                                            <strong>[+ content]</strong> at the
+                                            right end of each card nest child
+                                            elements under any type.
                                         </div>
                                     </div>
                                     <div
@@ -11442,6 +11457,12 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                                 </tbody>
                                             </table>
                                         </div>
+                                        <p class="mt-3 text-xs text-slate-600">
+                                            <i class="ph ph-tree-structure"></i>
+                                            <strong>Nesting:</strong>
+                                            Use <strong>[+ property]</strong> / <strong>[+ content]</strong> at the right end of each property / content card to add child elements under it. As the MaiML specification allows, <strong>any type can be a parent</strong>.
+                                            <code>propertyListType</code> is a value-less grouping type; any other type (e.g. a booleanType whose value is <code>true</code>, with related parameters beneath it) can carry both a value and child elements.
+                                        </p>
                                         <div
                                             class="mt-4 p-3 border border-dashed border-indigo-300 rounded bg-indigo-50/50">
                                             <h4
@@ -11682,8 +11703,9 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                                     beginning of the Key.
                                                     <code>&gt;</code>=depth 1,
                                                     <code>&gt;&gt;</code>=depth
-                                                    2. Parent elements must be
-                                                    <strong>propertyListType</strong>.
+                                                    2. A parent can be of any type
+                                                    (<strong>propertyListType</strong> is a value-less group;
+                                                    other types keep their value as well).
                                                 </p>
                                                 <p
                                                     class="text-[10px] text-indigo-600">
@@ -12112,7 +12134,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                                     Structures</strong>
                                                 <p
                                                     class="text-slate-600 text-xs">Encrypting
-                                                    a propertyListType parent
+                                                    a parent element (of any type)
                                                     encrypts all child property
                                                     / content / uncertainty
                                                     elements together.</p>
@@ -12370,6 +12392,29 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                             as children of the new parent,
                                             preserving the full revision chain.
                                         </li>
+                                        <li>
+                                            <strong>Properties vs. Additional
+                                                Properties in instances:</strong>
+                                            Among the property/content elements
+                                            of a material / condition / result,
+                                            those whose <strong>key matches</strong>
+                                            the referenced template are imported
+                                            as Properties (template-derived); the
+                                            rest are imported as Additional
+                                            Properties (added in the instance).
+                                            Data that repeats a template element
+                                            under different keys (e.g. the
+                                            template's <code>OnePointTemplate</code>
+                                            instantiated as <code>OnePoint0001</code>
+                                            and <code>OnePoint4515</code>) goes to
+                                            Additional Properties even though the
+                                            structure is the same. On export,
+                                            Properties are written first, then
+                                            Additional Properties (if the input
+                                            was already in that order, as in
+                                            B-RAMAN, the file content does not
+                                            change).
+                                        </li>
                                     </ul>
                                     <div
                                         class="bg-yellow-50 p-3 rounded text-sm text-yellow-800 border border-yellow-200 mb-3">
@@ -12395,21 +12440,6 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                             cannot currently be imported (the
                                             import is cancelled with an error
                                             message).
-                                        </li>
-                                        <li>
-                                            <strong>Unsupported nested
-                                                structures:</strong> When a type
-                                            other than
-                                            <code>propertyListType</code> has
-                                            nested child elements
-                                            (properties/contents) — which the
-                                            MaiML specification permits — the
-                                            Studio's data model cannot retain
-                                            them. A confirmation dialog lists the
-                                            affected elements and lets you choose
-                                            to <strong>continue (discarding the
-                                                nested children)</strong> or
-                                            <strong>cancel</strong>.
                                         </li>
                                     </ul>
                                     <div
@@ -12534,10 +12564,10 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                             class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
 
                         <label
-                            class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-lg transition-colors cursor-pointer mr-2"
+                            class="flex items-center gap-2 px-4 py-2 bg-slate-600 hover:bg-slate-700 dark:bg-slate-600 text-white rounded-lg text-sm font-medium shadow-sm transition-all active:scale-95 cursor-pointer mr-2"
                             title="Import a .maiml/.xml file for re-editing (single-method files only)">
-                            <i class="ph ph-file-arrow-up text-xl"></i>
-                            <span class="text-xs font-medium">Import MaiML</span>
+                            <i class="ph ph-file-arrow-up"></i>
+                            Import MaiML
                             <input type="file" accept=".maiml,.xml,.zip"
                                 onchange="importMaiML(event)" class="hidden" />
                         </label>
@@ -12790,10 +12820,16 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                             Global Properties
                                         </h3>
                                     </div>
+                                    <div class="flex items-center gap-2">
                                     <button onclick="addDocumentProperty()"
-                                        class="text-sm px-3 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium rounded-lg transition-colors flex items-center gap-2">
+                                        class="text-sm px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 font-medium rounded-lg transition-colors flex items-center gap-2">
                                         <i class="ph ph-plus"></i> Add Property
                                     </button>
+                                    <button onclick="addDocumentContent()"
+                                        class="text-sm px-3 py-1.5 bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/50 font-medium rounded-lg transition-colors flex items-center gap-2">
+                                        <i class="ph ph-plus"></i> Add Content
+                                    </button>
+                                    </div>
                                 </div>
                                 <div id="doc-properties-list"
                                     class="space-y-3"></div>
@@ -13154,12 +13190,41 @@ https://github.com/nodeca/pako/blob/main/LICENSE
             return item;
         }
 
+        /* Nesting: every property/content type may hold nested <property>/<content>
+         * children (genericDataContainerGroup is part of every type in
+         * maiml-property.xsd), not only propertyListType. propertyListType differs
+         * only in having no <value> and no units/formatString/scaleFactor.
+         * So "is a list" and "has children" are separate questions:
+         *   - value / numeric attrs  -> item.type !== "propertyListType"
+         *   - show children section  -> propertyListType || hasNestedChildren(item)
+         * normChildren() also converts the legacy array form in place. */
+        function normChildren(item) {
+            if (!item || !item.children) return null;
+            if (Array.isArray(item.children)) {
+                item.children = { properties: item.children, contents: [] };
+            }
+            return item.children;
+        }
+        function hasNestedChildren(item) {
+            const ch = normChildren(item);
+            return !!ch && ((ch.properties && ch.properties.length > 0)
+                || (ch.contents && ch.contents.length > 0));
+        }
+
         /* Call right after a user changes a property/content type. Clears the
          * attributes the new type cannot carry and tells the user what was
          * dropped -- the units input disappears from the UI, so a silent clear
          * would be invisible. */
         function applyTypeChange(item) {
             if (!item) return item;
+            // propertyListType has no <value>. Keep it in the model so switching
+            // back restores it, but say that it will not be exported.
+            if (item.type === "propertyListType" && item.value
+                && typeof showToast === "function") {
+                showToast('value "' + item.value
+                    + '" is not exported for propertyListType (no <value> element)',
+                    "info", 3500);
+            }
             const keys = ["units", "formatString", "scaleFactor"];
             const before = {};
             keys.forEach(k => before[k] = item[k]);
@@ -13360,6 +13425,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                 name: "",
                 description: "",
                 properties: [],
+                contents: [],
                 namespaces: [],
                 // creator/vendor/owner は MaiML (JIS K0200) 規格上の必須要素、instrument は任意
                 // (minOccurs="0") だが、新規プロジェクト作成時点でNAME/DESCRIPTIONと同様に
@@ -13688,8 +13754,26 @@ https://github.com/nodeca/pako/blob/main/LICENSE
         // ============================================================
         // DOCUMENT PROPERTIES
         // ============================================================
+        // <document> holds property* then content* directly
+        // (genericDataContainerGroup at the end of globalObjectContentGroup).
+        // Project files saved before contents existed have no `contents` array.
+        function docItems(root = "properties") {
+            if (!Array.isArray(state.document[root])) state.document[root] = [];
+            return state.document[root];
+        }
+
+        function addDocumentContent() {
+            docItems("contents").push({
+                key: "",
+                type: "contentStringListType",
+                description: "",
+                value: "",
+            });
+            renderDocumentProperties();
+        }
+
         function addDocumentProperty() {
-            state.document.properties.push({
+            docItems("properties").push({
                 key: "",
                 type: "stringType",
                 description: "",
@@ -13700,12 +13784,12 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 
         function renderDocumentProperties() {
             const list = document.getElementById("doc-properties-list");
-            if (state.document.properties.length === 0) {
+            if (docItems("properties").length === 0 && docItems("contents").length === 0) {
                 // list.innerHTML = `<div class="text-sm text-slate-400 italic text-center py-2">No properties defined</div>`;
                 list.innerHTML = `<div class="text-sm text-slate-400 italic text-center py-6 border-2 border-dashed border-slate-100 dark:border-slate-700 rounded-lg">No properties defined</div>`;
                 return;
             }
-            list.innerHTML = `<div class="space-y-2">${renderDocPropertiesHierarchy(state.document.properties, 0, [])}</div>`;
+            list.innerHTML = `<div class="space-y-2">${renderDocPropertiesHierarchy(docItems("properties"), 0, [], "properties")}${renderDocContentsHierarchy(docItems("contents"), 0, [], "contents")}</div>`;
         }
 
         function updateDocProperty(idx, field, value) {
@@ -13723,10 +13807,11 @@ https://github.com/nodeca/pako/blob/main/LICENSE
             }
         }
 
-        // Add child to Global Property propertyListType
-        function addChildToDocPropertyList(path, childType) {
+        // Add a nested child to a Global Property item (any type)
+        function addChildToDocPropertyList(path, childType, root = "properties") {
             // path is like [0] for top-level item, or [0, "properties", 1] for nested
-            let target = state.document.properties;
+            // (root: the top-level array the path starts from, "properties" or "contents")
+            let target = docItems(root);
             for (let i = 0; i < path.length; i++) {
                 const idx = path[i];
                 if (idx === "properties" || idx === "contents") {
@@ -13771,8 +13856,8 @@ https://github.com/nodeca/pako/blob/main/LICENSE
         }
 
         // Toggle collapse for Global Property propertyListType
-        function toggleDocPropertyCollapse(path) {
-            let target = state.document.properties;
+        function toggleDocPropertyCollapse(path, root = "properties") {
+            let target = docItems(root);
             for (let i = 0; i < path.length - 1; i++) {
                 const idx = path[i];
                 if (idx === "properties" || idx === "contents") {
@@ -13787,8 +13872,8 @@ https://github.com/nodeca/pako/blob/main/LICENSE
         }
 
         // Update nested field in Global Properties
-        function updateDocPropertyNested(path, field, value) {
-            let target = state.document.properties;
+        function updateDocPropertyNested(path, field, value, root = "properties") {
+            let target = docItems(root);
             for (let i = 0; i < path.length - 1; i++) {
                 const idx = path[i];
                 if (idx === "properties" || idx === "contents") {
@@ -13810,8 +13895,8 @@ https://github.com/nodeca/pako/blob/main/LICENSE
         }
 
         // Remove nested item from Global Properties
-        function removeDocPropertyNested(itemIdx, parentPath) {
-            let targetArray = state.document.properties;
+        function removeDocPropertyNested(itemIdx, parentPath, root = "properties") {
+            let targetArray = docItems(root);
             for (const idx of parentPath) {
                 if (idx === "properties" || idx === "contents") {
                     targetArray = targetArray[idx];
@@ -13832,12 +13917,13 @@ https://github.com/nodeca/pako/blob/main/LICENSE
         }
 
         // Render Global Properties hierarchy (with nesting support)
-        function renderDocPropertiesHierarchy(items, depth, parentPath) {
+        function renderDocPropertiesHierarchy(items, depth, parentPath, root = "properties") {
             if (!items) return "";
             return items
                 .map((p, itemIdx) => {
                     const currentPath = [...parentPath, itemIdx];
                     const isPropertyList = p.type === "propertyListType";
+                    const showChildren = isPropertyList || hasNestedChildren(p);
                     const _pmeta = PROPERTY_TYPE_META[p.type] || { units: false, placeholder: "Value" };
                     const isNumeric = _pmeta.units;
                     const isDateTime = p.type === "dateTimeType";
@@ -13852,8 +13938,8 @@ https://github.com/nodeca/pako/blob/main/LICENSE
         <div class="${indentClass}">
             <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-1 group/card hover:border-indigo-200 dark:hover:border-indigo-800 transition-all">
                 <div class="flex gap-1 items-center">
-                    ${isPropertyList
-                            ? `<button onclick="toggleDocPropertyCollapse([${serializePath(currentPath)}])"
+                    ${showChildren
+                            ? `<button onclick="toggleDocPropertyCollapse([${serializePath(currentPath)}], '${root}')"
                                 class="p-1 text-slate-400 hover:text-indigo-600 rounded transition-colors"
                                 title="${isCollapsed ? "Expand" : "Collapse"}">
                                 <i class="ph ph-caret-${isCollapsed ? "right" : "down"} text-sm"></i>
@@ -13863,28 +13949,28 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                     <span class="required-mark shrink-0" title="Required">*</span>
                     <input type="text" value="${escHtml(p.key || '')}"
                         oninput="updateKeyValidation(this, this.value)"
-                        onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'key', this.value)"
+                        onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'key', this.value, '${root}')"
                         placeholder="Key"
                         list="ns-prefix-list"
-                        class="w-48 px-2 py-1 text-xs ${isPropertyList ? "font-semibold" : ""} border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
-                        <select onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'type', this.value); renderDocumentProperties();"
+                        class="w-48 px-2 py-1 text-xs ${showChildren ? "font-semibold" : ""} border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                        <select onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'type', this.value, '${root}'); renderDocumentProperties();"
                         class="w-32 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white outline-none cursor-pointer">
                         ${buildOptions(PROPERTY_TYPE_META, p.type)}
                     </select>
                     ${isNumeric
                             ? `<input type="text" value="${escHtml(p.units || '')}"
-                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'units', this.value)"
+                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'units', this.value, '${root}')"
                                 placeholder="Units"
                                 class="w-20 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">`
                             : '<div class="w-0"></div>'
                         }
                     <input type="text" value="${escHtml(p.description || '')}"
-                        onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'description', this.value)"
+                        onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'description', this.value, '${root}')"
                         placeholder="Description"
                         class="flex-[2] min-w-[140px] px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                     ${!isPropertyList
                             ? `<input type="text" value="${escHtml(p.value || '')}"
-                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'value', this.value)"
+                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'value', this.value, '${root}')"
                                 placeholder="${placeholder}"
                                 class="flex-1 px-2 py-1 text-xs font-medium border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">`
                             : '<div class="flex-1"></div>'
@@ -13893,7 +13979,10 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                         class="px-2 py-1 text-xs text-slate-500 hover:text-indigo-600 transition-colors bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded flex items-center gap-1">
                         Details <i class="ph ph-caret-down"></i>
                         </button>` : ""}
-                        <button onclick="removeDocPropertyNested(${itemIdx}, [${serializePath(parentPath)}])"
+                        ${nestedAddButtonsHtml(
+                        `addChildToDocPropertyList([${serializePath(currentPath)}], 'property', '${root}')`,
+                        `addChildToDocPropertyList([${serializePath(currentPath)}], 'content', '${root}')`)}
+                        <button onclick="removeDocPropertyNested(${itemIdx}, [${serializePath(parentPath)}], '${root}')"
                             class="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors opacity-0 group-hover/card:opacity-100">
                             <i class="ph ph-trash text-sm"></i>
                         </button>
@@ -13904,50 +13993,25 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                         <div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
                             <input type="text" value="${escHtml(p.formatString || '')}"
-                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'formatString', this.value)"
+                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'formatString', this.value, '${root}')"
                                 placeholder="e.g. 0.00"
                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 outline-none">
                         </div>
                         ${isNumeric ? `<div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
                             <input type="number" step="any" value="${escHtml(p.scaleFactor || '')}"
-                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'scaleFactor', this.value)"
+                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'scaleFactor', this.value, '${root}')"
                                 placeholder="e.g. 1.0"
                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 outline-none">
                         </div>` : ""}
                     </div>
                 </div>` : ""}
-                ${isPropertyList && p.children && !isCollapsed
+                ${showChildren && !isCollapsed
                             ? `<div class="mt-1 space-y-1">
-                            <div class="flex justify-end mb-1">
-                                <div class="flex gap-1">
-                                    <button onclick="addChildToDocPropertyList([${serializePath(currentPath)}], 'property')"
-                                        class="text-[10px] px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded border border-indigo-100 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50">+ Add property</button>
-                                    <button onclick="addChildToDocPropertyList([${serializePath(currentPath)}], 'content')"
-                                        class="text-[10px] px-1.5 py-0.5 bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 rounded border border-teal-100 dark:border-teal-800 hover:bg-teal-100 dark:hover:bg-teal-900/50">+ Add content</button>
-                                </div>
-                            </div>
-                            ${p.children.properties &&
-                                p.children.properties.length > 0
-                                ? renderDocPropertiesHierarchy(
-                                    p.children.properties,
-                                    depth + 1,
-                                    [...currentPath, "properties"],
-                                )
-                                : ""
-                            }
-                            ${p.children.contents &&
-                                p.children.contents.length > 0
-                                ? renderDocContentsHierarchy(
-                                    p.children.contents,
-                                    depth + 1,
-                                    [...currentPath, "contents"],
-                                )
-                                : ""
-                            }
+                            ${renderDocPropertiesHierarchy(p.children.properties, depth + 1, [...currentPath, "properties"], root)}
+                            ${renderDocContentsHierarchy(p.children.contents, depth + 1, [...currentPath, "contents"], root)}
                         </div>`
-                            : ""
-                        }
+                            : ""}
             </div>
         </div>`;
                     return html;
@@ -13956,7 +14020,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
         }
 
         // Render Global Properties children of type content
-        function renderDocContentsHierarchy(items, depth, parentPath) {
+        function renderDocContentsHierarchy(items, depth, parentPath, root = "properties") {
             if (!items) return "";
             return items
                 .map((p, itemIdx) => {
@@ -13965,82 +14029,99 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                     const isNumeric = _cmeta.units;
                     const isDateTime = p.type === "dateTimeType";
                     const placeholder = _cmeta.placeholder || "Value";
+                    const showChildren = hasNestedChildren(p);
+                    const isCollapsed = p._collapsed || false;
                     const indentClass =
                         depth > 0
-                            ? `ml-${Math.min(depth * 4, 12)} border-l-2 border-teal-200 dark:border-teal-800 pl-3`
+                            ? `ml-${Math.min(depth * 4, 12)} border-l-2 border-purple-200 dark:border-purple-800 pl-3`
                             : "";
                     return `
         <div class="${indentClass}">
-            <div class="bg-teal-50/30 dark:bg-teal-900/10 border border-teal-200 dark:border-teal-800 rounded-lg p-1 group/card hover:border-teal-300 transition-all">
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-1 group/card hover:border-purple-200 dark:hover:border-purple-800 transition-all">
                 <div class="flex gap-1 items-center">
-                    <div class="w-6"></div>
+                    ${showChildren
+                            ? `<button onclick="toggleDocPropertyCollapse([${serializePath(currentPath)}], '${root}')"
+                                class="p-1 text-slate-400 hover:text-purple-600 rounded transition-colors"
+                                title="${isCollapsed ? "Expand" : "Collapse"}">
+                                <i class="ph ph-caret-${isCollapsed ? "right" : "down"} text-sm"></i>
+                            </button>`
+                            : '<div class="w-6"></div>'}
                     <span class="required-mark shrink-0" title="Required">*</span>
                     <input type="text" value="${escHtml(p.key || '')}"
-                        onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'key', this.value)"
+                        onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'key', this.value, '${root}')"
                         placeholder="Key"
                         list="ns-prefix-list"
                         class="w-48 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
-                        <select onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'type', this.value); renderDocumentProperties();"
+                        <select onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'type', this.value, '${root}'); renderDocumentProperties();"
                         class="w-32 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white outline-none cursor-pointer">
                         ${buildOptions(CONTENT_TYPE_META, p.type)}
                     </select>
                     ${isNumeric
                             ? `<input type="text" value="${escHtml(p.units || '')}"
-                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'units', this.value)"
+                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'units', this.value, '${root}')"
                                 placeholder="Units"
                                 class="w-20 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">`
                             : '<div class="w-0"></div>'
                         }
                     <input type="text" value="${escHtml(p.description || '')}"
-                        onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'description', this.value)"
+                        onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'description', this.value, '${root}')"
                         placeholder="Description"
                         class="flex-[2] min-w-[140px] px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                     <input type="text" value="${escHtml(p.value || '')}"
-                        onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'value', this.value)"
+                        onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'value', this.value, '${root}')"
                         placeholder="${placeholder}"
                         class="flex-1 px-2 py-1 text-xs font-medium border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                     ${(isNumeric || isDateTime) ? `<button type="button" onclick="const acc = this.parentElement.nextElementSibling; if(acc) { acc.classList.toggle('hidden'); const i = this.querySelector('i'); i.classList.toggle('ph-caret-down'); i.classList.toggle('ph-caret-up'); }"
                         class="px-2 py-1 text-xs text-slate-500 hover:text-indigo-600 transition-colors bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded flex items-center gap-1">
                         Details <i class="ph ph-caret-down"></i>
                     </button>` : ""}
-                    <button onclick="removeDocPropertyNested(${itemIdx}, [${serializePath(parentPath)}])"
+                    ${nestedAddButtonsHtml(
+                        `addChildToDocPropertyList([${serializePath(currentPath)}], 'property', '${root}')`,
+                        `addChildToDocPropertyList([${serializePath(currentPath)}], 'content', '${root}')`)}
+                    <button onclick="removeDocPropertyNested(${itemIdx}, [${serializePath(parentPath)}], '${root}')"
                         class="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors opacity-0 group-hover/card:opacity-100">
                         <i class="ph ph-trash text-sm"></i>
                     </button>
                 </div>
                 ${(isNumeric || isDateTime) ? `
-                <div class="hidden mt-2 mb-1 p-3 bg-teal-50/30 dark:bg-teal-900/10 rounded border border-teal-200 dark:border-teal-800 text-xs">
+                <div class="hidden mt-2 mb-1 p-3 bg-purple-50/20 dark:bg-purple-900/10 rounded border border-purple-200 dark:border-purple-800 text-xs">
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
                             <input type="text" value="${escHtml(p.formatString || '')}"
-                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'formatString', this.value)"
+                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'formatString', this.value, '${root}')"
                                 placeholder="e.g. 0.00"
-                                class="w-full px-2 py-1 border border-teal-200 dark:border-teal-700 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-teal-500/20 outline-none">
+                                class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none">
                         </div>
                         ${isNumeric ? `<div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
                             <input type="number" step="any" value="${escHtml(p.scaleFactor || '')}"
-                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'scaleFactor', this.value)"
+                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'scaleFactor', this.value, '${root}')"
                                 placeholder="e.g. 1.0"
-                                class="w-full px-2 py-1 border border-teal-200 dark:border-teal-700 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-teal-500/20 outline-none">
+                                class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none">
                         </div>` : ""}
                         <div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">axis <span class="font-normal">(xs:string)</span></label>
                             <input type="text" value="${escHtml(p.axis || '')}"
-                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'axis', this.value)"
+                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'axis', this.value, '${root}')"
                                 placeholder="e.g. x-axis"
-                                class="w-full px-2 py-1 border border-teal-200 dark:border-teal-700 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-teal-500/20 outline-none">
+                                class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none">
                         </div>
                         <div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">size <span class="font-normal">(xs:int)</span></label>
                             <input type="number" step="1" value="${escHtml(p.size || '')}"
-                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'size', this.value)"
+                                onchange="updateDocPropertyNested([${serializePath(currentPath)}], 'size', this.value, '${root}')"
                                 placeholder="e.g. 10"
-                                class="w-full px-2 py-1 border border-teal-200 dark:border-teal-700 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-teal-500/20 outline-none">
+                                class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none">
                         </div>
                     </div>
                 </div>` : ""}
+                ${showChildren && !isCollapsed
+                            ? `<div class="mt-1 space-y-1">
+                            ${renderDocPropertiesHierarchy(p.children.properties, depth + 1, [...currentPath, "properties"], root)}
+                            ${renderDocContentsHierarchy(p.children.contents, depth + 1, [...currentPath, "contents"], root)}
+                        </div>`
+                            : ""}
             </div>
         </div>`;
                 })
@@ -16366,6 +16447,18 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                 .join(", ");
         }
 
+        // "+ property" / "+ content" buttons placed in a property/content card row.
+        // They add a NESTED child (any type may be a parent — see normChildren()).
+        // Must stay inside the row div: the Details toggle relies on
+        // this.parentElement.nextElementSibling being the accordion.
+        function nestedAddButtonsHtml(onclickProperty, onclickContent) {
+            const contentClass = "bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded border border-purple-100 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/50";
+            return `<button type="button" onclick="${onclickProperty}" title="Add nested property"
+    class="shrink-0 whitespace-nowrap text-[10px] px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded border border-indigo-100 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50">+ property</button>
+<button type="button" onclick="${onclickContent}" title="Add nested content"
+    class="shrink-0 whitespace-nowrap text-[10px] px-1.5 py-0.5 ${contentClass}">+ content</button>`;
+        }
+
         // Render properties hierarchy with indentation
         function renderPropertiesHierarchy(
             items,
@@ -16382,6 +16475,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                 const currentPath = [...parentPath, itemIdx];
                 const pathStr = currentPath.join("-");
                 const isPropertyList = item.type === "propertyListType";
+                const showChildren = isPropertyList || hasNestedChildren(item);
                 const _pmeta = PROPERTY_TYPE_META[item.type] || { units: false, placeholder: "Default Value" };
                 const isNumeric = _pmeta.units;
                 const isDateTime = item.type === 'dateTimeType';
@@ -16397,9 +16491,9 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                             <div class="${indentClass}">
                                 <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-1 group/card hover:border-indigo-200 dark:hover:border-indigo-800 transition-all">
                                     <div class="flex gap-1 items-center">
-                                        ${isPropertyList
+                                        ${showChildren
                         ? `
-                        <button onclick="togglePropertyCollapse(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}])" 
+                        <button onclick="togglePropertyCollapse(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}])"
                             class="p-1 text-slate-400 hover:text-indigo-600 rounded transition-colors" 
                             title="${isCollapsed ? "Expand" : "Collapse"}">
                             <i class="ph ph-caret-${isCollapsed ? "right" : "down"} text-sm"></i>
@@ -16416,7 +16510,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                         placeholder="Key"
                                         list="ns-prefix-list"
                                         ${isReadOnly ? "disabled" : ""}
-                                        class="flex-1 min-w-[120px] px-2 py-1 text-xs ${isPropertyList ? "font-semibold" : ""} border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
+                                        class="flex-1 min-w-[120px] px-2 py-1 text-xs ${showChildren ? "font-semibold" : ""} border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                                         <select onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'type', this.value); renderTemplates();"
                                             ${isReadOnly ? "disabled" : ""}
                                             class="w-32 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white outline-none cursor-pointer ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
@@ -16458,6 +16552,10 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                             class="px-2 py-1 text-xs text-slate-500 hover:text-indigo-600 transition-colors bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded flex items-center gap-1 ">
                                         Details <i class="ph ph-caret-down"></i>
                                         </button>` : ""}
+
+                                        ${!isReadOnly ? nestedAddButtonsHtml(
+                            `addChildToPropertyList(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'property')`,
+                            `addChildToPropertyList(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'content')`) : ""}
 
                                         ${!isReadOnly
                         ? (parentEncrypt
@@ -16503,24 +16601,11 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                             </div>` : ""}
                                         </div>
                                     </div>` : ""}
-                                    ${isPropertyList &&
-                        item.children &&
+                                    ${showChildren &&
+                        normChildren(item) &&
                         !isCollapsed
                         ? `
                                     <div class="mt-1 space-y-1">
-                                        <div class="flex justify-end mb-1">
-                                            <div class="flex gap-1">
-                                             ${!isReadOnly
-                            ? `
-<button onclick="addChildToPropertyList(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'property')"
-    class="text-[10px] px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded border border-indigo-100 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50">+ Add property</button>
-<button onclick="addChildToPropertyList(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'content')"
-    class="text-[10px] px-1.5 py-0.5 bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded border border-purple-100 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/50">+ Add content</button>
-                                             `
-                            : ""
-                        }
-                                            </div>
-                                        </div>
                                         ${item.children.properties &&
                             item.children.properties.length > 0
                             ? renderPropertiesHierarchy(
@@ -16697,7 +16782,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             for (const c of (ch.contents  || [])) { c.encrypt = false; clearChildEncrypt(c); }
         }
 
-        // Add child to propertyListType (can be property or content)
+        // Add a nested child (property or content) to any property/content item
         function addChildToPropertyList(templateIdx, fieldType, path, childType) {
             const arrayName = fieldType === "property" ? "properties" : "contents";
             let target = state.templates[templateIdx][arrayName];
@@ -16792,6 +16877,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                 const isNumeric = _cmeta.units;
                 const isDateTime = item.type === 'dateTimeType';
                 const placeholder = _cmeta.placeholder || "Value";
+                const showChildren = hasNestedChildren(item);
+                const isCollapsed = item._collapsed || false;
 
                 const indentClass =
                     depth > 0
@@ -16802,7 +16889,13 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                             <div class="${indentClass}">
                                 <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-1 group/card hover:border-purple-200 dark:hover:border-purple-800 transition-all">
                                     <div class="flex gap-1 items-center">
-                                        <div class="w-6"></div>
+                                        ${showChildren
+                        ? `<button onclick="togglePropertyCollapse(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}])"
+                            class="p-1 text-slate-400 hover:text-purple-600 rounded transition-colors"
+                            title="${isCollapsed ? "Expand" : "Collapse"}">
+                            <i class="ph ph-caret-${isCollapsed ? "right" : "down"} text-sm"></i>
+                        </button>`
+                        : '<div class="w-6"></div>'}
 
                                         <span class="required-mark shrink-0" title="Required">*</span>
                                         <input type="text" value="${escHtml(item.key || '')}"
@@ -16848,6 +16941,9 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                         class="px-2 py-1 text-xs text-slate-500 hover:text-purple-600 transition-colors bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded flex items-center gap-1 ">
                                         Details <i class="ph ph-caret-down"></i>
                                     </button>
+                                    ${!isReadOnly ? nestedAddButtonsHtml(
+                        `addChildToPropertyList(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'property')`,
+                        `addChildToPropertyList(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'content')`) : ""}
                                     ${!isReadOnly ? (parentEncrypt
                                         ? `<button disabled class="p-1 text-slate-200 dark:text-slate-700 rounded cursor-not-allowed opacity-40"
                                             title="Parent element is already encrypted — no need to encrypt individually.">
@@ -16912,11 +17008,20 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">ref <span class="font-normal">(xs:IDREF)</span></label>
                                             <input type="text" value="${escHtml(item.ref || '')}"
                                                 onchange="updateTemplateFieldNested(${templateIdx}, '${fieldType}', [${serializePath(currentPath)}], 'ref', this.value)"
-                                                placeholder="e.g. cont_1_ref" 
+                                                placeholder="e.g. cont_1_ref"
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none">
                                         </div>
                                     </div>
                                 </div>
+                                ${showChildren && !isCollapsed ? `
+                                <div class="mt-1 space-y-1">
+                                    ${renderPropertiesHierarchy(item.children.properties, templateIdx, fieldType,
+                                        depth + 1, [...currentPath, "properties"], isReadOnly,
+                                        item.encrypt || parentEncrypt).join("")}
+                                    ${renderContentsHierarchy(item.children.contents, templateIdx, fieldType,
+                                        depth + 1, [...currentPath, "contents"], isReadOnly,
+                                        item.encrypt || parentEncrypt).join("")}
+                                </div>` : ""}
                             </div>
                         </div>`;;
 
@@ -17226,8 +17331,10 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                             formatString: item.formatString || "",
                         };
 
-                        // propertyListTypeの場合、子要素を再帰的に構築
-                        if (item.type === "propertyListType") {
+                        // 次の行が深ければ子要素として再帰的に構築する（どの型も親になれる）。
+                        // propertyListType は子が無くても children を持たせる（従来どおり）
+                        const nextIsChild = i + 1 < items.length && items[i + 1]._nestLevel > currentLevel;
+                        if (nextIsChild) {
                             i++; // 次の行へ
                             const children = buildNestedStructure(items, i, currentLevel);
                             newItem.children = children;
@@ -17237,6 +17344,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                 i++;
                             }
                             i--; // 1つ戻す（外側のループでインクリメントされるため）
+                        } else if (item.type === "propertyListType") {
+                            newItem.children = { properties: [], contents: [] };
                         }
 
                         // 要素タイプに応じて追加
@@ -17311,12 +17420,9 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                         p.scaleFactor !== undefined && p.scaleFactor !== null ? p.scaleFactor : '',
                         p.formatString || '',
                     ]);
-                    // propertyListTypeなら子要素を再帰展開
-                    if (p.type === 'propertyListType' && p.children) {
-                        const ch = Array.isArray(p.children)
-                            ? { properties: p.children, contents: [] }
-                            : p.children;
-                        itemsToRows(ch.properties, ch.contents, nestLevel + 1);
+                    // 子要素を再帰展開（どの型も親になれる）
+                    if (hasNestedChildren(p)) {
+                        itemsToRows(p.children.properties, p.children.contents, nestLevel + 1);
                     }
                 });
 
@@ -17333,6 +17439,9 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                         c.scaleFactor !== undefined && c.scaleFactor !== null ? c.scaleFactor : '',
                         c.formatString || '',
                     ]);
+                    if (hasNestedChildren(c)) {
+                        itemsToRows(c.children.properties, c.children.contents, nestLevel + 1);
+                    }
                 });
             }
 
@@ -17549,10 +17658,21 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             });
         }
 
-        // Helper to deep copy contents
+        // Helper to deep copy contents (contents may hold nested children too —
+        // a shallow copy would let instance edits write through to the template)
         function deepCopyContents(items) {
             if (!items) return [];
-            return items.map((item) => ({ ...item, value: item.value || "" }));
+            return items.map((item) => {
+                const newItem = { ...item, value: item.value || "" };
+                const ch = normChildren(newItem);
+                if (ch) {
+                    newItem.children = {
+                        properties: deepCopyProperties(ch.properties),
+                        contents: deepCopyContents(ch.contents),
+                    };
+                }
+                return newItem;
+            });
         }
 
 
@@ -17878,9 +17998,9 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             renderDataInstances();
         }
 
-        // Add child to instanceProperties propertyListType item
-        function addChildToInstancePropertyList(instIdx, path, childType) {
-            let target = state.instances[instIdx].instanceProperties;
+        // Add a nested child to an instance-only property/content item (root: instanceProperties or instanceContents)
+        function addChildToInstancePropertyList(instIdx, path, childType, root = "instanceProperties") {
+            let target = state.instances[instIdx][root];
             for (const idx of path) {
                 if (idx === "properties" || idx === "contents") {
                     target = target[idx];
@@ -17913,8 +18033,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
         }
 
         // Toggle collapse for instanceProperties propertyListType item
-        function toggleInstancePropertyCollapse(instIdx, path) {
-            let target = state.instances[instIdx].instanceProperties;
+        function toggleInstancePropertyCollapse(instIdx, path, root = "instanceProperties") {
+            let target = state.instances[instIdx][root];
             for (let i = 0; i < path.length - 1; i++) {
                 const idx = path[i];
                 if (idx === "properties" || idx === "contents") {
@@ -17932,9 +18052,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
         function removeInstanceAdditionalPropertyNested(
             instIdx,
             itemIdx,
-            parentPath,
-        ) {
-            let targetArray = state.instances[instIdx].instanceProperties;
+            parentPath, root = "instanceProperties") {
+            let targetArray = state.instances[instIdx][root];
             for (const idx of parentPath) {
                 if (idx === "properties" || idx === "contents") {
                     targetArray = targetArray[idx];
@@ -17954,6 +18073,24 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             );
         }
 
+        // Nested children of an instance-only (instanceProperties / instanceContents)
+        // property/content. `root` names the instance array the path starts from.
+        function renderInstanceAdditionalChildren(item, instIdx, depth, currentPath, isReadOnly, parentEncrypt, root) {
+            const ch = normChildren(item);
+            if (!ch) return "";
+            const enc = item.encrypt || parentEncrypt;
+            return `<div class="mt-1 space-y-1">
+                ${ch.properties && ch.properties.length > 0
+                    ? renderInstanceAdditionalPropertiesHierarchy(ch.properties, instIdx, depth + 1,
+                        [...currentPath, "properties"], isReadOnly, enc, root)
+                    : ""}
+                ${ch.contents && ch.contents.length > 0
+                    ? renderInstanceAdditionalContentsHierarchy(ch.contents, instIdx, depth + 1,
+                        [...currentPath, "contents"], isReadOnly, enc, root)
+                    : ""}
+            </div>`;
+        }
+
         // Render instanceProperties hierarchy (editable, with nesting support)
         function renderInstanceAdditionalPropertiesHierarchy(
             items,
@@ -17961,13 +18098,14 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             depth,
             parentPath,
             isReadOnly,
-            parentEncrypt = false,
+            parentEncrypt = false, root = "instanceProperties",
         ) {
             if (!items) return "";
             return items
                 .map((item, itemIdx) => {
                     const currentPath = [...parentPath, itemIdx];
                     const isPropertyList = item.type === "propertyListType";
+                    const showChildren = isPropertyList || hasNestedChildren(item);
                     const _pmeta = PROPERTY_TYPE_META[item.type] || { units: false, placeholder: "Value" };
                     const isNumeric = _pmeta.units;
                     const isDateTime = item.type === 'dateTimeType';
@@ -17982,8 +18120,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
         <div class="${indentClass}">
             <div class="bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg p-1 group/card hover:border-indigo-200 dark:hover:border-indigo-800 transition-all">
                 <div class="flex gap-1 items-center">
-                    ${isPropertyList
-                            ? `<button onclick="toggleInstancePropertyCollapse(${instIdx}, [${serializePath(currentPath)}])"
+                    ${showChildren
+                            ? `<button onclick="toggleInstancePropertyCollapse(${instIdx}, [${serializePath(currentPath)}], '${root}')"
                                 class="p-1 text-slate-400 hover:text-indigo-600 rounded transition-colors"
                                 title="${isCollapsed ? "Expand" : "Collapse"}">
                                 <i class="ph ph-caret-${isCollapsed ? "right" : "down"} text-sm"></i>
@@ -17993,33 +18131,33 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                     <span class="required-mark shrink-0" title="Required">*</span>
                     <input type="text" value="${escHtml(item.key || '')}"
                         oninput="updateKeyValidation(this, this.value)"
-                        onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'key', this.value)"
+                        onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'key', this.value, '${root}')"
                         placeholder="Key"
                         list="ns-prefix-list"
                         ${isReadOnly ? "disabled" : ""}
-                        class="flex-1 min-w-[120px] px-2 py-1 text-xs ${isPropertyList ? "font-semibold" : ""} border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
-                    <select onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'type', this.value); renderDataInstances();"
+                        class="flex-1 min-w-[120px] px-2 py-1 text-xs ${showChildren ? "font-semibold" : ""} border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
+                    <select onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'type', this.value, '${root}'); renderDataInstances();"
                         ${isReadOnly ? "disabled" : ""}
                         class="w-32 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white outline-none cursor-pointer ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                         ${buildOptions(PROPERTY_TYPE_META, item.type)}
                     </select>
                     ${isNumeric
                             ? `<input type="text" value="${escHtml(item.units || '')}"
-                                onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'units', this.value)"
+                                onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'units', this.value, '${root}')"
                                 placeholder="Units"
                                 ${isReadOnly ? "disabled" : ""}
                                 class="w-20 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">`
                             : '<div class="w-20"></div>'
                         }
                     <input type="text" value="${escHtml(item.description || '')}"
-                        onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'description', this.value)"
+                        onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'description', this.value, '${root}')"
                         placeholder="Description"
                         ${isReadOnly ? "disabled" : ""}
                         class="flex-[2] min-w-[140px] px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                     ${!isPropertyList
                             ? `<div class="relative flex-1 min-w-[100px]">
                                 <input type="text" value="${escHtml(item.value || '')}"
-                                    onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'value', this.value)"
+                                    onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'value', this.value, '${root}')"
                                     placeholder="${placeholder}"
                                     ${isReadOnly ? "disabled" : ""}
                                     class="w-full px-2 py-1 text-xs font-medium border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
@@ -18033,22 +18171,25 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                     ${item.encrypt
                             ? `<span title="Encrypted" class="p-1 text-amber-500"><i class="ph ph-lock-key text-sm"></i></span>`
                             : ""}
+                    ${!isReadOnly ? nestedAddButtonsHtml(
+                            `addChildToInstancePropertyList(${instIdx}, [${serializePath(currentPath)}], 'property', '${root}')`,
+                            `addChildToInstancePropertyList(${instIdx}, [${serializePath(currentPath)}], 'content', '${root}')`) : ""}
                     ${!isReadOnly
                             ? (parentEncrypt
                                 ? `<button disabled class="p-1 text-slate-200 dark:text-slate-700 rounded cursor-not-allowed opacity-40"
                                     title="Parent element is already encrypted — no need to encrypt individually.">
                                     <i class="ph ph-lock-key text-sm"></i>
                                    </button>
-                                   <button onclick="removeInstanceAdditionalPropertyNested(${instIdx}, ${itemIdx}, [${serializePath(parentPath)}])"
+                                   <button onclick="removeInstanceAdditionalPropertyNested(${instIdx}, ${itemIdx}, [${serializePath(parentPath)}], '${root}')"
                                     class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
                                     <i class="ph ph-trash text-sm"></i>
                                    </button>`
-                                : `<button onclick="toggleInstancePropertyEncrypt(${instIdx}, [${serializePath(currentPath)}])"
+                                : `<button onclick="toggleInstancePropertyEncrypt(${instIdx}, [${serializePath(currentPath)}], '${root}')"
                                     class="p-1 ${item.encrypt ? 'text-amber-500 bg-amber-50 dark:bg-amber-900/30' : 'text-slate-300 hover:text-amber-500 dark:text-slate-600 dark:hover:text-amber-400'} rounded transition-colors"
                                     title="${item.encrypt ? 'Encryption ON (click to disable)' : 'Encryption OFF (click to enable)'}">
                                     <i class="ph ph-${item.encrypt ? 'lock-key' : 'lock-open'} text-sm"></i>
                                    </button>
-                                   <button onclick="removeInstanceAdditionalPropertyNested(${instIdx}, ${itemIdx}, [${serializePath(parentPath)}])"
+                                   <button onclick="removeInstanceAdditionalPropertyNested(${instIdx}, ${itemIdx}, [${serializePath(parentPath)}], '${root}')"
                                     class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
                                     <i class="ph ph-trash text-sm"></i>
                                    </button>`)
@@ -18062,7 +18203,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                         <div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
                             <input type="text" value="${escHtml(item.formatString || '')}"
-                                onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'formatString', this.value)"
+                                onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'formatString', this.value, '${root}')"
                                 placeholder="e.g. 0.00" 
                                 ${isReadOnly ? "disabled" : ""}
                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
@@ -18070,53 +18211,17 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                         ${isNumeric ? `<div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
                             <input type="number" step="any" value="${escHtml(item.scaleFactor || '')}"
-                                onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'scaleFactor', this.value)"
+                                onchange="updateInstanceDynamicFieldNested(${instIdx}, [${serializePath(currentPath)}], 'scaleFactor', this.value, '${root}')"
                                 placeholder="e.g. 1.00" 
                                 ${isReadOnly ? "disabled" : ""}
                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                         </div>` : ""}
                     </div>
                 </div>` : ""}
-                ${isPropertyList && item.children && !isCollapsed
-                            ? `<div class="mt-1 space-y-1">
-                            <div class="flex justify-end mb-1">
-                                <div class="flex gap-1">
-                                    ${!isReadOnly
-                                ? `
-<button onclick="addChildToInstancePropertyList(${instIdx}, [${serializePath(currentPath)}], 'property')"
-    class="text-[10px] px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded border border-indigo-100 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50">+ Add property</button>
-<button onclick="addChildToInstancePropertyList(${instIdx}, [${serializePath(currentPath)}], 'content')"
-    class="text-[10px] px-1.5 py-0.5 bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded border border-purple-100 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/50">+ Add content</button>
-                                                `
-                                : ""
-                            }
-                                </div>
-                            </div>
-                            ${item.children.properties &&
-                                item.children.properties.length > 0
-                                ? renderInstanceAdditionalPropertiesHierarchy(
-                                    item.children.properties,
-                                    instIdx,
-                                    depth + 1,
-                                    [...currentPath, "properties"],
-                                    isReadOnly,
-                                )
-                                : ""
-                            }
-                            ${item.children.contents &&
-                                item.children.contents.length > 0
-                                ? renderInstanceAdditionalContentsHierarchy(
-                                    item.children.contents,
-                                    instIdx,
-                                    depth + 1,
-                                    [...currentPath, "contents"],
-                                    isReadOnly,
-                                )
-                                : ""
-                            }
-                        </div>`
-                            : ""
-                        }
+                ${showChildren && !isCollapsed
+                            ? renderInstanceAdditionalChildren(item, instIdx, depth, currentPath,
+                                isReadOnly, parentEncrypt, root)
+                            : ""}
             </div>
         </div>`;
                     return html;
@@ -18124,14 +18229,14 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                 .join("");
         }
 
-        // Render instanceProperties children of type content (for nesting under propertyListType)
+        // Render instanceProperties children of type content (nested under any property/content)
         function renderInstanceAdditionalContentsHierarchy(
             items,
             instIdx,
             depth,
             parentPath,
             isReadOnly,
-            parentEncrypt = false,
+            parentEncrypt = false, root = "instanceProperties",
         ) {
             if (!items) return "";
             return items
@@ -18141,6 +18246,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                     const isNumeric = _cmeta.units;
                     const isDateTime = item.type === 'dateTimeType';
                     const placeholder = _cmeta.placeholder || "Value";
+                    const showChildren = hasNestedChildren(item);
+                    const isCollapsed = item._collapsed || false;
                     const indentClass =
                         depth > 0
                             ? `ml-${Math.min(depth * 4, 12)} border-l-2 border-purple-200 dark:border-purple-800 pl-3`
@@ -18149,36 +18256,42 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
         <div class="${indentClass}">
             <div class="bg-purple-50/30 dark:bg-purple-900/10 border border-purple-200 dark:border-purple-800 rounded-lg p-1 group/card hover:border-purple-300 transition-all">
                 <div class="flex gap-1 items-center">
-                    <div class="w-6"></div>
+                    ${showChildren
+                            ? `<button onclick="toggleInstancePropertyCollapse(${instIdx}, [${serializePath(currentPath)}], '${root}')"
+                                class="p-1 text-slate-400 hover:text-purple-600 rounded transition-colors"
+                                title="${isCollapsed ? "Expand" : "Collapse"}">
+                                <i class="ph ph-caret-${isCollapsed ? "right" : "down"} text-sm"></i>
+                            </button>`
+                            : '<div class="w-6"></div>'}
                     <span class="required-mark shrink-0" title="Required">*</span>
                     <input type="text" value="${escHtml(item.key || '')}"
                         oninput="updateKeyValidation(this, this.value)"
-                        onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'key', this.value)"
+                        onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'key', this.value, '${root}')"
                         placeholder="Key"
                         list="ns-prefix-list"
                         ${isReadOnly ? "disabled" : ""}
                         class="flex-1 min-w-[120px] px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
-                    <select onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'type', this.value); renderDataInstances();"
+                    <select onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'type', this.value, '${root}'); renderDataInstances();"
                         ${isReadOnly ? "disabled" : ""}
                         class="w-32 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white outline-none cursor-pointer ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                         ${buildOptions(CONTENT_TYPE_META, item.type)}
                     </select>
                     ${isNumeric
                             ? `<input type="text" value="${escHtml(item.units || '')}"
-                                onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'units', this.value)"
+                                onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'units', this.value, '${root}')"
                                 placeholder="Units"
                                 ${isReadOnly ? "disabled" : ""}
                                 class="w-20 px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">`
                             : '<div class="w-20"></div>'
                         }
                     <input type="text" value="${escHtml(item.description || '')}"
-                        onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'description', this.value)"
+                        onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'description', this.value, '${root}')"
                         placeholder="Description"
                         ${isReadOnly ? "disabled" : ""}
                         class="flex-[2] min-w-[140px] px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                     <div class="relative flex-1 min-w-[100px]">
                         <input type="text" value="${escHtml(item.value || '')}"
-                            onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'value', this.value)"
+                            onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'value', this.value, '${root}')"
                             placeholder="${placeholder}"
                             ${isReadOnly ? "disabled" : ""}
                             class="w-full px-2 py-1 text-xs font-medium border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
@@ -18187,22 +18300,25 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                         class="px-2 py-1 text-xs text-slate-500 hover:text-purple-600 transition-colors bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded flex items-center gap-1 ">
                                         Details <i class="ph ph-caret-down"></i>
                     </button>
+                    ${!isReadOnly ? nestedAddButtonsHtml(
+                            `addChildToInstancePropertyList(${instIdx}, [${serializePath(currentPath)}], 'property', '${root}')`,
+                            `addChildToInstancePropertyList(${instIdx}, [${serializePath(currentPath)}], 'content', '${root}')`) : ""}
                     ${!isReadOnly
                             ? (parentEncrypt
                                 ? `<button disabled class="p-1 text-slate-200 dark:text-slate-700 rounded cursor-not-allowed opacity-40"
                                     title="Parent element is already encrypted — no need to encrypt individually.">
                                     <i class="ph ph-lock-key text-sm"></i>
                                    </button>
-                                   <button onclick="removeInstanceAdditionalContentNested(${instIdx}, ${itemIdx}, [${serializePath(parentPath)}])"
+                                   <button onclick="removeInstanceAdditionalContentNested(${instIdx}, ${itemIdx}, [${serializePath(parentPath)}], '${root}')"
                                     class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
                                     <i class="ph ph-trash text-sm"></i>
                                    </button>`
-                                : `<button onclick="toggleInstanceContentEncrypt(${instIdx}, [${serializePath(currentPath)}])"
+                                : `<button onclick="toggleInstanceContentEncrypt(${instIdx}, [${serializePath(currentPath)}], '${root}')"
                                     class="p-1 ${item.encrypt ? 'text-amber-500 bg-amber-50 dark:bg-amber-900/30' : 'text-slate-300 hover:text-amber-500 dark:text-slate-600 dark:hover:text-amber-400'} rounded transition-colors"
                                     title="${item.encrypt ? 'Encryption ON (click to disable)' : 'Encryption OFF (click to enable)'}">
                                     <i class="ph ph-${item.encrypt ? 'lock-key' : 'lock-open'} text-sm"></i>
                                    </button>
-                                   <button onclick="removeInstanceAdditionalContentNested(${instIdx}, ${itemIdx}, [${serializePath(parentPath)}])"
+                                   <button onclick="removeInstanceAdditionalContentNested(${instIdx}, ${itemIdx}, [${serializePath(parentPath)}], '${root}')"
                                     class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
                                     <i class="ph ph-trash text-sm"></i>
                                    </button>`)
@@ -18215,7 +18331,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                         ${(isNumeric || isDateTime) ? `<div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
                             <input type="text" value="${escHtml(item.formatString || '')}"
-                                onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'formatString', this.value)"
+                                onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'formatString', this.value, '${root}')"
                                 placeholder="e.g. 0.00" 
                                 ${isReadOnly ? "disabled" : ""}
                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
@@ -18223,7 +18339,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                         ${isNumeric ? `<div>
                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
                             <input type="number" step="any" value="${escHtml(item.scaleFactor || '')}"
-                                onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'scaleFactor', this.value)"
+                                onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'scaleFactor', this.value, '${root}')"
                                 placeholder="e.g. 1.00" 
                                 ${isReadOnly ? "disabled" : ""}
                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
@@ -18232,7 +18348,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                             <div>
                                 <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">axis <span class="font-normal">(xs:string)</span></label>
                                 <input type="text" value="${escHtml(item.axis || '')}"
-                                    onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'axis', this.value)"
+                                    onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'axis', this.value, '${root}')"
                                     placeholder="e.g. x-axis" 
                                     ${isReadOnly ? "disabled" : ""}
                                     class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
@@ -18240,7 +18356,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                             <div>
                                 <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">size <span class="font-normal">(xs:int)</span></label>
                                 <input type="number" value="${escHtml(item.size || '')}"
-                                    onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'size', this.value)"
+                                    onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'size', this.value, '${root}')"
                                     placeholder="Size" 
                                     ${isReadOnly ? "disabled" : ""}
                                     class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
@@ -18248,7 +18364,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                             <div>
                                 <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">id <span class="font-normal">(xs:ID)</span></label>
                                 <input type="text" value="${escHtml(item.id || '')}"
-                                    onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'id', this.value)"
+                                    onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'id', this.value, '${root}')"
                                     placeholder="e.g. cont_1" 
                                     ${isReadOnly ? "disabled" : ""}
                                     class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
@@ -18256,7 +18372,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                             <div>
                                 <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">ref <span class="font-normal">(xs:IDREF)</span></label>
                                 <input type="text" value="${escHtml(item.ref || '')}"
-                                    onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'ref', this.value)"
+                                    onchange="updateInstanceAdditionalContentNested(${instIdx}, [${serializePath(currentPath)}], 'ref', this.value, '${root}')"
                                     placeholder="e.g. cont_1_ref" 
                                     ${isReadOnly ? "disabled" : ""}
                                     class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
@@ -18264,6 +18380,10 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                         </div>
                     </div>
                 </div>
+                ${showChildren && !isCollapsed
+                            ? renderInstanceAdditionalChildren(item, instIdx, depth, currentPath,
+                                isReadOnly, parentEncrypt, root)
+                            : ""}
             </div>
         </div>`;
                 })
@@ -18271,8 +18391,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
         }
 
         // Update nested field in instanceProperties
-        function updateInstanceDynamicFieldNested(instIdx, path, field, value) {
-            let target = state.instances[instIdx].instanceProperties;
+        function updateInstanceDynamicFieldNested(instIdx, path, field, value, root = "instanceProperties") {
+            let target = state.instances[instIdx][root];
             for (let i = 0; i < path.length - 1; i++) {
                 const idx = path[i];
                 if (idx === "properties" || idx === "contents") {
@@ -18299,9 +18419,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             instIdx,
             path,
             field,
-            value,
-        ) {
-            let target = state.instances[instIdx].instanceProperties;
+            value, root = "instanceProperties") {
+            let target = state.instances[instIdx][root];
             for (let i = 0; i < path.length - 1; i++) {
                 const idx = path[i];
                 if (idx === "properties" || idx === "contents") {
@@ -18319,9 +18438,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
         function removeInstanceAdditionalContentNested(
             instIdx,
             itemIdx,
-            parentPath,
-        ) {
-            let targetArray = state.instances[instIdx].instanceProperties;
+            parentPath, root = "instanceProperties") {
+            let targetArray = state.instances[instIdx][root];
             for (const idx of parentPath) {
                 if (idx === "properties" || idx === "contents") {
                     targetArray = targetArray[idx];
@@ -18458,6 +18576,22 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             renderDataInstances();
         }
 
+        // Nested children of an inherited (template-derived) property/content.
+        // `root` is the instance array the path starts from ("properties" or
+        // "contents"); it is passed down unchanged because a content may sit
+        // under a property and vice versa.
+        function renderInstanceInheritedChildren(item, instIdx, depth, currentPath, isReadOnly, parentEncrypt, root) {
+            const ch = normChildren(item);
+            if (!ch) return "";
+            const enc = item.encrypt || parentEncrypt;
+            const childrenHTML =
+                renderInstancePropertiesHierarchy(ch.properties, instIdx, depth + 1,
+                    [...currentPath, "properties"], isReadOnly, enc, root) +
+                renderInstanceContentsHierarchy(ch.contents, instIdx, depth + 1,
+                    [...currentPath, "contents"], isReadOnly, enc, root);
+            return childrenHTML ? `<div class="mt-2 space-y-2">${childrenHTML}</div>` : "";
+        }
+
         // Render instance properties hierarchy (read-only display with editable values)
         function renderInstancePropertiesHierarchy(
             items,
@@ -18465,7 +18599,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             depth = 0,
             parentPath = [],
             isReadOnly = false,
-            parentEncrypt = false,
+            parentEncrypt = false, root = "properties",
         ) {
             if (!items || items.length === 0) return "";
 
@@ -18509,7 +18643,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                             ? `
                     <div class="relative flex-1 min-w-[140px]">
                         <input type="text" value="${escHtml(item.value || '')}"
-                            onchange="updateInstanceValueNested(${instIdx}, 'properties', [${serializePath(currentPath)}], this.value)"
+                            onchange="updateInstanceValueNested(${instIdx}, '${root}', [${serializePath(currentPath)}], this.value)"
                             ${isReadOnly ? "disabled" : ""}
                             ${/datetime/i.test(item.type || '') ? ` data-dt-type="${/list/i.test(item.type) ? 'list' : 'single'}"` : ''}
                             placeholder="Value"
@@ -18528,7 +18662,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                                 title="Parent element is already encrypted — no need to encrypt individually.">
                                                 <i class="ph ph-lock-key text-sm"></i>
                                                </button>`
-                                            : `<button onclick="toggleInstanceInheritedPropEncrypt(${instIdx}, [${serializePath(currentPath)}])"
+                                            : `<button onclick="toggleInstanceInheritedPropEncrypt(${instIdx}, [${serializePath(currentPath)}], '${root}')"
                                                 class="p-1 ${item.encrypt ? 'text-amber-500 bg-amber-50 dark:bg-amber-900/30' : 'text-slate-300 hover:text-amber-500 dark:text-slate-600 dark:hover:text-amber-400'} rounded transition-colors"
                                                 title="${item.encrypt ? 'Encryption ON (click to disable)' : 'Encryption OFF (click to enable)'}">
                                                 <i class="ph ph-${item.encrypt ? 'lock-key' : 'lock-open'} text-sm"></i>
@@ -18543,7 +18677,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                         <div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
                                             <input type="text" value="${escHtml(item.formatString || '')}"
-                                                onchange="updateInstanceFieldNested(${instIdx}, 'properties', [${serializePath(currentPath)}], 'formatString', this.value)"
+                                                onchange="updateInstanceFieldNested(${instIdx}, '${root}', [${serializePath(currentPath)}], 'formatString', this.value)"
                                                 placeholder="e.g. 0.00" 
                                                 ${isReadOnly ? "disabled" : ""}
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
@@ -18551,7 +18685,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                         ${isNumeric ? `<div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
                                             <input type="number" step="any" value="${escHtml(item.scaleFactor || '')}"
-                                                onchange="updateInstanceFieldNested(${instIdx}, 'properties', [${serializePath(currentPath)}], 'scaleFactor', this.value)"
+                                                onchange="updateInstanceFieldNested(${instIdx}, '${root}', [${serializePath(currentPath)}], 'scaleFactor', this.value)"
                                                 placeholder="e.g. 1.00" 
                                                 ${isReadOnly ? "disabled" : ""}
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-indigo-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
@@ -18560,52 +18694,9 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                 </div>` : ""}
             </div>`;
 
-                    // Render children if propertyListType
-                    if (isPropertyList && item.children) {
-                        // Convert old array format to new object format if needed
-                        if (Array.isArray(item.children)) {
-                            item.children = { properties: item.children, contents: [] };
-                        }
-
-                        const childrenHTML = [];
-
-                        // First render child properties
-                        if (
-                            item.children.properties &&
-                            item.children.properties.length > 0
-                        ) {
-                            childrenHTML.push(
-                                renderInstancePropertiesHierarchy(
-                                    item.children.properties,
-                                    instIdx,
-                                    depth + 1,
-                                    [...currentPath, "properties"],
-                                    isReadOnly,
-                                    item.encrypt || parentEncrypt,
-                                ),
-                            );
-                        }
-
-                        // Then render child contents
-                        if (item.children.contents && item.children.contents.length > 0) {
-                            childrenHTML.push(
-                                renderInstanceContentsHierarchy(
-                                    item.children.contents,
-                                    instIdx,
-                                    depth + 1,
-                                    [...currentPath, "contents"],
-                                    isReadOnly,
-                                    item.encrypt || parentEncrypt,
-                                ),
-                            );
-                        }
-
-                        if (childrenHTML.length > 0) {
-                            html += `<div class="mt-2 space-y-2">
-                                    ${childrenHTML.join("")}
-                        </div>`;
-                        }
-                    }
+                    // Render children (any type may have them — see normChildren())
+                    html += renderInstanceInheritedChildren(item, instIdx, depth, currentPath,
+                        isReadOnly, parentEncrypt, root);
 
                     html += `</div>`;
                     return html;
@@ -18620,7 +18711,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             depth = 0,
             parentPath = [],
             isReadOnly = false,
-            parentEncrypt = false,
+            parentEncrypt = false, root = "contents",
         ) {
             if (!items || items.length === 0) return "";
 
@@ -18661,7 +18752,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                   </div>
                                   <div class="relative flex-1 min-w-[140px]">
                                       <input type="text" value="${escHtml(item.value || '')}"
-                                          onchange="updateInstanceValueNested(${instIdx}, 'contents', [${serializePath(currentPath)}], this.value)"
+                                          onchange="updateInstanceValueNested(${instIdx}, '${root}', [${serializePath(currentPath)}], this.value)"
                                           ${isReadOnly ? "disabled" : ""}
                                           ${/datetime/i.test(item.type || '') ? ` data-dt-type="${/list/i.test(item.type) ? 'list' : 'single'}"` : ''}
                                           placeholder="Value"
@@ -18677,7 +18768,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                                 title="Parent element is already encrypted — no need to encrypt individually.">
                                                 <i class="ph ph-lock-key text-sm"></i>
                                                </button>`
-                                            : `<button onclick="toggleInstanceInheritedContEncrypt(${instIdx}, [${serializePath(currentPath)}])"
+                                            : `<button onclick="toggleInstanceInheritedContEncrypt(${instIdx}, [${serializePath(currentPath)}], '${root}')"
                                                 class="p-1 ${item.encrypt ? 'text-amber-500 bg-amber-50 dark:bg-amber-900/30' : 'text-slate-300 hover:text-amber-500 dark:text-slate-600 dark:hover:text-amber-400'} rounded transition-colors"
                                                 title="${item.encrypt ? 'Encryption ON (click to disable)' : 'Encryption OFF (click to enable)'}">
                                                 <i class="ph ph-${item.encrypt ? 'lock-key' : 'lock-open'} text-sm"></i>
@@ -18691,7 +18782,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                         <div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">formatString <span class="font-normal">(xs:string)</span></label>
                                             <input type="text" value="${escHtml(item.formatString || '')}"
-                                                onchange="updateInstanceFieldNested(${instIdx}, 'contents', [${serializePath(currentPath)}], 'formatString', this.value)"
+                                                onchange="updateInstanceFieldNested(${instIdx}, '${root}', [${serializePath(currentPath)}], 'formatString', this.value)"
                                                 placeholder="e.g. 0.00" 
                                                 ${isReadOnly ? "disabled" : ""}
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
@@ -18699,7 +18790,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                         <div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">scaleFactor <span class="font-normal">(xs:double)</span></label>
                                             <input type="number" step="any" value="${escHtml(item.scaleFactor || '')}"
-                                                onchange="updateInstanceFieldNested(${instIdx}, 'contents', [${serializePath(currentPath)}], 'scaleFactor', this.value)"
+                                                onchange="updateInstanceFieldNested(${instIdx}, '${root}', [${serializePath(currentPath)}], 'scaleFactor', this.value)"
                                                 placeholder="e.g. 1.00" 
                                                 ${isReadOnly ? "disabled" : ""}
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
@@ -18707,7 +18798,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                         <div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">axis <span class="font-normal">(xs:string)</span></label>
                                             <input type="text" value="${escHtml(item.axis || '')}"
-                                                onchange="updateInstanceFieldNested(${instIdx}, 'contents', [${serializePath(currentPath)}], 'axis', this.value)"
+                                                onchange="updateInstanceFieldNested(${instIdx}, '${root}', [${serializePath(currentPath)}], 'axis', this.value)"
                                                 placeholder="e.g. x-axis" 
                                                 ${isReadOnly ? "disabled" : ""}
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
@@ -18715,7 +18806,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                         <div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">size <span class="font-normal">(xs:int)</span></label>
                                             <input type="number" step="1" value="${escHtml(item.size || '')}"
-                                                onchange="updateInstanceFieldNested(${instIdx}, 'contents', [${serializePath(currentPath)}], 'size', this.value)"
+                                                onchange="updateInstanceFieldNested(${instIdx}, '${root}', [${serializePath(currentPath)}], 'size', this.value)"
                                                 placeholder="e.g. 16" 
                                                 ${isReadOnly ? "disabled" : ""}
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
@@ -18723,7 +18814,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                         <div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">id <span class="font-normal">(xs:ID)</span></label>
                                             <input type="text" value="${escHtml(item.id || '')}"
-                                                onchange="updateInstanceFieldNested(${instIdx}, 'contents', [${serializePath(currentPath)}], 'id', this.value)"
+                                                onchange="updateInstanceFieldNested(${instIdx}, '${root}', [${serializePath(currentPath)}], 'id', this.value)"
                                                 placeholder="e.g. cont_1" 
                                                 ${isReadOnly ? "disabled" : ""}
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
@@ -18731,14 +18822,16 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                         <div>
                                             <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">ref <span class="font-normal">(xs:IDREF)</span></label>
                                             <input type="text" value="${escHtml(item.ref || '')}"
-                                                onchange="updateInstanceFieldNested(${instIdx}, 'contents', [${serializePath(currentPath)}], 'ref', this.value)"
-                                                placeholder="e.g. cont_1_ref" 
+                                                onchange="updateInstanceFieldNested(${instIdx}, '${root}', [${serializePath(currentPath)}], 'ref', this.value)"
+                                                placeholder="e.g. cont_1_ref"
                                                 ${isReadOnly ? "disabled" : ""}
                                                 class="w-full px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 dark:text-white focus:ring-1 focus:ring-purple-500/20 outline-none ${isReadOnly ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900" : ""}">
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            ${renderInstanceInheritedChildren(item, instIdx, depth, currentPath,
+                                isReadOnly, parentEncrypt, root)}
                         </div>`;;
 
                     return html;
@@ -19066,6 +19159,9 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                                 class="px-2 py-1 text-xs text-slate-500 hover:text-purple-600 transition-colors bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded flex items-center gap-1 ">
                                         Details <i class="ph ph-caret-down"></i>
                                             </button>
+                                            ${!isProxy ? nestedAddButtonsHtml(
+                                `addChildToInstancePropertyList(${instIdx}, [${itemIdx}], 'property', 'instanceContents')`,
+                                `addChildToInstancePropertyList(${instIdx}, [${itemIdx}], 'content', 'instanceContents')`) : ""}
                                             ${!isProxy
                                 ? `<button onclick="removeInstanceContent(${instIdx}, ${itemIdx})"
                                                 class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors opacity-0 group-hover/card:opacity-100">
@@ -19129,6 +19225,10 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                                                 </div>
                                             </div>
                                         </div>
+                                        ${hasNestedChildren(item)
+                                ? renderInstanceAdditionalChildren(item, instIdx, 0, [itemIdx],
+                                    isProxy, item.encrypt, 'instanceContents')
+                                : ""}
 </div>`;
                     });
                     instanceHTML += `</div>`;
@@ -19397,8 +19497,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
         }
 
         // Toggle encrypt flag on instance INHERITED property (from template, inst.properties)
-        function toggleInstanceInheritedPropEncrypt(instIdx, path) {
-            let target = state.instances[instIdx].properties;
+        function toggleInstanceInheritedPropEncrypt(instIdx, path, root = "properties") {
+            let target = state.instances[instIdx][root];
             for (let i = 0; i < path.length - 1; i++) {
                 const idx = path[i];
                 if (idx === "properties" || idx === "contents") { target = target[idx]; }
@@ -19410,8 +19510,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
         }
 
         // Toggle encrypt flag on instance INHERITED content (from template, inst.contents)
-        function toggleInstanceInheritedContEncrypt(instIdx, path) {
-            let target = state.instances[instIdx].contents;
+        function toggleInstanceInheritedContEncrypt(instIdx, path, root = "contents") {
+            let target = state.instances[instIdx][root];
             for (let i = 0; i < path.length - 1; i++) {
                 const idx = path[i];
                 if (idx === "properties" || idx === "contents") { target = target[idx]; }
@@ -19423,8 +19523,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
         }
 
         // Toggle encrypt flag on instance additional property (nested)
-        function toggleInstancePropertyEncrypt(instIdx, path) {
-            let target = state.instances[instIdx].instanceProperties;
+        function toggleInstancePropertyEncrypt(instIdx, path, root = "instanceProperties") {
+            let target = state.instances[instIdx][root];
             for (let i = 0; i < path.length - 1; i++) {
                 const idx = path[i];
                 if (idx === "properties" || idx === "contents") { target = target[idx]; }
@@ -19439,8 +19539,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
         }
 
         // Toggle encrypt flag on instance additional content (nested)
-        function toggleInstanceContentEncrypt(instIdx, path) {
-            let target = state.instances[instIdx].instanceContents;
+        function toggleInstanceContentEncrypt(instIdx, path, root = "instanceContents") {
+            let target = state.instances[instIdx][root];
             for (let i = 0; i < path.length - 1; i++) {
                 const idx = path[i];
                 if (idx === "properties" || idx === "contents") { target = target[idx]; }
@@ -19846,7 +19946,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                     if (chk(i.properties) || chk(i.contents) || chk(i.instanceProperties) || chk(i.instanceContents)) return true;
                 }
             }
-            if (chk(state.document.properties)) return true;
+            if (chk(state.document.properties) || chk(state.document.contents)) return true;
             return false;
         }
 
@@ -19867,13 +19967,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                 let inner = "";
                 if (p.description) inner += `${indent}  <description>${escXml(p.description)}</description>\n`;
                 if (!isPropertyList && p.value) inner += `${indent}  <value>${escXml(p.value)}</value>\n`;
-                if (isPropertyList && p.children) {
-                    if (Array.isArray(p.children)) p.children = { properties: p.children, contents: [] };
-                    if (p.children.properties && p.children.properties.length > 0)
-                        inner += await outputPropertiesToXML(p.children.properties, indent + "  ", childPw);
-                    if (p.children.contents && p.children.contents.length > 0)
-                        inner += await outputContentsToXML(p.children.contents, indent + "  ", childPw);
-                }
+                // Nested children are allowed on every type, after <value>.
+                inner += await outputNestedChildrenToXML(p, indent, childPw);
                 // propertyListType is a container (extends propertyBaseType, whose only
                 // attribute is key) — units/formatString/scaleFactor are NOT allowed on it
                 // by the schema. Stale values can arrive from loaded project files, so
@@ -19896,14 +19991,28 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             return xml;
         }
 
+        // Nested <property>/<content> children of any property/content
+        // (genericDataContainerGroup — comes after <value> in every type).
+        async function outputNestedChildrenToXML(item, indent, childPw) {
+            const ch = normChildren(item);
+            if (!ch) return "";
+            let xml = "";
+            if (ch.properties && ch.properties.length > 0)
+                xml += await outputPropertiesToXML(ch.properties, indent + "  ", childPw);
+            if (ch.contents && ch.contents.length > 0)
+                xml += await outputContentsToXML(ch.contents, indent + "  ", childPw);
+            return xml;
+        }
+
         // Recursively output contents to XML (async, encryption-aware)
         // 暗号化方式: Content暗号化 (Type=#Content)
-        //   content要素の属性はそのまま残し、子要素(description/value)を暗号化
+        //   content要素の属性はそのまま残し、子要素(description/value/nested)を暗号化
         //   → UPA違反なし
         async function outputContentsToXML(contents, indent = "          ", password = null) {
             if (!contents || contents.length === 0) return "";
             let xml = "";
             for (const c of contents) {
+                const childPw = (c.encrypt && password) ? null : password;
                 const attrs = `key="${escXml(c.key)}" xsi:type="${c.type}"` +
                     (c.units ? ` units="${escXml(c.units)}"` : "") +
                     (c.formatString ? ` formatString="${escXml(c.formatString)}"` : "") +
@@ -19915,6 +20024,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                 let inner = "";
                 if (c.description) inner += `${indent}  <description>${escXml(c.description)}</description>\n`;
                 if (c.value) inner += `${indent}  <value>${escXml(c.value)}</value>\n`;
+                inner += await outputNestedChildrenToXML(c, indent, childPw);
                 if (c.encrypt && password) {
                     // Content暗号化: <content attrs>タグは残し、子要素だけを暗号化する
                     const cv = await encryptXmlString(inner, password);
@@ -20191,6 +20301,10 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
 
                 if (state.document.properties) {
                     xml += await outputPropertiesToXML(state.document.properties, "    ", password);
+                }
+                if (state.document.contents && state.document.contents.length > 0) {
+                    // genericDataContainerGroup: property* then content*
+                    xml += await outputContentsToXML(state.document.contents, "    ", password);
                 }
 
                 // Creator
@@ -20469,8 +20583,9 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                     resultsUuidByGroup.set(grp.id, resultsUuid);
                     xml += `    <results id="${methodResultsId}">\n`;
                     xml += `      <uuid>${resultsUuid}</uuid>\n`;
-                    xml += containerDesc('results:' + grp.id, '      ');
+                    // globalObjectContentGroup の順序は name -> description -> annotation
                     xml += nameTag(grp.name, '      ');
+                    xml += containerDesc('results:' + grp.id, '      ');
 
                     for (const type of ["material", "condition", "result"]) {
                         const typeInstances = groupInstances.filter(
@@ -21317,14 +21432,12 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
         // further EncryptedData (saveXML never double-encrypts), so no
         // recursive decryption is needed here.
         // `dropped` (optional) collects { path, type, droppedChildKeys } entries for
-        // properties/contents whose XML has nested <property>/<content> children on a
-        // type OTHER than propertyListType. Per maiml-property.xsd every property/content
-        // type legally allows this (genericDataContainerGroup is present in all of them),
-        // but Studio's own data model and UI only ever support nesting on propertyListType
-        // — outputPropertiesToXML() only emits children when isPropertyList is true — so
-        // these children cannot currently be represented and would be silently discarded.
-        // Callers surface `dropped` to the user (showImportDataLossModal) so they can
-        // decide whether the loss is acceptable rather than losing data invisibly.
+        // structures Studio cannot represent; callers surface it to the user
+        // (showImportDataLossModal) instead of losing data invisibly. Nested
+        // <property>/<content> children used to land here when the parent was not a
+        // propertyListType; every property/content type may now hold children (see
+        // the comment above normChildren()), so nesting no longer adds entries. The
+        // parameter and the modal are kept for any future unsupported structure.
         function parseProperty(el, decryptedMap, dropped, parentPath) {
             const type = mxXsiType(el) || 'stringType';
             const isList = type === 'propertyListType';
@@ -21347,19 +21460,12 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             const description = mxText(source, 'description');
             const result = { key, type, units, formatString, scaleFactor, encrypt, description };
 
-            if (isList) {
-                const properties = [];
-                const contents = [];
-                Array.from(source.children).forEach((c) => {
-                    const ln = mxLocalName(c);
-                    if (ln === 'property') properties.push(parseProperty(c, decryptedMap, dropped, path));
-                    else if (ln === 'content') contents.push(parseContent(c, decryptedMap, dropped, path));
-                });
-                result.children = { properties, contents };
-            } else {
-                result.value = mxText(source, 'value');
-                recordDroppedNestedChildren(source, path, type, dropped);
-            }
+            // propertyListType has no <value>; every other type may carry both a
+            // value and nested children (e.g. a stringType with a <value> plus
+            // floatType sub-properties).
+            if (!isList) result.value = mxText(source, 'value');
+            const children = parseNestedChildren(source, decryptedMap, dropped, path);
+            if (isList || children) result.children = children || { properties: [], contents: [] };
             return result;
         }
 
@@ -21385,23 +21491,28 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                 encrypt = true;
             }
 
-            recordDroppedNestedChildren(source, path, type, dropped);
-
-            return {
+            const result = {
                 key, type, units, formatString, scaleFactor, axis, size, id: cid, ref, encrypt,
                 description: mxText(source, 'description'),
                 value: mxText(source, 'value'),
             };
+            const children = parseNestedChildren(source, decryptedMap, dropped, path);
+            if (children) result.children = children;
+            return result;
         }
 
-        // content never supports nesting in Studio's model, and property only supports
-        // it when xsi:type="propertyListType" — see the comment above parseProperty().
-        function recordDroppedNestedChildren(source, path, type, dropped) {
-            if (!dropped) return;
-            const childKeys = Array.from(source.children)
-                .filter((c) => mxLocalName(c) === 'property' || mxLocalName(c) === 'content')
-                .map((c) => c.getAttribute('key') || '(no key)');
-            if (childKeys.length > 0) dropped.push({ path, type, droppedChildKeys: childKeys });
+        // Nested <property>/<content> children of any property/content (see the
+        // comment above normChildren()). Returns null when there are none, so
+        // leaf items keep having no `children` key.
+        function parseNestedChildren(source, decryptedMap, dropped, path) {
+            const properties = [];
+            const contents = [];
+            Array.from(source.children).forEach((c) => {
+                const ln = mxLocalName(c);
+                if (ln === 'property') properties.push(parseProperty(c, decryptedMap, dropped, path));
+                else if (ln === 'content') contents.push(parseContent(c, decryptedMap, dropped, path));
+            });
+            return (properties.length || contents.length) ? { properties, contents } : null;
         }
 
         function parseInsertion(el) {
@@ -21420,6 +21531,10 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
         // keys, in order, from the front of the list; whatever's left over is
         // instance-only. Falls back to "everything is template-owned" when the
         // leading keys don't line up (still round-trips fine on re-export).
+        // Deliberately key-based only: an element that repeats a template
+        // element's structure under a different key (B-RAMAN: OnePointTemplate
+        // -> OnePoint0001, OnePoint4515) is an instance-side addition, not the
+        // template element itself (decided 2026-10-06; see the import help).
         function splitByTemplateKeys(allItems, tplItems) {
             if (!tplItems || tplItems.length === 0) return { own: allItems, extra: [] };
             const n = tplItems.length;
@@ -21481,6 +21596,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                 description: mxText(documentEl, 'description'),
                 annotation: mxText(documentEl, 'annotation'),
                 properties: [],
+                contents: [],
                 namespaces: [],
                 creators: [],
                 vendors: [],
@@ -21495,6 +21611,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                 const ln = mxLocalName(c);
                 if (ln === 'property') {
                     newDocument.properties.push(parseProperty(c, decryptedMap, dropped));
+                } else if (ln === 'content') {
+                    newDocument.contents.push(parseContent(c, decryptedMap, dropped));
                 } else if (ln === 'creator') {
                     newDocument.creators.push({
                         id: c.getAttribute('id') || ('creator_' + Date.now()),
