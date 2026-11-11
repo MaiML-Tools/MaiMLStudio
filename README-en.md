@@ -25,7 +25,7 @@ It runs simply by opening the HTML file in Chrome / Edge — no additional insta
 - **MaiML export** — generate and download an XML file conforming to the MaiML standard
 - **Dark/light mode** — automatically follows the OS setting as the initial value
 - **Excel import feature** — bulk-load definitions from an Excel file
-- **AI Petri net generation** — automatically generate Places / Transitions / Arcs / Templates from experimental procedure text (cloud Gemini API or local Ollama). Photos or PDFs of handwritten lab notebooks can be read in with AI OCR
+- **AI Petri net generation** — automatically generate Places / Transitions / Arcs / Templates from experimental procedure text (cloud Gemini API or local Ollama). Photos or PDFs of handwritten lab notebooks can be read in with AI OCR, and procedures can also be imported from electronic lab notebook (ELN) `.eln` files
 - **XML encryption feature** — protect confidential data with AES-256-GCM
 - **XML digital signature feature** — output tamper-detectable MaiML files with RSA-SHA256 (W3C XML Signature compliant)
 - **File linking feature** — hash-based linking between multiple MaiML files (`<chain>` / `<parent>`)
@@ -105,7 +105,7 @@ The modal has two columns.
 | Area | Content |
 |------|------|
 | **Settings bar (top)** | The method to generate into (Target Method), plus a one-line summary of the provider, model, and API key status. **Change** opens the detailed settings (they open automatically when something is missing) |
-| **① Left column (input)** | Add notebook images → transcribe with **AI OCR ↓** → procedure text → **Generate →** |
+| **① Left column (input)** | Add notebook images → transcribe with **AI OCR ↓** (or import with **Import ELN file (.eln)**) → procedure text → **Generate →** |
 | **② Right column (result)** | The generated Structured Protocol (editable) and the Petri Net Preview |
 | **Footer (bottom)** | Errors, retry status, and elapsed time, plus **Cancel** / **Apply to Canvas** |
 
@@ -132,32 +132,46 @@ For AI OCR, choose a **model that accepts image input**. Gemini's flash / flash-
 >
 > If you click Generate with images added but the procedure field still empty, you are prompted to run AI OCR first.
 
-**③ Enter the procedure text**
+**③ Input from an ELN file (Import ELN file)** — optional
+
+Choose an `.eln` file (RO-Crate format) exported from an electronic lab notebook such as eLabFTW with **Import ELN file (.eln)** (or drop it onto the modal), and the **text and steps (latest version)** of one entry are put into the procedure field. The file is read in the browser and sent nowhere.
+
+- Entries are the ones whose genre is experiment. In a file without any, datasets that have a text or a `.txt` / `.md` attachment are used as entries
+- `.txt` / `.md` attachments are added after the text, each after a line with its name (`----- procedure.md -----`). XML, JSON and other attachments are not read
+- Subscripts become plain characters (SiO2), superscripts get a `^` (10^7), and tables become Markdown tables. Steps named the same as a heading of the text are not repeated
+- When the file holds two or more entries, pick one in **ELN entry**. Switching entries replaces the imported part (you are asked first if you edited it)
+- eLabFTW custom fields of the types Number, Radio buttons and Dropdown menu are added after the steps under `Custom fields:`, one per line as `name (description) = value unit` (e.g. `Condition1 (Accelerating voltage) = 5.0 kV`). Other field types, comments, history and images in the text are not imported
+
+**④ Enter the procedure text**
 
 Free-form text works, but the following recommended structure improves accuracy.
 
 ```
 [STEP] Step name (action verb phrase)
-[IN:material] Raw substance, reagent, or instrument name (no quantities)
-[IN:condition] Condition name | param:value unit, param:value unit
-[IN:result] Output of a previous STEP (reuse the name verbatim)
-[OUT:condition] Intermediate state name | param:value unit
-[OUT:result] Final product or measurement result name
+[IN:material] Substance, reagent, sample, solution, or equipment | param:value unit (optional)
+[IN:condition] Process_Condition | param:value unit, param:value unit
+[IN:result] Measured data reused from a previous STEP (exactly)
+[OUT:material] Processed sample, mixture, or product (e.g. Coated_Sample)
+[OUT:result] Observation or measurement
 ```
 
-Using the same label in multiple STEPs automatically treats it as a shared Place (connected by arcs).
+Physical things (including processed samples) are `material`, operation settings are `condition`, and measured data are `result`. Using the same label in multiple STEPs automatically treats it as a shared Place (connected by arcs). To reuse a previous output, write it with the same type and name.
+
+The text in parentheses after a name (`XRF analysis result` in `XRF_Result (XRF analysis result)`) becomes its MaiML `description`. The AI copies the words the source text uses for that item, in their own language and spelling, without translating them.
 
 **Tables** such as measurement results are handled as `[TABLE]` blocks. A table becomes a template with one content per column (column contents grouped under a `propertyListType`), and cell values are kept exactly as written.
 
 ```
-[OUT:result] XRF_Result (XRF分析結果)
-[TABLE] XRF_Quantification (XRF定量結果) | unit:mass%
-| Point (点) | Fe | Cr | Ni |
+[OUT:result] XRF_Result (XRF analysis result)
+[TABLE] XRF_Quantification (XRF quantification) | unit:mass%
+| Point (measurement point) | Fe | Cr | Ni |
 | A1 | 70.2 | 18.5 | 8.3 |
 | A2 | 69.8 | 18.9 | 8.1 |
 ```
 
-**④ Generate, review, and apply**
+**⑤ Generate, review, and apply**
+
+- When **Target Method** creates a new method, its name is checked as you type (letters, numbers and `_` only)
 
 - **Generate Templates** (ON by default) - also generates the properties (with types and units) of the template for each Place
 - **Generate →** (bottom of the left column) - runs the generation. The elapsed time is shown on the button while it works. Input already written in `[STEP]` format is converted directly without calling the AI
@@ -231,7 +245,7 @@ Enter the actual measurement data and events, based on the schemas defined in Te
 
 **Left Panel (Source Templates)**
 
-- **Data Templates** — a list of registered templates. The **+ Add Instance** button at the bottom of each card generates an instance
+- **Data Templates** — a list of registered templates. The **+ Add Instance** button at the bottom of each card generates an instance. When some templates have no instance in the current results group, an **Add Missing Instances (count)** button appears next to the heading and adds one to each of them at once
 - **Transitions (Events)** — the transitions defined in the Petri net (one per method). The following fields can be edited in each transition card.
 
 **Transition (eventLog) Card Fields**
@@ -267,7 +281,7 @@ Each tab corresponds to one `<results>` element in MaiML. Events belong to the a
 | Delete a group | Click the `×` button on the tab (also deletes the instances/events within the group). The last remaining tab cannot be deleted |
 | Switch groups | Click the tab |
 
-Each method has its own independent Results Groups. When you switch groups, the content displayed in the right panel switches to match the group.
+Each method has its own independent Results Groups. When you switch groups, the content displayed in the right panel switches to match the group. Groups that still have their automatic name (`Results1_MethodName`) follow the new name when you rename the method; names you set yourself are kept.
 
 ⚠️ **Tab name constraints:** the tab name is used as the ID attribute value of `<results id="...">` on export. Since IDs must be unique within the file, the following rules apply (the input dialog validates them in real time).
 
