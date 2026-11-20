@@ -25,7 +25,7 @@ It runs simply by opening the HTML file in Chrome / Edge — no additional insta
 - **MaiML export** — generate and download an XML file conforming to the MaiML standard
 - **Dark/light mode** — automatically follows the OS setting as the initial value
 - **Excel import feature** — bulk-load definitions from an Excel file
-- **AI Petri net generation** — automatically generate Places / Transitions / Arcs / Templates from experimental procedure text (cloud Gemini API or local Ollama). Photos or PDFs of handwritten lab notebooks can be read in with AI OCR, and procedures can also be imported from electronic lab notebook (ELN) `.eln` files
+- **AI Petri net generation** — automatically generate Places / Transitions / Arcs / Templates from experimental procedure text (choose copy & paste with a chat AI, no API key needed, the cloud Gemini API, or a local Ollama). Photos or PDFs of handwritten lab notebooks can be read in with AI OCR, and procedures can also be imported from electronic lab notebook (ELN) `.eln` files
 - **XML encryption feature** — protect confidential data with AES-256-GCM
 - **XML digital signature feature** — output tamper-detectable MaiML files with RSA-SHA256 (W3C XML Signature compliant)
 - **File linking feature** — hash-based linking between multiple MaiML files (`<chain>` / `<parent>`)
@@ -104,22 +104,26 @@ The modal has two columns.
 
 | Area | Content |
 |------|------|
-| **Settings bar (top)** | The method to generate into (Target Method), plus a one-line summary of the provider, model, and API key status. **Change** opens the detailed settings (they open automatically when something is missing) |
+| **Settings bar (top)** | The **AI** switch for how to use AI (💬 Chat AI (copy & paste) / ☁️ Gemini API / 🖥️ Ollama (local)) and the method to generate into (Target Method). When an API is chosen, the model (left) and API key (right, Gemini only) fields appear below it |
 | **① Left column (input)** | Add notebook images → transcribe with **AI OCR ↓** (or import with **Import ELN file (.eln)**) → procedure text → **Generate →** |
 | **② Right column (result)** | The generated Structured Protocol (editable) and the Petri Net Preview |
 | **Footer (bottom)** | Errors, retry status, and elapsed time, plus **Cancel** / **Apply to Canvas** |
 
-**① Choose an LLM provider** (via **Change** in the settings bar)
+**① Choose how to use AI** (the **AI** switch at the left of the settings bar)
 
-| Provider | Description |
+| Choice | Description |
 |------|------|
-| **☁️ Cloud (Gemini)** | Enter a Gemini API key obtained from Google AI Studio and pick a model. The API key is stored in the browser's localStorage and is sent nowhere except the Google Gemini API. Accurate and fast (a few seconds), but your data is sent to Google's servers |
-| **🖥️ Local (Ollama)** | Uses a local Ollama instance. Since no data leaves the machine, this suits confidential experimental data and works without a network connection. Processing time depends on your PC (especially the GPU); on a machine without a GPU it can take several to a dozen-plus minutes |
+| **💬 Chat AI (copy & paste)** | No API key or sign-in needed (simple mode). **Copy Prompt →** copies a prompt; paste it into a chat AI your institution allows, such as Microsoft Copilot, ChatGPT, Gemini or Claude, and paste the answer back into the right column. Studio itself sends nothing (the procedure text goes to the chat service you paste it into) |
+| **☁️ Gemini API** | Enter a Gemini API key obtained from Google AI Studio and pick a model. The API key is stored in the browser's localStorage and is sent nowhere except the Google Gemini API. Accurate and fast (a few seconds), but your data is sent to Google's servers |
+| **🖥️ Ollama (local)** | Uses a local Ollama instance. Since no data leaves the machine, this suits confidential experimental data and works without a network connection. Processing time depends on your PC (especially the GPU); on a machine without a GPU it can take several to a dozen-plus minutes |
 
+- AI Generate first opens with 💬 Chat AI. Your choice is remembered in the browser (if you set a Gemini API key or Ollama in an earlier version, it opens with the API instead). The switch and the model row are the same as in the Viewer's AI Summary
+- With Chat AI, copy the answer with the copy button of the chat AI's code block. When pasted into the right column, Markdown escapes, lost line breaks and the like are cleaned up automatically and the preview is shown
+- AI OCR of notebook images is not available with Chat AI. Attach the images in the chat AI together with the prompt
 - Before you click **Fetch Models**, the Gemini model list offers `gemini-flash-lite-latest` (default) and `gemini-flash-latest`. **Fetch Models** loads the current list of models available to your key
 - When Gemini is busy (temporary errors such as `high demand`), the request is retried automatically up to 3 times, after 2, 4, and 8 seconds. The status is shown in the footer while waiting
 
-**② Read a handwritten notebook (AI OCR)** — optional
+**② Read a handwritten notebook (AI OCR)** — optional (☁️ Gemini API / 🖥️ Ollama only)
 
 1. Use **Add notebook images** to add photos or scans of lab-notebook pages (multiple images, paste, and drag-and-drop are supported; PDF works with Cloud only)
 2. Reorder pages with ◀ ▶ under each thumbnail. Click a thumbnail to enlarge it
@@ -157,7 +161,7 @@ Free-form text works, but the following recommended structure improves accuracy.
 
 Physical things (including processed samples) are `material`, operation settings are `condition`, and measured data are `result`. Using the same label in multiple STEPs automatically treats it as a shared Place (connected by arcs). To reuse a previous output, write it with the same type and name.
 
-The text in parentheses after a name (`XRF analysis result` in `XRF_Result (XRF analysis result)`) becomes its MaiML `description`. The AI copies the words the source text uses for that item, in their own language and spelling, without translating them.
+The text in parentheses after a name (`XRF analysis result` in `XRF_Result (XRF analysis result)`) becomes the `description` element of that Place / Transition itself. Identity is decided by the name before the parentheses only: two Places with different names stay separate even if their descriptions are the same. The AI copies the words the source text uses for that item, in their own language and spelling, without translating them.
 
 **Tables** such as measurement results are handled as `[TABLE]` blocks. A table becomes a template with one content per column (column contents grouped under a `propertyListType`), and cell values are kept exactly as written.
 
@@ -174,7 +178,7 @@ The text in parentheses after a name (`XRF analysis result` in `XRF_Result (XRF 
 - When **Target Method** creates a new method, its name is checked as you type (letters, numbers and `_` only)
 
 - **Generate Templates** (ON by default) - also generates the properties (with types and units) of the template for each Place
-- **Generate →** (bottom of the left column) - runs the generation. The elapsed time is shown on the button while it works. Input already written in `[STEP]` format is converted directly without calling the AI
+- **Generate →** (bottom of the left column) - runs the generation. The elapsed time is shown on the button while it works. Input already written in `[STEP]` format is converted directly without calling the AI. With 💬 Chat AI it becomes **Copy Prompt →** and copies the prompt to the clipboard
 - **Structured Protocol (right column)** - the intermediate form the AI converts your text into. You can edit it directly; the Petri Net Preview below updates as you type
 - **Data-loss checks** - if a number in the source text is missing from the result, the preview shows a warning. If a structural problem is found, such as a source table not output as a `[TABLE]` block or different values merging into one Place with the same name, the AI is asked once to fix it automatically
 - **Apply to Canvas** (footer) - adds the generated result to the canvas. Dagre Auto Layout is applied automatically afterwards
@@ -184,7 +188,7 @@ The text in parentheses after a name (`XRF analysis result` in `XRF_Result (XRF 
 1. Download and run the installer from [https://ollama.com](https://ollama.com)
 2. Pull a model (e.g. `ollama pull gemma4:e4b`)
 3. Start Ollama; it is ready once its icon appears in the notification area
-4. In the AI Generate modal, click **Change** in the settings bar, choose **🖥️ Local (Ollama)**, and click **Fetch Models** to list the available models
+4. In the AI Generate modal, choose **🖥️ Ollama (local)** with the **AI** switch in the settings bar, and click **Fetch Models** to list the available models
 
 AI OCR (reading images) requires a model that accepts image input (e.g. `qwen3-vision`, or an image-capable gemma4).
 

@@ -8846,11 +8846,45 @@ https://github.com/nodeca/pako/blob/main/LICENSE
         }
         #ai-cfg-detail:not(.hidden) {
             display: grid;
-            grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr);
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
             gap: 16px;
             align-items: start;
             margin-top: 12px;
         }
+        /* Model first, then API key (same order as the Viewer's AI Summary) */
+        #ai-cloud-model { order: 1; }
+        #ai-cloud-apikey { order: 2; }
+        #ai-chat-section { grid-column: 1 / span 2; }
+        /* AI mode: segmented control (chat AI copy & paste / Gemini API / Ollama).
+           Same look as .ai-seg in the Viewer. */
+        .ai-seg {
+            display: inline-flex;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #ffffff;
+        }
+        .ai-seg button {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+            background: transparent;
+            border: 0;
+            border-left: 1px solid #cbd5e1;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .ai-seg button:first-child { border-left: 0; }
+        .ai-seg button:hover { background: #f1f5f9; }
+        .ai-seg button.active { background: #f59e0b; color: #ffffff; }
+        .dark .ai-seg { border-color: #475569; background: #1e293b; }
+        .dark .ai-seg button { color: #cbd5e1; border-color: #475569; }
+        .dark .ai-seg button:hover { background: #334155; }
+        .dark .ai-seg button.active { background: #d97706; color: #ffffff; }
         .ai-cfg-chip {
             display: inline-flex;
             align-items: center;
@@ -8979,6 +9013,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
             .ai-gen-fill { flex: none; height: 220px; }
             #ai-result-empty { flex: none; min-height: 140px; }
             #ai-cfg-detail:not(.hidden) { grid-template-columns: minmax(0, 1fr); }
+            #ai-chat-section { grid-column: auto; }
             #ai-generate-panel > div:last-child { flex-wrap: wrap; justify-content: flex-end; }
             #ai-gen-status { flex-basis: 100%; }
         }
@@ -8997,8 +9032,10 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 
     <body
         class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 h-screen flex overflow-hidden transition-colors duration-200">
+        <!-- Above every modal (they are z-50 and come later in the DOM), so a toast
+             raised from inside a modal is not hidden under its blurred backdrop -->
         <div id="toast-container"
-            class="fixed top-4 right-4 z-50 space-y-2 pointer-events-none"></div>
+            class="fixed top-4 right-4 space-y-2 pointer-events-none" style="z-index: 10000"></div>
 
         <div id="confirm-modal"
             class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
@@ -9537,9 +9574,12 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                             class="bg-white rounded-lg p-3 border border-amber-100 space-y-2">
                                             <p
                                                 class="font-bold text-amber-700">①
-                                                LLM プロバイダーの選択（設定バーの「Change」から）</p>
-                                            <p>設定済みの場合、設定バーにはプロバイダー・モデル・API キーの状態が1行で表示されます。
-                                                API キーやモデルが未設定のときは、詳細設定が自動で開きます。</p>
+                                                モードと LLM プロバイダーの選択</p>
+                                            <p><strong>シンプルモードと API モード：</strong>
+                                                AI Generate は最初、<strong>シンプルモード</strong>で開きます。この画面は「手順の入力（ELN の取り込み可）→ Copy Prompt → 好きなチャット AI に貼り付け → 回答を右カラムに貼り付け → Apply to Canvas」だけに絞ってあり、Studio 自身は外部と通信しません。
+                                                Gemini API やローカルの Ollama で直接生成したい場合や、ノート画像を AI OCR で読み取りたい場合は、設定バー左端の <strong>AI</strong> 切替ボタンで「Gemini API」または「Ollama (local)」を選んで <strong>API モード</strong>に切り替えてください（「Chat AI (copy &amp; paste)」がシンプルモードです）。以下のモデル・API キーの設定は API モードでのみ表示されます。
+                                                選んだモードはブラウザに記憶されます。以前の版で Gemini の API キーや Ollama を設定したことがある場合は、最初から API モードで開きます。</p>
+                                            <p>API モードでは、選んだプロバイダーのモデル（左）と API キー（右、Gemini のみ）が常に表示されます。この切替ボタンとモデル欄の並びは Viewer の AI Summary と共通です。</p>
                                             <p><strong>☁️ Cloud
                                                     (Gemini)：</strong> Google AI
                                                 Studio で取得した Gemini API
@@ -9552,6 +9592,14 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                                 データが外部に送信されないため、機密性の高い実験データに適しています。ネットワーク環境がなくても利用できます。処理時間は
                                                 PC のスペック（特に GPU）に依存し、GPU 非搭載 PC
                                                 では数分〜十数分かかる場合があります。</p>
+                                            <p><strong>💬 シンプルモード（チャット AI でのコピー＆ペースト）：</strong>
+                                                API キーやサインインは不要です。Microsoft Copilot・ChatGPT・Gemini・Claude など、所属機関で利用が許可されているチャット AI をそのまま使えます。
+                                                「Copy Prompt」ボタンで、実験手順を推奨構造形式へ変換するためのプロンプトがクリップボードにコピーされます。
+                                                これをチャット AI に貼り付け、返ってきた回答（コードブロックのコピーボタンでコピー）を右カラムの Structured Protocol 欄に貼り付けてください。
+                                                画面からそのままコピーして改行が崩れた場合も、貼り付け時に自動で整形されます。
+                                                ノート画像や PDF はこの画面では読み取らないので、プロンプトと一緒にチャット AI 側に添付してください。
+                                                手順のテキスト（と添付した画像）は、そのチャットサービスに送信されます。
+                                                なお、Cloud／Local で行っている自動の修正（構造に問題があったときの再生成）は行われません。プレビューの警告を確認し、必要なら手で直してください。</p>
                                             <p>Gemini のモデルは、「Fetch Models」を押す前は <code>gemini-flash-lite-latest</code>（既定）と
                                                 <code>gemini-flash-latest</code> の2つが候補に出ます。「Fetch Models」で、そのキーで使える最新のモデル一覧を取得できます。
                                                 Gemini が混雑している（high demand などの一時的なエラー）場合は、2 → 4 → 8 秒の間隔で最大3回まで自動で再送します。</p>
@@ -11159,10 +11207,20 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                             class="bg-white rounded-lg p-3 border border-amber-100 space-y-2">
                                             <p
                                                 class="font-bold text-amber-700">①
-                                                Select LLM Provider (via "Change" in the settings bar)</p>
-                                            <p>Once configured, the settings bar shows the provider, model and
-                                                API key status on one line. The detailed settings open automatically
-                                                when the API key or model is missing.</p>
+                                                Select the Mode and LLM Provider</p>
+                                            <p><strong>Simple mode and API mode:</strong> AI Generate
+                                                opens in <strong>simple mode</strong>: enter the procedure (or import
+                                                an ELN file), click Copy Prompt, paste it into the chat AI of your
+                                                choice, paste its answer into the right column, and Apply to Canvas.
+                                                In this mode Studio itself sends nothing anywhere. To generate
+                                                directly with the Gemini API or a local Ollama, or to read notebook
+                                                images with AI OCR, switch to <strong>API mode</strong> by choosing "Gemini API" or "Ollama (local)" with the
+                                                <strong>AI</strong> switch at the left end of the settings bar ("Chat AI (copy &amp; paste)" is simple mode).
+                                                The model and API key settings below appear only in API mode. The chosen mode
+                                                is remembered in the browser; if you set a Gemini API key or Ollama in
+                                                an earlier version, AI Generate opens in API mode.</p>
+                                            <p>In API mode the model (left) and, for Gemini, the API key (right) of the selected provider
+                                                are always shown. The AI switch and the model row are the same as in the Viewer's AI Summary.</p>
                                             <p><strong>☁️ Cloud
                                                     (Gemini):</strong> Enter a
                                                 Gemini API key from Google AI
@@ -11184,6 +11242,20 @@ https://github.com/nodeca/pako/blob/main/LICENSE
                                                 (especially GPU); expect several
                                                 minutes on CPU-only
                                                 machines.</p>
+                                            <p><strong>💬 Simple mode (copy &amp; paste with a chat
+                                                    AI):</strong> No API key or
+                                                sign-in needed. Use any chat AI your institution allows, such as
+                                                Microsoft Copilot, ChatGPT, Gemini or Claude. "Copy Prompt" copies
+                                                a prompt that converts the procedure into the recommended structured
+                                                format. Paste it into the chat AI, copy the answer with the copy
+                                                button of its code block, and paste it into the Structured Protocol
+                                                field on the right. If the answer was copied from the rendered page and
+                                                its line breaks are lost, it is cleaned up automatically when pasted.
+                                                Notebook images and PDFs are not read here: attach them in the chat AI
+                                                together with the prompt. The procedure text (and any attached images)
+                                                is sent to that chat service. The automatic repair round of Cloud /
+                                                Local (regenerating when structural problems are found) does not run;
+                                                check the warnings in the preview and fix them by hand if needed.</p>
                                             <p>Before you click "Fetch Models", the Gemini model list offers
                                                 <code>gemini-flash-lite-latest</code> (default) and <code>gemini-flash-latest</code>.
                                                 "Fetch Models" loads the current list of models available to your key.
@@ -20532,12 +20604,13 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                     // Petri Net (pnml)
                     xml += `      <pnml id="${escXml(keepId(method.pnmlXmlId, 'pnml_' + method.id))}">\n`;
                     xml += `        <uuid>${crypto.randomUUID()}</uuid>\n`;
-                    for (const p of method.petriNet.places) {
-                        xml += `        <place id="${p.label}" />\n`;
-                    }
-                    for (const t of method.petriNet.transitions) {
-                        xml += `        <transition id="${t.label}" />\n`;
-                    }
+                    // simpleObjectType: name? description? — description は xs:string
+                    // なので非 ASCII・重複可。AI Generate の括弧内の説明がここに入る。
+                    const pnmlNode = (tag, n) => n.description
+                        ? `        <${tag} id="${n.label}">\n          <description>${escXml(n.description)}</description>\n        </${tag}>\n`
+                        : `        <${tag} id="${n.label}" />\n`;
+                    for (const p of method.petriNet.places) xml += pnmlNode('place', p);
+                    for (const t of method.petriNet.transitions) xml += pnmlNode('transition', t);
                     for (const a of method.petriNet.arcs) {
                         const src =
                             method.petriNet.places.find((p) => p.id === a.source) ||
@@ -21825,13 +21898,13 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                     const label = c.getAttribute('id') || ('Place_' + placeSeq);
                     const pid = 'place_' + placeSeq;
                     placeLabelToId.set(label, pid);
-                    method.petriNet.places.push({ id: pid, label, x: 0, y: 0, type: 'node' });
+                    method.petriNet.places.push({ id: pid, label, description: mxText(c, 'description'), x: 0, y: 0, type: 'node' });
                 } else if (ln === 'transition') {
                     transSeq++;
                     const label = c.getAttribute('id') || ('Transition_' + transSeq);
                     const tid = 'trans_' + transSeq;
                     transLabelToId.set(label, tid);
-                    method.petriNet.transitions.push({ id: tid, label, x: 0, y: 0 });
+                    method.petriNet.transitions.push({ id: tid, label, description: mxText(c, 'description'), x: 0, y: 0 });
                 }
             });
             Array.from(pnmlEl.children).forEach((c) => {
@@ -21863,7 +21936,8 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                 if (tid) {
                     const tr = method.petriNet.transitions.find((t) => t.id === tid);
                     if (tr) {
-                        tr.description = mxText(c, 'description');
+                        // <transition><description> を優先し、無ければ instruction 側から補う
+                        tr.description = tr.description || mxText(c, 'description');
                         tr.annotation = mxText(c, 'annotation');
                         // <instruction> は <event ref> の参照先になる
                         tr.instructionXmlId = instrId || '';
@@ -23092,17 +23166,9 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                 }
                 sel.value = savedModel;
             }
-            const savedProvider = localStorage.getItem('ai_provider') || 'cloud';
-            document.getElementById(savedProvider === 'local' ? 'ai-provider-local' : 'ai-provider-cloud').checked = true;
-            toggleAiProvider();
-            if (savedProvider === 'local') fetchOllamaModels();
-            else fetchGeminiModels(false);
             document.getElementById('ai-elapsed-time').textContent = '';
             _wireAiCfgSummary();
-            updateAiCfgSummary();
-            toggleAiCfgDetail(savedProvider === 'local'
-                ? !localStorage.getItem('ollama_model')
-                : !document.getElementById('ai-apikey-input').value.trim());
+            setAiAdvancedMode(_aiInitialAdvancedMode(), { initial: true });
             document.getElementById('ai-new-method-name-input').value = '';
             populateAiTargetMethodSelect();
             document.getElementById('ai-generate-modal').classList.remove('hidden');
@@ -23161,13 +23227,117 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             document.getElementById('ai-generate-modal').classList.add('hidden');
         }
 
+        // ---------- Simple mode / API mode ----------
+        // Simple (default): chat AI copy & paste only — no provider settings, no image
+        // OCR; Studio itself sends nothing. API mode: the full set (Gemini / Ollama /
+        // Chat AI, AI OCR). The choice is remembered; before it is ever made, people who
+        // already used Gemini or Ollama here start in API mode so nothing disappears.
+        let _aiAdvanced = false;
+
+        function _aiInitialAdvancedMode() {
+            const saved = localStorage.getItem('ai_ui_mode');
+            if (saved === 'advanced') return true;
+            if (saved === 'simple') return false;
+            return !!(localStorage.getItem('gemini_api_key')
+                || localStorage.getItem('ollama_model')
+                || localStorage.getItem('ai_provider') === 'local');
+        }
+
+        function setAiAdvancedMode(advanced, opts = {}) {
+            _aiAdvanced = !!advanced;
+            if (!opts.initial) {
+                localStorage.setItem('ai_ui_mode', _aiAdvanced ? 'advanced' : 'simple');
+                document.getElementById('ai-error-msg').textContent = '';   // a hint for the other mode
+            }
+            const show = (id, on) => document.getElementById(id)?.classList.toggle('hidden', !on);
+            // API mode keeps the provider settings open, so the one-line summary and the
+            // Change/Hide toggle are not used in either mode.
+            show('ai-cfg-summary', false);
+            show('ai-cfg-toggle', false);
+            show('ai-ocr-add-btn', _aiAdvanced);
+            show('ai-ocr-row', _aiAdvanced);
+            show('ai-ocr-note', _aiAdvanced);
+            show('ai-simple-hint', !_aiAdvanced);
+
+            // API mode offers only the API providers; chat AI copy & paste is simple mode
+            let provider;
+            if (_aiAdvanced) {
+                provider = localStorage.getItem('ai_provider') || 'cloud';
+                if (!['cloud', 'local'].includes(provider)) provider = 'cloud';
+            } else {
+                provider = 'chat';
+                if (_aiOcrFiles.length > 0) clearAiOcrFiles();   // images are attached in the chat AI instead
+            }
+            document.getElementById('ai-provider-' + provider).checked = true;
+            toggleAiProvider();
+            if (_aiAdvanced) {
+                if (provider === 'local') fetchOllamaModels();
+                else fetchGeminiModels(false);
+            }
+            toggleAiCfgDetail(_aiAdvanced);
+        }
+
+        // Segmented control #ai-mode-seg: 'chat' is simple mode, 'cloud' / 'local' are API mode
+        function selectAiProvider(p) {
+            if (p === 'chat') { if (_aiAdvanced) setAiAdvancedMode(false); return; }
+            localStorage.setItem('ai_provider', p);
+            if (!_aiAdvanced) { setAiAdvancedMode(true); return; }
+            if (getAiProvider() === p) return;
+            document.getElementById('ai-error-msg').textContent = '';
+            document.getElementById('ai-provider-' + p).checked = true;
+            toggleAiProvider();
+            if (p === 'local') fetchOllamaModels();
+            else fetchGeminiModels(false);
+        }
+
+        // 'cloud' (Gemini API) | 'local' (Ollama) | 'chat' (copy & paste with any chat AI)
+        function getAiProvider() {
+            if (document.getElementById('ai-provider-local').checked) return 'local';
+            if (document.getElementById('ai-provider-chat').checked) return 'chat';
+            return 'cloud';
+        }
+
         function toggleAiProvider() {
-            const isLocal = document.getElementById('ai-provider-local').checked;
-            document.getElementById('ai-cloud-apikey').classList.toggle('hidden', isLocal);
-            document.getElementById('ai-cloud-model').classList.toggle('hidden', isLocal);
-            document.getElementById('ai-local-section').classList.toggle('hidden', !isLocal);
-            localStorage.setItem('ai_provider', isLocal ? 'local' : 'cloud');
+            const p = getAiProvider();
+            document.getElementById('ai-cloud-apikey').classList.toggle('hidden', p !== 'cloud');
+            document.getElementById('ai-cloud-model').classList.toggle('hidden', p !== 'cloud');
+            document.getElementById('ai-local-section').classList.toggle('hidden', p !== 'local');
+            document.getElementById('ai-chat-section').classList.toggle('hidden', p !== 'chat');
+            if (_aiAdvanced) localStorage.setItem('ai_provider', p);   // simple mode keeps the API-mode choice
+            document.querySelectorAll('#ai-mode-seg button').forEach(b => {
+                const on = b.dataset.p === p;
+                b.classList.toggle('active', on);
+                b.setAttribute('aria-checked', on ? 'true' : 'false');
+            });
+            const ocrNote = document.getElementById('ai-ocr-note');
+            if (ocrNote) ocrNote.textContent = p === 'chat'
+                ? 'Optional. In Chat AI mode, images are not read here: attach them yourself in the chat AI together with the copied prompt.'
+                : 'Optional. Images are sent to the selected provider (Cloud: Google Gemini / Local: stays on this PC). PDF is supported with Cloud only.';
+            const editor = document.getElementById('ai-dsl-editor');
+            editor.placeholder = p === 'chat'
+                ? 'Paste the chat AI\'s answer here (use the copy button of its code block). It is cleaned up and previewed as you paste.'
+                : '';
+            // Chat mode: the result column is where the answer is pasted, so show it
+            // right away; leaving the mode hides it again if nothing was entered.
+            const area = document.getElementById('ai-result-area');
+            if (p === 'chat') area.classList.remove('hidden');
+            else if (!editor.value.trim()) area.classList.add('hidden');
+            _setAiGenerateBtnIdle();
+            renderAiOcrList();
             updateAiCfgSummary();
+        }
+
+        // Generate button label depends on the provider: in Chat AI mode it copies the prompt.
+        function _setAiGenerateBtnIdle() {
+            const btn = document.getElementById('ai-generate-btn');
+            if (!btn) return;
+            if (getAiProvider() === 'chat') {
+                btn.innerHTML = '<i class="ph ph-copy"></i> Copy Prompt <i class="ph ph-arrow-right"></i>';
+                btn.title = 'Copy a prompt that converts the procedure into the structured format. Paste it into any chat AI (Copilot, ChatGPT, Gemini, Claude, ...), then paste the answer on the right.';
+            } else {
+                btn.innerHTML = '<i class="ph ph-head-circuit"></i> Generate <i class="ph ph-arrow-right"></i>';
+                btn.title = 'Convert the procedure into a structured protocol (shown on the right)';
+            }
         }
 
         // One-line summary of provider / model / key state shown in the settings bar.
@@ -23176,7 +23346,10 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             if (!el) return;
             const chip = (icon, text, cls = '') =>
                 `<span class="ai-cfg-chip ${cls}"><i class="ph ${icon}"></i>${escHtml(text)}</span>`;
-            if (document.getElementById('ai-provider-local').checked) {
+            if (getAiProvider() === 'chat') {
+                el.innerHTML = chip('ph-chat-circle-text', 'Chat AI (copy & paste)')
+                    + chip('ph-check-circle', 'No API key needed', 'ok');
+            } else if (document.getElementById('ai-provider-local').checked) {
                 const m = document.getElementById('ai-ollama-model-select').value;
                 el.innerHTML = chip('ph-desktop', 'Local (Ollama)')
                     + (m ? chip('ph-cpu', m, 'font-mono') : chip('ph-warning-circle', 'No model selected', 'warn'));
@@ -23277,6 +23450,15 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             const n = (rawName || '').match(/^([A-Za-z_][A-Za-z0-9_.\-]*)\s*[（(](.*[^\s])[)）]$/);
             if (n && /[（(]/.test(n[2])) return { labelSrc: n[1], desc: n[2].trim() };
             return { labelSrc: rawName, desc: rawName };
+        }
+
+        // Text for <place>/<transition> <description>: the parenthesised part,
+        // or — for a name without one — the source wording only when the
+        // identifier had to be altered (non-ASCII, spaces), so nothing is lost.
+        function _aiNodeDesc(parts) {
+            if (parts.labelSrc !== parts.desc) return parts.desc;
+            const raw = (parts.desc || '').trim();
+            return raw && _aiSanitizeNCName(raw) !== raw ? raw : '';
         }
 
         // "38.8 mM" → float + unit / "5" → int / "5e-4~1e-3 Pa" → range string + unit / text → string
@@ -23471,19 +23653,35 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                 if (/[^\x00-\x7F]/.test(parts.labelSrc)) renamed.push(`${rawName} → ${label}`);
                 return label;
             };
+            // Identity is decided by the identifier only. The description in
+            // parentheses is free text and may repeat ("Heating_Condition (加熱条件)"
+            // / "Heating_Condition_Growth (加熱条件)" are two Places), so it is
+            // used only to resolve a bare "原語" line that has no identifier,
+            // and the first Place registered under it wins.
+            const descByKey = new Map();
             const getPlace = io => {
                 const parts = _aiSplitBilingualName(io.name);
-                // Register aliases so "Name (原語)" and bare "Name" (or bare 原語)
-                // still resolve to the same Place.
-                const keys = [...new Set([io.name, parts.labelSrc, parts.desc].map(_aiNormKey).filter(Boolean))];
-                if (keys.length === 0) keys.push(io.name);
-                let rec = keys.map(k => placeByKey.get(k)).find(Boolean);
+                const hasId = parts.labelSrc !== parts.desc;
+                const nameKeys = [...new Set([io.name, parts.labelSrc].map(_aiNormKey).filter(Boolean))];
+                if (nameKeys.length === 0) nameKeys.push(io.name);
+                const descKey = hasId ? _aiNormKey(parts.desc) : '';
+                let rec = nameKeys.map(k => placeByKey.get(k)).find(Boolean);
+                // bare "原語" line → the Place that carries that description
+                if (!rec && !hasId) rec = nameKeys.map(k => descByKey.get(k)).find(Boolean);
+                // "Name (原語)" after a bare "原語" line → that bare Place
+                if (!rec && descKey) {
+                    const bare = placeByKey.get(descKey);
+                    if (bare && bare._bare) rec = bare;
+                }
                 if (!rec) {
                     const typeBase = io.type.charAt(0).toUpperCase() + io.type.slice(1);
-                    rec = { label: labelFor(io.name, parts, typeBase), description: parts.desc, type: io.type, _props: new Map(), _tables: [] };
+                    rec = { label: labelFor(io.name, parts, typeBase), description: _aiNodeDesc(parts), type: io.type, _bare: !hasId, _props: new Map(), _tables: [] };
                     places.push(rec);
+                } else if (rec._bare && hasId) {
+                    rec._bare = false;
                 }
-                keys.forEach(k => placeByKey.set(k, rec));
+                nameKeys.forEach(k => placeByKey.set(k, rec));
+                if (descKey && !descByKey.has(descKey)) descByKey.set(descKey, rec);
                 io.params.forEach(pr => {
                     const pk = _aiNormKey(pr.key) || pr.key;
                     const prev = rec._props.get(pk);
@@ -23512,7 +23710,7 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
             steps.forEach(step => {
                 const parts = _aiSplitBilingualName(step.name);
                 const tLabel = labelFor(step.name, parts, 'Step');
-                transitions.push({ label: tLabel, description: parts.desc });
+                transitions.push({ label: tLabel, description: _aiNodeDesc(parts) });
                 step.ins.forEach(io => pushArc(getPlace(io).label, tLabel));
                 step.outs.forEach(io => pushArc(tLabel, getPlace(io).label));
             });
@@ -23531,17 +23729,10 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
                         if (/[^\x00-\x7F]/.test(pr.key)) renamed.push(`${pr.key} → ${key}`);
                         return absorbIllegalUnits({ key, type: pv.type, units: pv.units, description: pr.key, value: pv.value });
                     });
-                    // "Hexane (ヘキサン)" のように括弧内の説明があるのに [IN/OUT] 行に
-                    // "|params" が無い場合、そのままだと日本語の説明が出力先を持たず
-                    // 消えてしまう。schemaはdescription要素に非ASCII文字を許容するため、
-                    // 識別用の1エントリを自動生成して説明文の行き先を確保する。
-                    // key属性名はPlace自身の英語ラベル(例: "Hexane")をそのまま使う。
                     p._tables.forEach(t => properties.push(_aiTableToProperty(t, usedKeys, renamed)));
-                    // 説明がラベルと同じ文字列でも作る（英語では "Fumed_Silica (Fumed_Silica)" も
-                    // あり得るが、description を必ず MaiML に残すため）。
-                    if (properties.length === 0 && p.description) {
-                        properties.push({ key: p.label, type: 'stringType', units: '', description: p.description, value: '' });
-                    }
+                    // 括弧内の説明は <place><description> に出力する。以前は説明の
+                    // 行き先として value の無いダミー property（key=Place 名）を
+                    // 作っていたが、place 自身の description があるので廃止した。
                     templates.push({ place: p.label, type: p.type, properties });
                 });
             }
@@ -23656,7 +23847,12 @@ ${isArcSrc ? `<rect x="${t.x - 21}" y="${ty2 - 31}" width="42" height="62" fill=
         // (_aiSplitLanguageLine). English gets descriptions too
         // ("Fumed_Silica (fumed silica)"): the parenthesis is what ends up in
         // <description>, so no language is exempt.
-        function buildDslPrompt(procedure) {
+        // opts.chat: the prompt is pasted by hand into a chat AI (Copilot, ChatGPT,
+        // Claude, ...). Those UIs render Markdown, and copying the rendered answer loses
+        // line breaks and adds escapes, so the answer is asked for inside ONE code block
+        // (its copy button gives the raw text). opts.imagesAttached: the procedure is in
+        // images the user attaches in the chat, not in the text.
+        function buildDslPrompt(procedure, opts = {}) {
             // Examples follow the procedure: Japanese ones when it contains kana,
             // English ones otherwise, so a non-Japanese procedure gets a prompt with no
             // Japanese in it (gemini-flash-lite took stray Japanese examples as a cue
@@ -23742,7 +23938,9 @@ CRITICAL RULES:
 7. If the SAME parameter takes different values at different points of the procedure (e.g. polishing with 3 µm paste, then with 1 µm paste), write them as SEPARATE steps -- never merge them. Only when the procedure genuinely tests several values at one and the same step, keep ONE step and write them "/"-joined WITHOUT a unit (e.g. equivalents:0.1/0.25/0.5/10).
 8. Ignore only these: literature references, figure/table citations (e.g. "Fig. S1"), explanations of why, safety notes. Measured data is NOT ignorable content (see rule 11).
 9. Write every step and input/output name as a short English identifier using only ASCII letters, digits and underscores (e.g. Sodium_Citrate_Solution) — these become XML IDs and QNames. Reuse identifiers consistently. ${descRule}
-10. The first line of your answer is "LANGUAGE: " followed by the English name of the main language of the procedure text (e.g. LANGUAGE: Japanese, LANGUAGE: German). After it, output ONLY structured lines ([STEP], [IN:...], [OUT:...]) and blank lines between steps. No explanations, no markdown fences, no numbering.
+10. The first line of your answer is "LANGUAGE: " followed by the English name of the main language of the procedure text (e.g. LANGUAGE: Japanese, LANGUAGE: German). ${opts.chat
+    ? 'Put your WHOLE answer (the LANGUAGE line and every structured line) inside ONE fenced code block that starts with ```text and ends with ```, so it can be copied as plain text. Inside the block, output ONLY the LANGUAGE line, structured lines ([STEP], [IN:...], [OUT:...], [TABLE] blocks) and blank lines between steps. Write nothing before or after the code block: no explanations, no numbering, no citations.'
+    : 'After it, output ONLY structured lines ([STEP], [IN:...], [OUT:...]) and blank lines between steps. No explanations, no markdown fences, no numbering.'}
 11. NEVER drop measured data. Every numeric result in the text (measured values, analysis tables, compositions, yields, ratios calculated from the data) must appear as params on an [OUT:result] line of the step that measured it.
    - If the text reports results of a measurement whose procedure is not described (e.g. only a results table such as ${resultsTableExample}), still create a [STEP] for that measurement. Its inputs are the sample produced by an earlier step ([IN:material], same name) and the instrument if one is named ([IN:material]). Do not invent conditions that are not written.
    - Tables: copy every table in the text as a [TABLE] block placed right after the [IN:...] or [OUT:...] line it belongs to (results tables go after the [OUT:result] line). Never expand table cells into params.
@@ -23761,7 +23959,10 @@ CRITICAL RULES:
 ${exampleNote}${exampleBlock}
 
 --- PROCEDURE ---
-${procedure}`;
+${opts.imagesAttached && !procedure ? '(The procedure is in the attached image(s) / PDF, in page order. Read it from them first.)' : procedure}${opts.chat ? `
+--- END OF PROCEDURE ---
+
+Now convert the procedure above, following every rule, and answer with ONE \`\`\`text code block only (rule 10).` : ''}`;
         }
 
         function buildDslRepairPrompt(procedure, previousDsl, issues) {
@@ -23968,7 +24169,8 @@ Rewrite the COMPLETE structured protocol, fixing all the problems above while fo
             const btn = document.getElementById('ai-ocr-btn');
             if (btn) {
                 btn.disabled = _aiOcrBusy || _aiOcrFiles.length === 0;
-                btn.classList.toggle('hidden', _aiOcrFiles.length === 0);
+                // Chat AI mode: images are attached in the chat itself, nothing is read here
+                btn.classList.toggle('hidden', _aiOcrFiles.length === 0 || getAiProvider() === 'chat');
             }
         }
 
@@ -24006,14 +24208,22 @@ Rewrite the COMPLETE structured protocol, fixing all the problems above while fo
                 const files = Array.from(e.dataTransfer.files);
                 const eln = files.find(f => /\.eln$/i.test(f.name || ''));
                 if (eln) importAiElnFile(eln);
-                addAiOcrFiles(files.filter(f => f !== eln));
+                const rest = files.filter(f => f !== eln);
+                if (!_aiAdvanced) { if (rest.length) _aiImagesInSimpleMode(); return; }
+                addAiOcrFiles(rest);
             });
             document.getElementById('ai-procedure-input').addEventListener('paste', (e) => {
                 const files = Array.from(e.clipboardData?.files || []);
                 if (files.length === 0) return;   // plain text paste: leave to the browser
                 e.preventDefault();
+                if (!_aiAdvanced) { _aiImagesInSimpleMode(); return; }
                 addAiOcrFiles(files);
             });
+        }
+
+        function _aiImagesInSimpleMode() {
+            document.getElementById('ai-error-msg').textContent =
+                'Images are not read in simple mode: attach them in the chat AI together with the copied prompt (or choose Gemini API / Ollama above for AI OCR here).';
         }
 
         // ---------- .eln import (RO-Crate in a ZIP) ----------
@@ -24652,6 +24862,92 @@ Strict rules:
             return s.trim();
         }
 
+        // ---------- Chat AI mode (copy & paste with any chat AI) ----------
+
+        async function _copyTextToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                return true;
+            } catch (e) {
+                // Fallback for contexts without the async Clipboard API
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed'; ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                let ok = false;
+                try { ok = document.execCommand('copy'); } catch (e2) { ok = false; }
+                ta.remove();
+                return ok;
+            }
+        }
+
+        async function copyAiChatPrompt() {
+            const errEl = document.getElementById('ai-error-msg');
+            errEl.textContent = '';
+            const procedure = _aiNormalizeTables(document.getElementById('ai-procedure-input').value.trim());
+            const hasImages = _aiOcrFiles.length > 0;
+            if (!procedure && !hasImages) { errEl.textContent = 'Please enter the experimental procedure.'; return; }
+            const prompt = buildDslPrompt(procedure, { chat: true, imagesAttached: hasImages });
+            if (!(await _copyTextToClipboard(prompt))) {
+                errEl.textContent = 'Could not copy to the clipboard. Please allow clipboard access in the browser and try again.';
+                return;
+            }
+            const area = document.getElementById('ai-result-area');
+            area.classList.remove('hidden');
+            document.getElementById('ai-dsl-source-note').textContent = hasImages
+                ? `Prompt copied (${prompt.length.toLocaleString()} characters). Paste it into your chat AI and attach the ${_aiOcrFiles.length} image(s)/PDF there too, then paste the answer above.`
+                : `Prompt copied (${prompt.length.toLocaleString()} characters). Paste it into your chat AI, then paste the answer above.`;
+            document.getElementById('ai-result-note').textContent =
+                'Use the copy button of the code block in the chat AI. The pasted answer is cleaned up automatically; edit freely, then click "Apply to Canvas".';
+            showToast('Prompt copied — paste it into your chat AI');
+            document.getElementById('ai-dsl-editor').focus();
+        }
+
+        // Clean up an answer copied from a chat AI's rendered view: Markdown escapes
+        // (\[ \_ \|), lookalike bars (∣ ∥), lost line breaks, a lost leading "[",
+        // code fences with text around them, and the whole answer pasted twice.
+        // Text that is already well-formed passes through unchanged.
+        function _aiCleanPastedDsl(raw) {
+            let s = String(raw || '').replace(/\r\n?/g, '\n');
+            // Text inside a code block wins over anything written around it
+            const fence = s.match(/```[a-zA-Z]*[ \t]*\n([\s\S]*?)\n?```/);
+            if (fence && /[\[［]\s*STEP\s*[\]］]/i.test(fence[1])) s = fence[1];
+            s = s
+                .replace(/[ \t]*\\\|[ \t]*/g, '\n| ')            // escaped "|" starts a table row
+                .replace(/∥/g, '\n|').replace(/∣/g, '|')   // ∥ = row break, ∣ = bar
+                .replace(/\\([\[\]_*#|])/g, '$1')                // remaining Markdown escapes
+                .replace(/(?<![\[［]\s*)STEP\s*[\]］]/g, '[STEP]')  // "[" lost in front of STEP]
+                .replace(/([^\n])[ \t]*(?=[\[［]\s*(?:STEP|IN|OUT|TABLE)\s*[\]］:：])/gi, '$1\n')
+                .replace(/\n{2,}(?=[\[［]\s*(?:IN|OUT|TABLE))/gi, '\n')
+                .replace(/\n+(?=[\[［]\s*STEP)/gi, '\n\n');
+            // Same steps twice in a row (rendered + raw copy): keep the last copy
+            const parts = s.split(/(?=[\[［]\s*STEP\s*[\]］])/i);
+            const head = /[\[［]\s*STEP/i.test(parts[0]) ? '' : parts.shift();
+            const n = parts.length;
+            if (n >= 2 && n % 2 === 0) {
+                const nameOf = p => p.split('\n')[0].replace(/[\[［]\s*STEP\s*[\]］]/i, '').replace(/\s+/g, '').replace(/[(（].*$/, '');
+                const a = parts.slice(0, n / 2).map(nameOf), b = parts.slice(n / 2).map(nameOf);
+                if (a.every((x, i) => x === b[i])) parts.splice(0, n / 2);
+            }
+            s = head + parts.join('');
+            return _cleanLlmDsl(s.replace(/\n{3,}/g, '\n\n'));
+        }
+
+        function onAiDslPaste(e) {
+            const text = (e.clipboardData || window.clipboardData)?.getData('text');
+            if (!text) return;
+            const cleaned = _aiCleanPastedDsl(text);
+            if (!cleaned || cleaned === _cleanLlmDsl(text)) return;   // nothing to fix: default paste
+            e.preventDefault();
+            const ed = e.target;
+            ed.setRangeText(cleaned, ed.selectionStart, ed.selectionEnd, 'end');
+            document.getElementById('ai-dsl-source-note').textContent =
+                'The pasted answer was cleaned up (line breaks, Markdown escapes or duplicate text). Check it against the preview below.';
+            clearTimeout(_aiDslDebounce);
+            _renderAiCompiledPreview();
+        }
+
         // ---------- DSL editor preview (recompiles as the user types) ----------
 
         let _aiDslDebounce = null;
@@ -24690,7 +24986,10 @@ Strict rules:
             }
             v.issues.forEach(s => lines.push(`❌ ${s}`));
             v.notes.forEach(s => lines.push(`⚠️ ${s}`));
-            if (!/[\[［]\s*STEP\s*[\]］]/i.test(source)) {
+            // Source-text checks need a source text: with an empty procedure box
+            // (e.g. only a chat-AI answer pasted after a reload) every non-Latin
+            // description would be reported as "translated".
+            if (source.trim() && !/[\[［]\s*STEP\s*[\]］]/i.test(source)) {
                 const srcTables = detectSourceTables(_aiNormalizeTables(source));
                 if (srcTables.length > 0) {
                     lines.push(`📊 Table(s) detected in the source text: ${srcTables.map(t => `${t.rows.length} rows × ${t.header.length} cols`).join(', ')}`);
@@ -24730,6 +25029,13 @@ Strict rules:
             const genTemplates = document.getElementById('ai-gen-templates').checked;
             const errEl = document.getElementById('ai-error-msg');
             const btn = document.getElementById('ai-generate-btn');
+
+            // Chat AI mode: no API call here; the button copies the prompt instead.
+            // (Input already in [STEP] format still compiles directly below.)
+            if (getAiProvider() === 'chat' && !/[\[［]\s*STEP\s*[\]］]/i.test(procedure)) {
+                await copyAiChatPrompt();
+                return;
+            }
 
             errEl.textContent = '';
             _aiParsedResult = null;
@@ -24822,7 +25128,7 @@ Strict rules:
                 clearInterval(_aiTimerInterval);
                 _aiTimerInterval = null;
                 btn.disabled = false;
-                btn.innerHTML = '<i class="ph ph-head-circuit"></i> Generate <i class="ph ph-arrow-right"></i>';
+                _setAiGenerateBtnIdle();
                 // 経過時間を結果エリアに残す
                 const elapsed = document.getElementById('ai-elapsed-time');
                 if (elapsed) elapsed.textContent = `elapsed time: ${fmtTime(_aiElapsed)}`;
@@ -24925,7 +25231,7 @@ Strict rules:
                 const id = `trans_${maxTransId}`;
                 const finalLabel = uniqueLabel(t.label, existingTransLabels);
                 labelToId[t.label] = id;
-                targetMethod.petriNet.transitions.push({ id, label: finalLabel, x: 0, y: 0 });
+                targetMethod.petriNet.transitions.push({ id, label: finalLabel, description: t.description || '', x: 0, y: 0 });
 
                 // Create Events for all Results groups（ターゲットメソッドのもの）
                 if (!targetMethod.events) targetMethod.events = [];
@@ -25290,6 +25596,21 @@ Strict rules:
                 <div id="ai-cfg"
                     class="px-6 py-3 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 shrink-0">
                     <div class="flex items-center gap-3 flex-wrap">
+                        <!-- How to use AI: chat AI copy & paste (simple mode) or an API (API mode).
+                             Same control as the Viewer's AI Summary (#viewer-ai-seg). -->
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">AI</span>
+                        <div id="ai-mode-seg" class="ai-seg" role="radiogroup" aria-label="How to use AI">
+                            <button type="button" role="radio" data-p="chat" onclick="selectAiProvider('chat')"
+                                title="No API key or sign-in. Copy the prompt into any chat AI (Copilot, ChatGPT, Gemini, Claude, ...) and paste its answer back.">
+                                <i class="ph ph-chat-circle-text"></i> Chat AI (copy &amp; paste)</button>
+                            <button type="button" role="radio" data-p="cloud" onclick="selectAiProvider('cloud')"
+                                title="Generate here with the Google Gemini API (API key needed). Notebook images can be read by AI OCR.">
+                                <i class="ph ph-cloud"></i> Gemini API</button>
+                            <button type="button" role="radio" data-p="local" onclick="selectAiProvider('local')"
+                                title="Generate here with a local Ollama model. Nothing leaves this PC.">
+                                <i class="ph ph-desktop"></i> Ollama (local)</button>
+                        </div>
+                        <span class="flex-1"></span>
                         <label for="ai-target-method-select"
                             class="text-xs font-bold text-slate-500 uppercase tracking-wider">Target
                             Method</label>
@@ -25307,15 +25628,15 @@ Strict rules:
                             class="hidden text-xs font-bold text-red-600 dark:text-red-400">
                             <i class="ph ph-warning-circle"></i> Use only letters, numbers, and underscores.
                         </span>
-                        <div id="ai-cfg-summary" class="flex items-center gap-2 flex-wrap ml-auto"></div>
-                        <button type="button" id="ai-cfg-toggle" onclick="toggleAiCfgDetail()"
-                            class="text-xs text-indigo-500 hover:underline flex items-center gap-1">
-                            <i class="ph ph-gear-six"></i> <span>Change</span>
+                        <!-- Not shown (the segmented control above replaces them); kept for the JS -->
+                        <div id="ai-cfg-summary" class="hidden"></div>
+                        <button type="button" id="ai-cfg-toggle" onclick="toggleAiCfgDetail()" class="hidden">
+                            <span>Change</span>
                         </button>
                     </div>
                     <div id="ai-cfg-detail" class="hidden">
-                        <!-- LLM Provider -->
-                        <div>
+                        <!-- LLM Provider: state holder only, chosen with #ai-mode-seg -->
+                        <div class="hidden">
                             <label
                                 class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">LLM
                                 Provider</label>
@@ -25340,13 +25661,33 @@ Strict rules:
                                         class="text-sm text-slate-700 dark:text-slate-300">🖥️
                                         Local (Ollama)</span>
                                 </label>
+                                <!-- Selected by simple mode only (never shown: API mode lists the API providers) -->
+                                <label
+                                    class="hidden flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="ai-provider"
+                                        id="ai-provider-chat" value="chat"
+                                        onchange="toggleAiProvider()"
+                                        class="text-amber-500 focus:ring-amber-400">
+                                    <span
+                                        class="text-sm text-slate-700 dark:text-slate-300">💬
+                                        Chat AI (copy &amp; paste)</span>
+                                </label>
                             </div>
+                        </div>
+                        <!-- Chat AI: no API; the prompt is copied and the answer pasted back -->
+                        <div id="ai-chat-section" class="hidden">
+                            <p class="text-xs text-slate-500 dark:text-slate-400">No API key or
+                                sign-in needed. Click "Copy Prompt", paste it into any chat AI
+                                you are allowed to use (Microsoft Copilot, ChatGPT, Gemini, Claude,
+                                ...), then paste the AI's answer into the Structured Protocol field.
+                                The procedure text (and any images you attach) goes to that chat
+                                service.</p>
                         </div>
                         <!-- API Key -->
                         <div id="ai-cloud-apikey">
                             <label
                                 class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                                Gemini API Key
+                                API Key
                                 <a href="https://aistudio.google.com/app/apikey"
                                     target="_blank"
                                     class="ml-2 normal-case font-normal text-indigo-500 hover:underline">Get
@@ -25363,15 +25704,14 @@ Strict rules:
                                     <i class="ph ph-eye text-lg"></i>
                                 </button>
                             </div>
-                            <p class="text-[10px] text-slate-400 mt-1">Saved locally
-                                in your browser. Not sent anywhere except Google
+                            <p class="text-[10px] text-slate-400 mt-1">Saved in this
+                                browser only; sent only to the Google
                                 Gemini API.</p>
                         </div>
                         <!-- Model select -->
                         <div id="ai-cloud-model">
                             <label
-                                class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Gemini
-                                Model</label>
+                                class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Model</label>
                             <div class="flex gap-2">
                                 <select id="ai-model-select"
                                     onchange="localStorage.setItem('gemini_model', this.value)"
@@ -25387,16 +25727,13 @@ Strict rules:
                                     Models
                                 </button>
                             </div>
-                            <p class="text-[10px] text-slate-400 mt-1">The list
-                                above is a fallback shown before fetching. Click
-                                "Fetch Models" (requires an API key) to load the
-                                live, up-to-date model list from Google.</p>
+                            <p class="text-[10px] text-slate-400 mt-1">"Fetch Models"
+                                loads the current list from Google (needs the API key).</p>
                         </div>
                         <!-- Ollama Section -->
                         <div id="ai-local-section" class="hidden">
                             <label
-                                class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Ollama
-                                Model</label>
+                                class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Model</label>
                             <div class="flex gap-2">
                                 <select id="ai-ollama-model-select"
                                     class="flex-1 min-w-0 px-3 py-2 text-sm font-mono border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all">
@@ -25410,7 +25747,7 @@ Strict rules:
                                 </button>
                             </div>
                             <p class="text-[10px] text-slate-400 mt-1">Ollama must
-                                be running on localhost:11434</p>
+                                be running on localhost:11434. Nothing leaves this PC.</p>
                         </div>
                     </div>
                 </div>
@@ -25429,7 +25766,7 @@ Strict rules:
                              generating; nothing downstream changes. -->
                         <div id="ai-ocr-section">
                             <div class="flex items-center gap-2">
-                                <button type="button"
+                                <button type="button" id="ai-ocr-add-btn"
                                     onclick="document.getElementById('ai-ocr-file-input').click()"
                                     title="Add photos or scans of lab-notebook pages (you can also paste or drop them here)"
                                     class="px-3 py-1.5 text-xs font-semibold text-white bg-slate-600 hover:bg-slate-700 rounded-lg transition-all flex items-center gap-1.5">
@@ -25451,7 +25788,7 @@ Strict rules:
                             </div>
                             <!-- Thumbnails, then the OCR action right after them (shown only
                                  while images exist); its ↓ points at the procedure field it fills -->
-                            <div class="flex flex-wrap items-center gap-2 mt-2">
+                            <div id="ai-ocr-row" class="flex flex-wrap items-center gap-2 mt-2">
                                 <div id="ai-ocr-list" class="flex flex-wrap gap-2"></div>
                                 <button type="button" id="ai-ocr-btn"
                                     onclick="runAiTranscribe()" disabled
@@ -25527,7 +25864,11 @@ the original name in parentheses: HAuCl4_Solution (original name)</div>
                         </div>
                         <!-- Generate sits at the end of the input flow; the arrow points at
                              the result column it fills -->
-                        <div class="flex justify-end">
+                        <div class="flex items-center justify-end gap-3">
+                            <p id="ai-simple-hint" class="hidden text-xs text-slate-500 dark:text-slate-400 mr-auto">
+                                Copy the prompt, paste it into a chat AI you may use (Copilot, ChatGPT,
+                                Gemini, Claude, ...), and paste its answer on the right. Notebook images:
+                                attach them in the chat AI.</p>
                             <button id="ai-generate-btn" onclick="runAiGenerate()"
                                 title="Convert the procedure into a structured protocol (shown on the right)"
                                 class="px-5 py-2.5 text-sm font-semibold text-white bg-amber-500 hover:bg-amber-600 rounded-xl shadow-sm transition-all flex items-center gap-2 whitespace-nowrap">
@@ -25543,7 +25884,7 @@ the original name in parentheses: HAuCl4_Solution (original name)</div>
                             Structured Protocol (review &amp; edit)</label>
                         <div id="ai-result-area" class="hidden">
                             <textarea id="ai-dsl-editor"
-                                spellcheck="false" oninput="onAiDslEdited()"
+                                spellcheck="false" oninput="onAiDslEdited()" onpaste="onAiDslPaste(event)"
                                 class="ai-gen-fill w-full px-3 py-2 text-xs font-mono border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all resize-none"></textarea>
                             <p id="ai-dsl-source-note"
                                 class="text-[10px] text-slate-400"></p>
